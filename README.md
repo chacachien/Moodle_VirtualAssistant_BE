@@ -13,6 +13,7 @@ Before running the application, ensure you have the following dependencies insta
 
 
 ## Create venv
+
     ```bash
     python3 -m venv venv
     source venv/bin/activate
