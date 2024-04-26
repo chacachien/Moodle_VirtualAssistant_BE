@@ -1,5 +1,6 @@
+from numpy import insert
 from app.models.message_model import *
-from sqlmodel import select
+from sqlmodel import select, delete
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from fastapi import HTTPException
 from starlette import status
@@ -58,3 +59,34 @@ class ChatService(object):
             print(e)
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
     
+
+    @staticmethod
+    async def delete_message(chatId: int, session: AsyncSession):
+        try:
+            async with session.begin():
+                # Fetch messages to be deleted
+                query = select(Message).where(Message.chatId == chatId)
+                result = await session.execute(query)
+                message_history = result.scalars().all()
+                
+                if not message_history:
+                    return "No messages found for deletion"
+
+                # Add messages to MessageDeleted table
+                for message in message_history:
+                    message_deleted = MessageDeleted(
+                        content=message.content,
+                        chatId=message.chatId,
+                        role=message.role
+                    )
+                    session.add(message_deleted)
+                
+                # Delete messages from Message table
+                query = delete(Message).where(Message.chatId == chatId)
+                await session.execute(query)
+                await session.commit()
+                
+            return "Messages deleted successfully"
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")

@@ -32,5 +32,14 @@ async def send_message(
     print('Answer: ', result)
     return result
 
+@router.delete("/chat/{chatid}")
+async def delete_message(
+                    chatid: int = Path(..., title="The ID of the chat"),
+                    chat_service: ChatService = Depends(),
+                    session: AsyncSession = Depends(get_session)):
+    print("DELETE MESSAGE FROM ", chatid)
+    result = await chat_service.delete_message(chatid, session)
+    print('Answer: ', result)
+    return result
 
 

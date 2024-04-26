@@ -9,7 +9,7 @@ class TypeRoleChoices(Enum):
     USER = 1
 
 class MessageBase(SQLModel):
-    content: str
+    content: str = Field(max_length=255)
     chatId: int
     role: TypeRoleChoices
 
