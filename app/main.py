@@ -36,19 +36,6 @@ def get_application() -> FastAPI:
 
 app = get_application()
 
-# from apscheduler.schedulers.asyncio import AsyncIOScheduler
-
-# scheduler = AsyncIOScheduler()
-
-# # Define a sample job to run every 5 seconds
-# async def sample_job():
-#     print("Executing sample job")
-#     scheduler.add_job(sample_job, "interval", seconds=5)
-#     scheduler.start()
-# Add the sample job to the scheduler
-
-
-# Start the scheduler
 
 if __name__ == "__main__":
     import asyncio
