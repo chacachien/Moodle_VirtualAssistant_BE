@@ -8,3 +8,4 @@ alembic_old.ini
 alembic.ini
 poetry.lock
 pyproject.toml
+api.http
