@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 
+
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'))
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
@@ -12,7 +13,8 @@ def get_url():
     server = os.getenv("POSTGRES_SERVER")
     port = os.getenv("POSTGRES_PORT")
     db = os.getenv("POSTGRES_DB")
-    return f"postgresql+asyncpg://{user}:{password}@{server}:{port}/{db}"
+
+    return f"mysql+aiomysql://{user}:{password}@{server}/{db}"
 
 def get_url_notsync():
     user = os.getenv("POSTGRES_USER")
@@ -20,7 +22,7 @@ def get_url_notsync():
     server = os.getenv("POSTGRES_SERVER")
     port = os.getenv("POSTGRES_PORT")
     db = os.getenv("POSTGRES_DB")
-    return f"postgresql+psycopg2://{user}:{password}@{server}:{port}/{db}"
+    return f"mysql+mysqlconnector://{user}:{password}@{server}/{db}"
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"

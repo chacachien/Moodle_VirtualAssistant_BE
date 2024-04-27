@@ -21,7 +21,6 @@ class ChatService(object):
             print("MESSAGE LIST: ", message_history)
             if message_history is None:
                 return []
-
             return message_history.all()
         except Exception as e:
             print(e)
@@ -70,7 +69,7 @@ class ChatService(object):
                 message_history = result.scalars().all()
                 
                 if not message_history:
-                    return "No messages found for deletion"
+                    return []
 
                 # Add messages to MessageDeleted table
                 for message in message_history:
@@ -85,7 +84,6 @@ class ChatService(object):
                 query = delete(Message).where(Message.chatId == chatId)
                 await session.execute(query)
                 await session.commit()
-                
             return "Messages deleted successfully"
         except Exception as e:
             print(e)

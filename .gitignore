@@ -3,3 +3,8 @@ venv/
 .DS_Store
 .env
 midgration/
+midgration_old/
+alembic_old.ini
+alembic.ini
+poetry.lock
+pyproject.toml

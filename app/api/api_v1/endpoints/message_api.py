@@ -30,7 +30,7 @@ async def send_message(
     print("SEND MESSAGE TO ", message)
     result = await chat_service.send_message(message, session)
     print('Answer: ', result)
-    return result
+    return {"message": result}
 
 @router.delete("/chat/{chatid}")
 async def delete_message(

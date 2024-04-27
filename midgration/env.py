@@ -11,7 +11,7 @@ from alembic import context
 
 from sqlmodel import SQLModel
 from app.models.message_model import Message, MessageDeleted
-from app.models.user_model import *
+
 from app.core.config import get_url
 
 
