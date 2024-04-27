@@ -9,7 +9,7 @@ from app.api.api_v1.api import router
 from app.helpers.exception_handler import CustomException, http_exception_handler
 
 import logging
-
+import schedule
 
 logging.config.fileConfig(settings.LOGGING_CONFIG_FILE, disable_existing_loggers=False)
 def get_application() -> FastAPI:
@@ -35,5 +35,45 @@ def get_application() -> FastAPI:
     return app
 
 app = get_application()
+
+# from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
+# scheduler = AsyncIOScheduler()
+
+# # Define a sample job to run every 5 seconds
+# async def sample_job():
+#     print("Executing sample job")
+#     scheduler.add_job(sample_job, "interval", seconds=5)
+#     scheduler.start()
+# Add the sample job to the scheduler
+
+
+# Start the scheduler
+
 if __name__ == "__main__":
+    import asyncio
+    import time
+    import schedule
+    from datetime import datetime
+    from threading import Thread
+
+    async def scheduled_job():
+        message = f"`Now is alert time!`"
+        print(message)
+
+    def schedule_checker():
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
+
+    def run_async_function_sync( func):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        loop.run_until_complete(func())
+
+    schedule.every(10).seconds.do(lambda: run_async_function_sync(scheduled_job))
+    Thread(target=schedule_checker).start()
+
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
+    while True:
+        schedule.run_pending()
