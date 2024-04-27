@@ -6,11 +6,7 @@ from numpy import mat
 from pinecone import PodSpec, Pinecone
 from langchain_community.vectorstores import Pinecone as PC
 from app.core.config import get_url_notsync
-from langchain.sql_database import SQLDatabase
 from sqlalchemy import create_engine, MetaData, Table
-from langchain_core.documents import Document
-
-
 
 
 import pinecone
