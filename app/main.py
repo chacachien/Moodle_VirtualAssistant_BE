@@ -9,7 +9,7 @@ from app.api.api_v1.api import router
 from app.helpers.exception_handler import CustomException, http_exception_handler
 
 import logging
-import schedule
+from app.chatbot.taskbot.main import TaskHandle
 
 logging.config.fileConfig(settings.LOGGING_CONFIG_FILE, disable_existing_loggers=False)
 def get_application() -> FastAPI:
@@ -35,8 +35,6 @@ def get_application() -> FastAPI:
     return app
 
 app = get_application()
-
-
 if __name__ == "__main__":
     import asyncio
     import time
@@ -44,21 +42,41 @@ if __name__ == "__main__":
     from datetime import datetime
     from threading import Thread
 
+    taskBot = TaskHandle()
     async def scheduled_job():
-        message = f"`Now is alert time!`"
-        print(message)
+        print('start checking')
+        taskBot.run()
+
+    async def daily_job():
+        print("DAILY START")
+        taskBot.daily_check()
 
     def schedule_checker():
         while True:
             schedule.run_pending()
             time.sleep(1)
 
+
     def run_async_function_sync( func):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         loop.run_until_complete(func())
+    
 
-    schedule.every(10).seconds.do(lambda: run_async_function_sync(scheduled_job))
+
+    #schedule.every(41).minutes.do(lambda: run_async_function_sync(scheduled_job))
+    import pytz
+    from datetime import datetime
+    timezone = 'Asia/Ho_Chi_Minh'  
+    scheduled_time = '7:00'
+
+    schedule.every().day.at(scheduled_time, timezone).do(
+        lambda: run_async_function_sync(daily_job))
+
+    schedule.every(1).minutes.do(
+        lambda: run_async_function_sync(scheduled_job)
+    )
+
     Thread(target=schedule_checker).start()
 
     uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")

@@ -34,6 +34,7 @@ bs4 = "^0.0.2"
 fastapi-sqlalchemy = "^0.2.1"
 aiomysql = "^0.2.0"
 mysqlclient = "^2.2.4"
+schedule = "^1.2.1"
 
 
 [build-system]

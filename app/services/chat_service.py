@@ -7,6 +7,8 @@ from starlette import status
 from app.chatbot.model import ChatBot
 
 
+
+
 class ChatService(object):
     chatbot = ChatBot()
     __instance = None
@@ -33,7 +35,7 @@ class ChatService(object):
             message_obj = Message(
                 content = message.content,
                 chatId = message.chatId,
-                role = message.role,
+                role = TypeRoleChoices.USER,
             )
             session.add(message_obj)
             await session.commit()
@@ -45,7 +47,7 @@ class ChatService(object):
                 message_obj_res = Message(
                     content= res,
                     chatId= message.chatId,
-                    role ="BOT",
+                    role = TypeRoleChoices.BOT,
                 )
                 session.add(message_obj_res)
                 await session.commit()

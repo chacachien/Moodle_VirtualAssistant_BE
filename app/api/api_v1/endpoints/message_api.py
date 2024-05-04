@@ -3,7 +3,7 @@ from starlette.responses import JSONResponse
 from starlette import status
 from app.db.db import get_session
 from sqlalchemy.ext.asyncio.session import AsyncSession
-from app.api.api_v1.services.chat_service import ChatService
+from app.services.chat_service import ChatService
 from typing import Annotated
 import logging
 from app.models.message_model import *
