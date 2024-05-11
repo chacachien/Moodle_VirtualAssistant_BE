@@ -5,6 +5,7 @@ from sqlalchemy import create_engine, MetaData, Table, text
 from datetime import datetime, timedelta
 from app.chatbot.taskbot.reminder import Reminder
 from app.services.schedule import ReminderService
+from app.services.label_service import LabelService
 import json
 from datetime import datetime, time
 
@@ -103,7 +104,6 @@ class TaskHandle():
     
     def check_chapter(self, u_c):
         print("CHECK CHAPTER: ", u_c)
-
         for row in u_c:
             userid = row[0]
             courseid = row[1]
@@ -211,11 +211,23 @@ class TaskHandle():
         self.check_user_active()
 
 
-def main():
+    def check_label_change(self):
+        labels = LabelService.get_all_label()
+        if labels:
+            for row in labels:
+                print("time: ", row['timemodified'])
+                if self.check_time(row['timemodified']):
+                    print('modified')
+                else:
+                    print('old')
+                
 
+def main():
     time_action = datetime.now()
     time_remind = datetime.now() + timedelta(seconds=10) 
-    taskBot = TaskBot()
-    taskBot.remind()
+    taskBot = TaskHandle()
+    taskBot.check_label_change()
+
+
 if __name__ =='__main__':
     main()

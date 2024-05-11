@@ -63,12 +63,11 @@ if __name__ == "__main__":
         loop.run_until_complete(func())
     
 
-
     #schedule.every(41).minutes.do(lambda: run_async_function_sync(scheduled_job))
     import pytz
     from datetime import datetime
     timezone = 'Asia/Ho_Chi_Minh'  
-    scheduled_time = '7:00'
+    scheduled_time = '16:55'
 
     schedule.every().day.at(scheduled_time, timezone).do(
         lambda: run_async_function_sync(daily_job))

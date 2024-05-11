@@ -89,10 +89,10 @@ PROMPT_FIX_BUG = PromptTemplate.from_template(
 
 PROMPT_SQL_ANSWER = PromptTemplate.from_template(
             """
-            You are a friendly Virtual assistant. Your boss have user_id = {id}.
+            You are a friendly Virtual assistant. You are assitanting the user that have user_id = {id}.
             You just get the database that relevant to this user.
             Your task is to answer the user question using the SQL query you have written.
-            You must use the friendly tongue with your boss. 
+            You must use the friendly tongue when answer the question. 
             Look at the results of the query and return the answer to the input question. Given the following user question, corresponding SQL query, and SQL result, answer the user question.
             Ìf the result is None or [], just answer that this information is none, don't fake data to answer.
             
@@ -165,6 +165,18 @@ PROMPT_REMINDER = PromptTemplate.from_template("""
 PROMPT_REMINDER_DAILY = PromptTemplate.from_template("""
         Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language.
         please message to report the user's study progress.
-        If have more than one course in information, you can send more than one message (separated by two line breaks:). 
-        based on the following information: {input}
+        I need a clean message format when you list the user's task and remember leave Your Words of encouragement and reminders at the end of the message:
+        
+        ``` 
+            Khoá học A:
+            - tiến độ quiz
+            - tiến độ assignment
+            - tiến độ chapter
+            Khoá học B:
+            - tiến độ quiz
+            - tiến độ assignment
+            - tiến độ chapter
+            ...
+        ```
+        Based on the following information: {input}
 """)

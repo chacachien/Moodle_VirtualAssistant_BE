@@ -51,10 +51,12 @@ class Reminder:
         username = ReminderService.get_username(user)
         full_content = f"User: {username}\n" + list_content
         reminder_ai = self.bot_reminder.reminder_daily(full_content)
-        messages = reminder_ai.split("\n\n")
+        messages = reminder_ai
+        #messages = reminder_ai.split("\n\n")
+
         print("remind list", messages)
-        for m in messages:
-            self.create_reminder_database('daily', user, time_reminder, m)
+        # for m in messages:
+        self.create_reminder_database('daily', user, time_reminder, messages)
 
 
     def remind_user(self, userid):

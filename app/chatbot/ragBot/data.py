@@ -6,7 +6,7 @@ from numpy import mat
 from pinecone import PodSpec, Pinecone
 from langchain_community.vectorstores import Pinecone as PC
 from app.core.config import get_url_notsync
-from sqlalchemy import create_engine, MetaData, Table
+from sqlalchemy import create_engine, MetaData, Table, text
 
 
 import pinecone
@@ -52,7 +52,6 @@ class LoadData:
 
         with self.engine.connect() as connection:
             # Execute the query
-            from sqlalchemy import text
             query = text('SELECT name, intro FROM mdl_label')
             result = connection.execute(query)
             # Fetch all rows
@@ -87,7 +86,6 @@ class LoadData:
         self.docs = text_splitter.split_text(self.docs)
     
     def embed_data(self):
-
         # Checking Index
         docsearch = None
         if self.index_name not in self.pc.list_indexes().names():
