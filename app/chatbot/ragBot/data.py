@@ -44,6 +44,12 @@ class LoadData:
             content_text = content_soup.get_text()
             row['intro'] = content_text
         return res 
+    
+    def clean_data(self, data):
+        
+        data['intro'] = BeautifulSoup(data['intro'], 'html.parser').get_text()
+        return data
+
 
     def split_data(self, data: str):
 
@@ -91,7 +97,7 @@ class LoadData:
         return docsearch
     
 
-    def update_data(self, data: list):
+    def update_data(self, data):
         '''
             texts: Iterable[str],
             metadatas: Optional[List[dict]] = None,
@@ -100,9 +106,11 @@ class LoadData:
             batch_size: int = 32,
             embedding_chunk_size: int = 1000,
         '''
+        clean_data = self.clean_data(data)
+        docs = [{'id': text['id'],'course':text['course'], 'name': text['name'],'intro': self.split_data(text['intro'])} for text in clean_data]
         pc = PC(index= self.pc.Index(name=self.index_name), embedding=self.embeddings, text_key='text')
 
-        for i in data:
+        for i in docs:
             id_list = [f'doc{i['id']}_chunk'+str(j) for j in range(len(i['intro']))]
             print("LIST ID: ",id_list)
             # print id vs intro 
