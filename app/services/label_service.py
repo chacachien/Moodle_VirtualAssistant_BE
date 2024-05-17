@@ -7,6 +7,7 @@ from sqlalchemy import create_engine, MetaData, Table, text
 
 
 DATABASE_URL = get_url_notsync()
+print(DATABASE_URL)
 class LabelService(object):
     __instance = None
     engine = create_engine(DATABASE_URL)
@@ -25,6 +26,7 @@ class LabelService(object):
                 for row in rows:
                     label = {
                         'id': row[0],
+                        'course': row[1],
                         'name': row[2],  # Assuming the name field is the first column in the query result
                         'intro': row[3],
                         'timemodified': row[5]                    }
@@ -38,7 +40,9 @@ class LabelService(object):
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
     
 def main():
+
     lis_Label = LabelService.get_all_label()
+    
     print(lis_Label)
 
 if __name__ == '__main__':

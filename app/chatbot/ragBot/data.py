@@ -1,4 +1,5 @@
-from langchain.text_splitter import CharacterTextSplitter
+from hmac import new
+from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.document_loaders import GoogleDriveLoader
@@ -7,7 +8,8 @@ from pinecone import PodSpec, Pinecone
 from langchain_community.vectorstores import Pinecone as PC
 from app.core.config import get_url_notsync
 from sqlalchemy import create_engine, MetaData, Table, text
-
+from app.services.label_service import LabelService
+from bs4 import BeautifulSoup
 
 import pinecone
 import sys
@@ -25,79 +27,100 @@ class LoadData:
             api_key= os.getenv("PINECONE_API_KEY"),
             environment='gcp-starter'
         )
-        self.index_name = "langchain-demo1"
+        self.index_name = "ragbot"
         self.folder_id = '10ZN2ztM_WC00CyktKSZENS2LULbdJkNP'
         DATABASE_URL = get_url_notsync()
         self.engine = create_engine(DATABASE_URL)
-        self.metadata = MetaData()
+
         self.embeddings = HuggingFaceEmbeddings()
         self.docsearch = None
         self.PC = None
 
     def load_data(self):
-
+        res = LabelService.get_all_label()
         data_clear = []
-        from bs4 import BeautifulSoup
+        for row in res:
+            content_soup = BeautifulSoup( row['intro'], 'html.parser')
+            content_text = content_soup.get_text()
+            row['intro'] = content_text
+        return res 
 
-        with self.engine.connect() as connection:
-            # Execute the query
-            query = text('SELECT name, intro FROM mdl_label')
-            result = connection.execute(query)
-            # Fetch all rows
-            rows = result.fetchall()
-            for row in rows:
-                new_row = ''
-                for i in range(2):
-                    if i%2==0:
-                        new_row +=row[i]
-                        new_row += '\n'
-                    else:
-                        content_soup = BeautifulSoup(row[i], 'html.parser')
-                        content_text = content_soup.get_text()
-                        new_row += content_text
-                        new_row += '\n\n'
-                data_clear.append((new_row))
+    def split_data(self, data: str):
 
-        merged_string = ''.join(data_clear)
-        self.docs = merged_string
-        # store into file txt
-        with open('app/chatbot/ragBot/new.txt', 'w') as file:
-            file.write(str(merged_string))
-        return merged_string
-
-    def split_data(self):
-
-        text_splitter = CharacterTextSplitter(
-                separator="\n\n",
-                chunk_size=100,
-                chunk_overlap=20,
-                length_function=len,
-                is_separator_regex=False,
+        # text_splitter = CharacterTextSplitter(
+        #         # separator="\n\n",
+        #         chunk_size=100,
+        #         chunk_overlap=2,
+        #         length_function=len,
+        #         is_separator_regex=False,
+        # )
+        text_splitter = RecursiveCharacterTextSplitter(
+            separators=[
+                "\n\n",
+                "\n",
+                " ",
+                ".",
+                ",",
+                "\u200b",  # Zero-width space
+                "\uff0c",  # Fullwidth comma
+                "\u3001",  # Ideographic comma
+                "\uff0e",  # Fullwidth full stop
+                "\u3002",  # Ideographic full stop
+                "",
+            ],
+            chunk_size=1000,
+            chunk_overlap=100,
+            length_function=len,
+            is_separator_regex=False,
         )
 
-        self.docs = text_splitter.split_text(self.docs)
-    
-    def embed_data(self):
-        # Checking Index
-        docsearch = None
+        docs = text_splitter.split_text(data)
+        return docs
+
+    def create_index(self):
+
         if self.index_name not in self.pc.list_indexes().names():
         # Create new Index
-            self.pc.create_index(name=self.index_name, metric="cosine", dimension=768, spec=PodSpec(environment="gcp-starter"))
-            docsearch = PC.from_texts(self.docs, self.embeddings, index_name=self.index_name)
+            self.pc.create_index(name=self.index_name, metric="euclidean", dimension=768, spec=PodSpec(environment="gcp-starter"))
+            # docsearch = PC.from_texts(self.docs, self.embeddings, index_name=self.index_name)
             
-        else:
-        # Link to the existing index
-            print('Index already exists')
-            docsearch = PC.from_existing_index(self.index_name, self.embeddings)
+    def embed_data(self):
+
+        docsearch = PC.from_existing_index(self.index_name, self.embeddings)
         self.docsearch = docsearch
         return docsearch
     
-    def update_data(self):
-        with open('app/chatbot/ragBot/new.txt', 'r') as text:
-            new_data = text.read()
-            pc = PC(index= self.pc.Index(name=self.index_name), embedding=self.embeddings, text_key='text')
-            pc.add_texts(texts = [new_data])
-            print('Data updated')
+
+    def update_data(self, data: list):
+        '''
+            texts: Iterable[str],
+            metadatas: Optional[List[dict]] = None,
+            ids: Optional[List[str]] = None,
+            namespace: Optional[str] = None,
+            batch_size: int = 32,
+            embedding_chunk_size: int = 1000,
+        '''
+        pc = PC(index= self.pc.Index(name=self.index_name), embedding=self.embeddings, text_key='text')
+
+        for i in data:
+            id_list = [f'doc{i['id']}_chunk'+str(j) for j in range(len(i['intro']))]
+            print("LIST ID: ",id_list)
+            # print id vs intro 
+            [pc.add_texts(
+                texts = [j[1]],
+                ids = [j[0]],
+                metadatas= [{'title': i['name'], 'course': i['course'], "text": j[1]}],
+                batch_size=64,
+                embedding_chunk_size=1000) for j in zip(id_list, i['intro'])]
+        print('Data updated')
+
+
+    def set_up(self):
+        self.docs = self.load_data()
+        self.docs = [{'id': text['id'],'course':text['course'], 'name': text['name'],'intro': self.split_data(text['intro'])} for text in self.docs]
+        self.create_index()
+        self.update_data(self.docs)
+
 
 def main():
     def pretty_print_docs(docs):
@@ -107,8 +130,17 @@ def main():
             )
         )
 
-    data = LoadData()
     # res = data.load_data()
+
+
+    # for i in res:
+    #     i['intro'] = data.split_data(i['intro'])
+
+    # # upload data
+    # data.update_data(res)
+
+
+        
     # # #store into file txt
     # with open('data.txt', 'w') as file:
     #     file.write(str(res))
@@ -116,7 +148,7 @@ def main():
     # data.split_data()
     # search = data.embed_data()
     # data.update_data()
-    query = "Cuộc chiến tranh nhà Ngô"
+
 
     # res = data.docsearch.similarity_search(
     #     query,  # our search query
@@ -128,7 +160,6 @@ def main():
     # res = data.docsearch.max_marginal_relevance_search(query, k=3, fetch_k=10)
     # pretty_print_docs(res)
 
-    index = data.pc.Index(name=data.index_name)
     # res = index.fetch(['c42951d4-f3fa-4893-9f22-ad9674ff50e2'])
 
     # #convert res to json
@@ -147,16 +178,27 @@ def main():
     # print(res)
     # des = data.pc.describe_index('langchain-demo1')
     # print(des)
+    data = LoadData()
+    # data.create_index()
+    # texts = data.load_data()
 
-    res = index.query(
-            vector=[0.1]*768,
-        filter = {
-            'course': 1
-        },
-        top_k=1,
-        include_metadata=True
+    # texts = [{'id': text['id'],'course':text['course'], 'name': text['name'],'intro': data.split_data(text['intro'])} for text in texts]
+
+    # data.update_data(texts)
+
+    index = data.pc.Index(name=data.index_name)
+    query = "tên các tác phẩm chữ nôm được nêu ra trong bài"
+    query = 'tên các tác giả có các sáng tác thơ nôm'
+    query = 'thời gian ra đời của chữ nôm'
+    vectoreStore = PC(index = index, embedding= data.embeddings, text_key='text')
+    res = vectoreStore.similarity_search(
+        query = query,
+        k = 4,
+        filter={
+            'course': 5,
+        }
     )
     print(res)
-
+    pretty_print_docs(res)
 if __name__ == "__main__":
     main()

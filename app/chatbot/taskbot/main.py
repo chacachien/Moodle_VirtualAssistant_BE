@@ -8,6 +8,7 @@ from app.services.schedule import ReminderService
 from app.services.label_service import LabelService
 import json
 from datetime import datetime, time
+from app.chatbot.ragBot.data import LoadData
 
 class TaskHandle():
     def __init__(self):
@@ -16,6 +17,7 @@ class TaskHandle():
         DATABASE_URL = get_url_notsync()
         self.engine = create_engine(DATABASE_URL)
         self.reminder = Reminder()
+        self.LoadData = LoadData()
         self.time_daily = "7:00"
         self.TIME_REMINDER_BEFORE = 1*24*60*60
 
@@ -197,6 +199,7 @@ class TaskHandle():
         self.check_assign(u_c)
         self.check_chapter(u_c)
 
+
     def check_user_active(self):
         result = ReminderService.get_user_active(self.TIME_INTERVAL)
         rows = result.fetchall()
@@ -206,22 +209,23 @@ class TaskHandle():
                 print("remind user: ", row[0])
                 self.reminder.remind_user(row[0])
 
-    def run(self):
-        self.check()
-        self.check_user_active()
-
-
     def check_label_change(self):
         labels = LabelService.get_all_label()
         if labels:
             for row in labels:
                 print("time: ", row['timemodified'])
                 if self.check_time(row['timemodified']):
-                    print('modified')
+                    print('UPLOADING NEW DATA')
+                    self.LoadData.update_data(row)
                 else:
                     print('old')
-                
+    
+    def run(self):
+        self.check()
+        self.check_user_active()
+        self.check_label_change()
 
+                
 def main():
     time_action = datetime.now()
     time_remind = datetime.now() + timedelta(seconds=10) 
