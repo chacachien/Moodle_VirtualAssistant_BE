@@ -1,4 +1,6 @@
 from hmac import new
+import token
+
 from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -6,11 +8,12 @@ from langchain_community.document_loaders import GoogleDriveLoader
 from numpy import mat
 from pinecone import PodSpec, Pinecone
 from langchain_community.vectorstores import Pinecone as PC
+from sympy import Q
 from app.core.config import get_url_notsync
 from sqlalchemy import create_engine, MetaData, Table, text
 from app.services.label_service import LabelService
 from bs4 import BeautifulSoup
-
+from pyvi.ViTokenizer import tokenize, spacy_tokenize
 import pinecone
 import sys
 import os
@@ -32,13 +35,30 @@ class LoadData:
         DATABASE_URL = get_url_notsync()
         self.engine = create_engine(DATABASE_URL)
 
-        self.embeddings = HuggingFaceEmbeddings()
+
+###
+            # from langchain_community.embeddings import HuggingFaceEmbeddings
+
+            # model_name = "sentence-transformers/all-mpnet-base-v2"
+            # model_kwargs = {'device': 'cpu'}
+            # encode_kwargs = {'normalize_embeddings': False}
+            # hf = HuggingFaceEmbeddings(
+            #     model_name=model_name,
+            #     model_kwargs=model_kwargs,
+            #     encode_kwargs=encode_kwargs
+            # )
+###
+        self.vietnamese_model = 'dangvantuan/vietnamese-embedding'
+        ## use tokenize vietnamese-embedding from pyvi.vitokenizer
+        self.embeddings = HuggingFaceEmbeddings(model_name=self.vietnamese_model)
+
+        #self.embeddings = HuggingFaceEmbeddings(model_name=self.vietnamese_model)
         self.docsearch = None
         self.PC = None
 
     def load_data(self):
         res = LabelService.get_all_label()
-        data_clear = []
+
         for row in res:
             content_soup = BeautifulSoup( row['intro'], 'html.parser')
             content_text = content_soup.get_text()
@@ -46,8 +66,12 @@ class LoadData:
         return res 
     
     def clean_data(self, data):
-        
-        data['intro'] = BeautifulSoup(data['intro'], 'html.parser').get_text()
+        try: 
+            data['intro'] = BeautifulSoup(data['intro'], 'html.parser').get_text()
+            
+        except:
+            print('Cannot convert this data to text')
+        data['intro'] = str(tokenize(data['intro']))
         return data
 
 
@@ -74,7 +98,7 @@ class LoadData:
                 "\u3002",  # Ideographic full stop
                 "",
             ],
-            chunk_size=1500,
+            chunk_size=1000,
             chunk_overlap=100,
             length_function=len,
             is_separator_regex=False,
@@ -98,30 +122,52 @@ class LoadData:
 
     def update_data(self, data):
         '''
+
             texts: Iterable[str],
             metadatas: Optional[List[dict]] = None,
             ids: Optional[List[str]] = None,
             namespace: Optional[str] = None,
             batch_size: int = 32,
             embedding_chunk_size: int = 1000,
+            ------
+            data =  {
+                'id':,
+                'course':,
+                'name':,
+                'intro': string
+            }
         '''
-        cleaned_data = self.clean_data(data)
-        cleaned_data['intro'] = self.split_data(cleaned_data['intro'])
-        
+        # print('data: ', data)
+        clean_data = self.clean_data(data)
+
+        # print('CLEAN DATA: ', clean_data)
+        clean_data['intro'] = self.split_data(clean_data['intro']) 
         pc = PC(index= self.pc.Index(name=self.index_name), embedding=self.embeddings, text_key='text')
 
 
-        id_list = [f'doc{cleaned_data['id']}_chunk'+str(j) for j in range(len(cleaned_data['intro']))]
-        print("LIST ID: ",id_list)
-        # print id vs intro 
-        [pc.add_texts(
-            texts = [j[1]],
-            ids = [j[0]],
-            metadatas= [{'title': cleaned_data['name'], 'course': cleaned_data['course'], "text": j[1]}],
-            batch_size=64,
-            embedding_chunk_size=1000) for j in zip(id_list, cleaned_data['intro'])]
-        print('Data updated')
+        id_list = [f'doc{clean_data['id']}_chunk'+str(j) for j in range(len(clean_data['intro']))]
+        
+        print("Length of id_list:", len(id_list))
+        print("Length of clean_data['intro']:", len(clean_data['intro']))
 
+        # Print clean_data and id_list for debugging
+        print("Clean data:", clean_data)
+        print("Id list:", id_list)
+        # print id vs intro 
+        # [pc.add_texts(
+        #     texts = [j[1]],
+        #     ids = [j[0]],
+        #     metadatas= [{'title': clean_data['name'], 'course': clean_data['course'], "text": j[1]}],
+        #     batch_size=64,
+        #     embedding_chunk_size=1
+        #     ) for j in zip(id_list, clean_data['intro'])]
+        pc.add_texts(
+            texts = clean_data['intro'],
+            ids = id_list,
+            metadatas= [{'title': clean_data['name'], 'course': clean_data['course'], "text":i } for i in clean_data['intro']],
+            batch_size=1,
+            embedding_chunk_size=1)
+        
 
     def set_up(self):
         self.docs = self.load_data()
@@ -189,24 +235,47 @@ def main():
     data = LoadData()
     # data.create_index()
     # texts = data.load_data()
+    # [data.update_data(text) for text in texts]
 
-    # texts = [{'id': text['id'],'course':text['course'], 'name': text['name'],'intro': data.split_data(text['intro'])} for text in texts]
-
-    # data.update_data(texts)
 
     index = data.pc.Index(name=data.index_name)
-    query = "tên các tác phẩm chữ nôm được nêu ra trong bài"
     query = 'tên các tác giả có các sáng tác thơ nôm'
     query = 'thời gian ra đời của chữ nôm'
+    query = "tên các tác phẩm chữ nôm"
+    
+
+    tokenize_query = tokenize(query)
+    print('TOKEN QUERY: ', tokenize_query)
     vectoreStore = PC(index = index, embedding= data.embeddings, text_key='text')
-    res = vectoreStore.similarity_search(
-        query = query,
+    # res = vectoreStore.similarity_search(
+    #     query = tokenize_query,
+    #     k = 4,
+    #     filter={
+    #         'course': 5,
+    #     }
+    # )
+    # res = vectoreStore.max_marginal_relevance_search_by_vector(
+    #     embedding = data.embeddings.embed_query(tokenize_query),
+    #     k = 4,
+    #     fetch_k = 10,
+    #     filter={
+    #         'course': 5,
+    #     }
+    # )
+
+
+    res = vectoreStore.max_marginal_relevance_search(
+        query = tokenize_query,
         k = 4,
+        fetch_k = 10,
         filter={
             'course': 5,
         }
     )
+    # convert from tokenized query to string
+
     print(res)
     pretty_print_docs(res)
 if __name__ == "__main__":
     main()
+    

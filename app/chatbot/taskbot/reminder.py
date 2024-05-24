@@ -85,7 +85,8 @@ class Reminder:
         message_obj = MessageCreate(
             chatId = userid,
             content = content,
-            role = TypeRoleChoices.BOT
+            role = TypeRoleChoices.BOT,
+            courseId = -1
         )
         result = ReminderService.send_message(message_obj)
         print(result)

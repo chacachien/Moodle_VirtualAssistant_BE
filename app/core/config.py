@@ -23,7 +23,9 @@ def get_url_notsync():
     port = os.getenv("POSTGRES_PORT")
     db = os.getenv("POSTGRES_DB")
     return f"mysql+mysqlconnector://{user}:{password}@{server}/{db}"
-
+    # use port 
+    # return f"mysql+mysqlconnector://{user}:{password}@{server}:{port}/{db}"
+    # return f'postgresql+psycopg2://{user}:{password}@{server}:{port}/{db}'
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     #SECRET_KEY: str = os.getenv("SECRET_KEY")

@@ -1,6 +1,6 @@
 from re import search
 from app.chatbot.root import RootBot
-from app.chatbot.prompt import PROMPT_RAG
+from app.chatbot.prompt import PROMPT_RAG, PROMPT_RAG_IMPROVE
 from langchain.schema.output_parser import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
 from app.chatbot.ragBot.data import LoadData
@@ -9,7 +9,7 @@ from app.chatbot.ragBot.data import LoadData
 class RagBot(RootBot):
     def __init__(self):
         super().__init__()
-        self.prompt = PROMPT_RAG
+        self.prompt = PROMPT_RAG_IMPROVE
         self.data = LoadData()
 
     def rag(self, user_message, courseId):
@@ -44,13 +44,17 @@ class RagBot(RootBot):
             'filter': {
                 'course': courseId,
             }
-        }c
+        }
         print("KWARGS: ", search_kwargs)
         context_with_course = self.data.docsearch.as_retriever(
-                                    search_type = 'similarity',
-                                    search_kwargs = search_kwargs
+                                    search_type = 'mmr',
+                                    search_kwargs = {"k": 4,
+                                                    'filter': {
+                                                        'course': 5,
+                                                    }
+                                    }
                                 )
-        print("CONTEXT: ", context_with_course)
+        
         print("content: ", context_with_course.invoke(user_message))
 
         chain = (
@@ -65,14 +69,14 @@ class RagBot(RootBot):
     
 def main():
     chat = RagBot()
-
     question = "Cuộc chiến tranh nhà Ngô chống lại quân đội nước nào"
-    question = 'ví sao có chữ nôm'
-
+    question = 'vì sao có chữ nôm'
     question = 'đặc điểm tiếng việt'
-    question = 'tên các tác phẩm chữ nôm được nêu ra trong bài'
+    question = 'kể tên các tác phẩm chữ nôm'
+    question = 'tác phẩm lục vân tiên nói về điều gì'
+    question = 'tóm tắt toàn bộ nội dung khoá học'
 
-    res = chat.rag(question)
+    res = chat.rag(question, 5)
     print(res)
 
 if __name__ == '__main__':

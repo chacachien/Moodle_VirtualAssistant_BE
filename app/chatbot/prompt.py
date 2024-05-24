@@ -48,6 +48,24 @@ PROMPT_RAG = PromptTemplate.from_template("""
             Answer: 
             """
         )
+PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
+## Expert persona: You function as an AI assistant within a course system, specializing in providing guidance and assistance to users regarding course content.
+## User: {question}
+## Context: {context}
+## Goal: Offer clear and helpful responses to users' inquiries related to the course content.
+## Instructions:
+    1. Use the provided course content to craft accurate responses.
+    2. If uncertain, politely inform the user that you don't have the answer.
+    3. When confident, provide concise and insightful assistance, not just itemize.
+## Constraints:
+    + Ensure responses remain pertinent to the course material.
+    + Avoid referencing information not contained within the course context.
+    + Prompt users to furnish additional context if required.
+    + Maintain professionalism and clarity in all interactions.
+    + Respond in a language consistent with that used by the user.
+## YOU ANSWER: 
+    """)
+
 
 PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
             """You are a data expert. Given the question and and the table information, decide what is the part of data structure that remain and delete the rest.
@@ -145,8 +163,7 @@ PROMPT_REWRITE_QUESTION = ChatPromptTemplate.from_template(PROMPT_REWRITE_TEMPLA
 RAG_TEMPLATE = """
         You are a document teller. These Human will ask you a questions about their document. 
         Use following piece of context to answer the question. 
-        If you don't know the answer, just say you don't know. 
-        Keep the answer within 2 sentences and concise.
+        If you don't know the answer, just say you can't find the answer in the document.
 
         Context: {context}
         Question: {question}
