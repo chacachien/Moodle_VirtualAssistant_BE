@@ -147,7 +147,8 @@ class LoadData:
 
 
         id_list = [f'doc{clean_data['id']}_chunk'+str(j) for j in range(len(clean_data['intro']))]
-        print("LIST ID: ",id_list)
+        [print(j) for j in zip(id_list, clean_data['intro'])]
+
         # print id vs intro 
         [pc.add_texts(
             texts = [j[1]],
@@ -229,6 +230,7 @@ def main():
     query = 'tên các tác giả có các sáng tác thơ nôm'
     query = 'thời gian ra đời của chữ nôm'
     query = "tên các tác phẩm chữ nôm"
+    query  = "việt phục qua các thời kỳ"
     
 
     tokenize_query = tokenize(query)
@@ -253,10 +255,10 @@ def main():
 
     res = vectoreStore.max_marginal_relevance_search(
         query = tokenize_query,
-        k = 4,
+        # k = 4,
         fetch_k = 10,
         filter={
-            'course': 5,
+            'course': 6,
         }
     )
     # convert from tokenized query to string

@@ -48,7 +48,7 @@ class RagBot(RootBot):
                                     search_type = 'mmr',
                                     search_kwargs = {"k": 4,
                                                     'filter': {
-                                                        'course': 5,
+                                                        'course': 6,
                                                     }
                                     }
                                 )
@@ -73,7 +73,8 @@ def main():
     question = 'vì sao có chữ nôm'
     question = 'đặc điểm tiếng việt'
     question = "Cuộc chiến tranh nhà Ngô chống lại quân đội nước nào"
-
+    question = "Cổ phục Việt Nam gồm những gì?"
+    question = "nội dung chính khóa học"
     res = chat.rag(question)
     print(res)
 
