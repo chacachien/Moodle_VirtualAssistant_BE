@@ -145,8 +145,7 @@ PROMPT_REWRITE_QUESTION = ChatPromptTemplate.from_template(PROMPT_REWRITE_TEMPLA
 RAG_TEMPLATE = """
         You are a document teller. These Human will ask you a questions about their document. 
         Use following piece of context to answer the question. 
-        If you don't know the answer, just say you don't know. 
-        Keep the answer within 2 sentences and concise.
+        If you don't know the answer, just say you can't find the answer in the document.
 
         Context: {context}
         Question: {question}

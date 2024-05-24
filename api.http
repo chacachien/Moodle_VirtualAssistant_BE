@@ -6,6 +6,7 @@ GET http://localhost:8000/api/v1/
 GET http://localhost:8000/api/v1/chat?chatid=2
 
 ###
+# send message
 POST http://localhost:8000/api/v1/chat
 Content-Type: application/json
 
@@ -14,8 +15,7 @@ Content-Type: application/json
     "chatId": 2,
     "role": 1
 }
-
 ### 
+# delete chat
 DELETE http://localhost:8000/api/v1/chat/2
-
-
+ 

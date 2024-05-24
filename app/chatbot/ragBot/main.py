@@ -45,7 +45,7 @@ class RagBot(RootBot):
         context_max_search = self.data.docsearch.max_marginal_relevance_search(user_message, k=3, fetch_k=10)
 
         context_with_course = self.data.docsearch.as_retriever(
-                                    search_type = 'similarity',
+                                    search_type = 'mmr',
                                     search_kwargs = {"k": 4,
                                                     'filter': {
                                                         'course': 5,
@@ -68,11 +68,11 @@ class RagBot(RootBot):
 def main():
     chat = RagBot()
 
-    question = "Cuộc chiến tranh nhà Ngô chống lại quân đội nước nào"
-    question = 'ví sao có chữ nôm'
 
-    question = 'đặc điểm tiếng việt'
     question = 'tên các tác phẩm chữ nôm được nêu ra trong bài'
+    question = 'vì sao có chữ nôm'
+    question = 'đặc điểm tiếng việt'
+    question = "Cuộc chiến tranh nhà Ngô chống lại quân đội nước nào"
 
     res = chat.rag(question)
     print(res)
