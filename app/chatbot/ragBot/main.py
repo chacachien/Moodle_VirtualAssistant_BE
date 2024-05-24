@@ -12,7 +12,7 @@ class RagBot(RootBot):
         self.prompt = PROMPT_RAG
         self.data = LoadData()
 
-    def rag(self, user_message):
+    def rag(self, user_message, courseId):
         """
             def as_retriever(self, **kwargs: Any) -> VectorStoreRetriever:
         Return VectorStoreRetriever initialized from this VectorStore.
@@ -32,25 +32,23 @@ class RagBot(RootBot):
                         1 for minimum diversity and 0 for maximum. (Default: 0.5)
                     filter: Filter by document metadata
         """
-
-        # def format_docs(docs):
-        #     print(docs)
-        #     return "\n\n".join(doc.page_content for doc in docs)
-
-
-
         self.data.embed_data()
         context = self.data.docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
         context_max = self.data.docsearch.as_retriever(search_type='mmr', search_kwargs={"k": 3})
         context_max_search = self.data.docsearch.max_marginal_relevance_search(user_message, k=3, fetch_k=10)
 
+        search_kwargs = {
+            "k": 4,
+        } if courseId == -1 else {
+             "k": 4,
+            'filter': {
+                'course': courseId,
+            }
+        }c
+        print("KWARGS: ", search_kwargs)
         context_with_course = self.data.docsearch.as_retriever(
                                     search_type = 'similarity',
-                                    search_kwargs = {"k": 4,
-                                                    'filter': {
-                                                        'course': 5,
-                                                    }
-                                    }
+                                    search_kwargs = search_kwargs
                                 )
         print("CONTEXT: ", context_with_course)
         print("content: ", context_with_course.invoke(user_message))

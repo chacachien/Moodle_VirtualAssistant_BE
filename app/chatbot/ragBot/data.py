@@ -74,12 +74,11 @@ class LoadData:
                 "\u3002",  # Ideographic full stop
                 "",
             ],
-            chunk_size=1000,
+            chunk_size=1500,
             chunk_overlap=100,
             length_function=len,
             is_separator_regex=False,
         )
-
         docs = text_splitter.split_text(data)
         return docs
 
@@ -106,20 +105,21 @@ class LoadData:
             batch_size: int = 32,
             embedding_chunk_size: int = 1000,
         '''
-        clean_data = self.clean_data(data)
-        docs = [{'id': text['id'],'course':text['course'], 'name': text['name'],'intro': self.split_data(text['intro'])} for text in clean_data]
+        cleaned_data = self.clean_data(data)
+        cleaned_data['intro'] = self.split_data(cleaned_data['intro'])
+        
         pc = PC(index= self.pc.Index(name=self.index_name), embedding=self.embeddings, text_key='text')
 
-        for i in docs:
-            id_list = [f'doc{i['id']}_chunk'+str(j) for j in range(len(i['intro']))]
-            print("LIST ID: ",id_list)
-            # print id vs intro 
-            [pc.add_texts(
-                texts = [j[1]],
-                ids = [j[0]],
-                metadatas= [{'title': i['name'], 'course': i['course'], "text": j[1]}],
-                batch_size=64,
-                embedding_chunk_size=1000) for j in zip(id_list, i['intro'])]
+
+        id_list = [f'doc{cleaned_data['id']}_chunk'+str(j) for j in range(len(cleaned_data['intro']))]
+        print("LIST ID: ",id_list)
+        # print id vs intro 
+        [pc.add_texts(
+            texts = [j[1]],
+            ids = [j[0]],
+            metadatas= [{'title': cleaned_data['name'], 'course': cleaned_data['course'], "text": j[1]}],
+            batch_size=64,
+            embedding_chunk_size=1000) for j in zip(id_list, cleaned_data['intro'])]
         print('Data updated')
 
 

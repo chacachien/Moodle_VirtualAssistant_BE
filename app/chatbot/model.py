@@ -70,7 +70,7 @@ class ChatBot(RootBot):
         return res
 
 
-    def get_response(self, user_message, chatId):
+    def get_response(self, user_message, chatId, courseId):
 
         tool, new_user_message  = self.chat_with_tool(user_message)
         res = None
@@ -81,7 +81,7 @@ class ChatBot(RootBot):
 
         if tool == 'rag':
             print('TOOL RAG')
-            res = self.ragBot.rag(user_message)
+            res = self.ragBot.rag(user_message, courseId)
 
         if tool == 'query':
             print('TOOL QUERY')

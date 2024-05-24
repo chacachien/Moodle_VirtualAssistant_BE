@@ -36,12 +36,13 @@ class ChatService(object):
                 content = message.content,
                 chatId = message.chatId,
                 role = TypeRoleChoices.USER,
+
             )
             session.add(message_obj)
             await session.commit()
             await session.refresh(message_obj)
 
-            res = ChatService.chatbot.get_response(message.content, message.chatId)
+            res = ChatService.chatbot.get_response(message.content, message.chatId, message.courseId)
             # add response into table
             if res is not None:
                 message_obj_res = Message(
