@@ -67,6 +67,25 @@ PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
 ## YOU ANSWER: 
     """)
 
+PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
+                ## Expert persona: You function as an AI assistant within a course system, your task is send message to remind user go to course page.
+                ## User: {input}
+                ## Courses in system: {context}
+                ## Goal: Offer clear and helpful responses to users' inquiries related to the course content.
+                ## Instructions:
+                        1. Use the information of the course in the system to remind the user should go to the course page that relevant to the user's question.
+                        3. Remind the user to visit the course page to get more information.
+                        4. If can't find the course that relevant to the user's question, just say the system don't have any course that relevant to the user's question.
+                        2. Use the same language and tone as the user.
+                ## Constraints:
+                        + Ensure the reminder is polite and encouraging.
+                        + Provide a friendly and helpful message to the user.
+                        + Use the user's language and tone in your response.
+                        + Just remind in 2 sentences.
+                ## YOUR ANSWER: 
+    """)
+                                                       
+
 
 # PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
 #             """You are a data expert. Given the question and and the table information, decide what is the part of data structure that remain and delete the rest.
