@@ -48,23 +48,18 @@ class RagBot(RootBot):
         print("KWARGS: ", search_kwargs)
         context_with_course = self.data.docsearch.as_retriever(
                                     search_type = 'mmr',
-                                    search_kwargs = {"k": 4,
-                                                    'filter': {
-                                                        'course': 6,
-                                                    }
-                                    }
+                                    search_kwargs = search_kwargs
                                 )
-        
         print("content: ", context_with_course.invoke(user_message))
 
         chain = (
-            {"context": context_with_course , "question": RunnablePassthrough()}|
+            {"context": context_with_course, "question":RunnablePassthrough(), "courseid":RunnablePassthrough()  }|
             self.prompt|
             self.model|
             StrOutputParser()
         )
 
-        res = chain.invoke(user_message)
+        res = chain.invoke({"context": "","question": user_message, "courseid": courseId})
         return res
     
 def main():
