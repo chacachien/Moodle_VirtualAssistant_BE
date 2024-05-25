@@ -71,7 +71,7 @@ class LoadData:
             
         except:
             print('Cannot convert this data to text')
-        data['intro'] = tokenize(data['intro'])
+        data['intro'] = str(tokenize(data['intro']))
         return data
 
 
@@ -98,12 +98,11 @@ class LoadData:
                 "\u3002",  # Ideographic full stop
                 "",
             ],
-            chunk_size=1500,
+            chunk_size=1000,
             chunk_overlap=100,
             length_function=len,
             is_separator_regex=False,
         )
-
         docs = text_splitter.split_text(data)
         return docs
 
@@ -138,24 +137,37 @@ class LoadData:
                 'intro': string
             }
         '''
-        print('data: ', data)
+        # print('data: ', data)
         clean_data = self.clean_data(data)
 
-        print('CLEAN DATA: ', clean_data)
+        # print('CLEAN DATA: ', clean_data)
         clean_data['intro'] = self.split_data(clean_data['intro']) 
         pc = PC(index= self.pc.Index(name=self.index_name), embedding=self.embeddings, text_key='text')
 
 
         id_list = [f'doc{clean_data['id']}_chunk'+str(j) for j in range(len(clean_data['intro']))]
-        [print(j) for j in zip(id_list, clean_data['intro'])]
+        
+        print("Length of id_list:", len(id_list))
+        print("Length of clean_data['intro']:", len(clean_data['intro']))
 
+        # Print clean_data and id_list for debugging
+        print("Clean data:", clean_data)
+        print("Id list:", id_list)
         # print id vs intro 
-        [pc.add_texts(
-            texts = [j[1]],
-            ids = [j[0]],
-            metadatas= [{'title': clean_data['name'], 'course': clean_data['course'], "text": j[1]}],
-            batch_size=64,
-            embedding_chunk_size=1000) for j in zip(id_list, clean_data['intro'])]
+        # [pc.add_texts(
+        #     texts = [j[1]],
+        #     ids = [j[0]],
+        #     metadatas= [{'title': clean_data['name'], 'course': clean_data['course'], "text": j[1]}],
+        #     batch_size=64,
+        #     embedding_chunk_size=1
+        #     ) for j in zip(id_list, clean_data['intro'])]
+        pc.add_texts(
+            texts = clean_data['intro'],
+            ids = id_list,
+            metadatas= [{'title': clean_data['name'], 'course': clean_data['course'], "text":i } for i in clean_data['intro']],
+            batch_size=1,
+            embedding_chunk_size=1)
+        
 
     def set_up(self):
         self.docs = self.load_data()

@@ -14,7 +14,7 @@ class MessageBase(SQLModel):
     role: TypeRoleChoices
 
 class MessageCreate(MessageBase):
-    pass
+    courseId: int
 
 class MessageRead(SQLModel):
     chatId: int

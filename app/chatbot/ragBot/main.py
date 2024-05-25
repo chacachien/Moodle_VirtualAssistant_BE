@@ -1,6 +1,6 @@
 from re import search
 from app.chatbot.root import RootBot
-from app.chatbot.prompt import PROMPT_RAG
+from app.chatbot.prompt import PROMPT_RAG, PROMPT_RAG_IMPROVE
 from langchain.schema.output_parser import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
 from app.chatbot.ragBot.data import LoadData
@@ -9,10 +9,10 @@ from app.chatbot.ragBot.data import LoadData
 class RagBot(RootBot):
     def __init__(self):
         super().__init__()
-        self.prompt = PROMPT_RAG
+        self.prompt = PROMPT_RAG_IMPROVE
         self.data = LoadData()
 
-    def rag(self, user_message):
+    def rag(self, user_message, courseId):
         """
             def as_retriever(self, **kwargs: Any) -> VectorStoreRetriever:
         Return VectorStoreRetriever initialized from this VectorStore.
@@ -32,18 +32,20 @@ class RagBot(RootBot):
                         1 for minimum diversity and 0 for maximum. (Default: 0.5)
                     filter: Filter by document metadata
         """
-
-        # def format_docs(docs):
-        #     print(docs)
-        #     return "\n\n".join(doc.page_content for doc in docs)
-
-
-
         self.data.embed_data()
         context = self.data.docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
         context_max = self.data.docsearch.as_retriever(search_type='mmr', search_kwargs={"k": 3})
         context_max_search = self.data.docsearch.max_marginal_relevance_search(user_message, k=3, fetch_k=10)
 
+        search_kwargs = {
+            "k": 4,
+        } if courseId == -1 else {
+             "k": 4,
+            'filter': {
+                'course': courseId,
+            }
+        }
+        print("KWARGS: ", search_kwargs)
         context_with_course = self.data.docsearch.as_retriever(
                                     search_type = 'mmr',
                                     search_kwargs = {"k": 4,
@@ -52,7 +54,7 @@ class RagBot(RootBot):
                                                     }
                                     }
                                 )
-        print("CONTEXT: ", context_with_course)
+        
         print("content: ", context_with_course.invoke(user_message))
 
         chain = (
@@ -67,15 +69,14 @@ class RagBot(RootBot):
     
 def main():
     chat = RagBot()
-
-
-    question = 'tên các tác phẩm chữ nôm được nêu ra trong bài'
+    question = "Cuộc chiến tranh nhà Ngô chống lại quân đội nước nào"
     question = 'vì sao có chữ nôm'
     question = 'đặc điểm tiếng việt'
-    question = "Cuộc chiến tranh nhà Ngô chống lại quân đội nước nào"
-    question = "Cổ phục Việt Nam gồm những gì?"
-    question = "nội dung chính khóa học"
-    res = chat.rag(question)
+    question = 'kể tên các tác phẩm chữ nôm'
+    question = 'tác phẩm lục vân tiên nói về điều gì'
+    question = 'tóm tắt toàn bộ nội dung khoá học'
+
+    res = chat.rag(question, 5)
     print(res)
 
 if __name__ == '__main__':
