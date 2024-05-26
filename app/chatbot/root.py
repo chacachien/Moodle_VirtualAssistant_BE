@@ -5,9 +5,10 @@ from dotenv import load_dotenv
 import os
 
 class RootBot:
+
     def __init__(self):
         load_dotenv()
-        self.model = ChatGoogleGenerativeAI(model="gemini-1.0-pro", temperature=0, convert_system_message_to_human=True)
+        self.model = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0)
         # repo_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
         # self.modelmi = HuggingFaceHub(
         #   repo_id=repo_id, 

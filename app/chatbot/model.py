@@ -46,6 +46,7 @@ class ChatBot(RootBot):
     def chat_with_tool(self, user_message):
         history = self.__chat_history_buffer
         user_message = self.improve_message(history, user_message)
+        
         print('NEW USER MESSAGE: ',user_message)
         
         tools = [Tool.talk, Tool.rag, Tool.query]

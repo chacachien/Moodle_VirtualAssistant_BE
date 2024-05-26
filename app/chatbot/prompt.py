@@ -52,7 +52,7 @@ PROMPT_RAG = PromptTemplate.from_template("""
 PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
 ## Expert persona: You function as an AI assistant within a course system, specializing in providing guidance and assistance to users regarding course content.
 ## User: {question}
-## Context: {context}
+## Context: {context} 
 ## Goal: Offer clear and helpful responses to users' inquiries related to the course content.
 ## Instructions:
     1. Use the provided course content to craft accurate responses.
@@ -70,7 +70,7 @@ PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
 PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
                 ## Expert persona: You function as an AI assistant within a course system, your task is send message to remind user go to course page.
                 ## User: {input}
-                ## Courses in system: {context}
+                ## Course information: {context}
                 ## Goal: Offer clear and helpful responses to users' inquiries related to the course content.
                 ## Instructions:
                         1. Use the information of the course in the system to remind the user should go to the course page that relevant to the user's question.
@@ -252,7 +252,7 @@ SYSTEM_PROMPT = """You are a MySQL expert. Given an input question, create a syn
 
 PROMPT_CHAT = ChatPromptTemplate.from_messages(
     [
-        ("system", SYSTEM_PROMPT),
+        ("system_instruction", SYSTEM_PROMPT),
         MessagesPlaceholder("history"),
         ("human", "{input}"),
     ]
@@ -271,20 +271,39 @@ PROMPT_CHAT = ChatPromptTemplate.from_messages(
 #             USER: {input}
 #             INPUT REWRITED:
 #             """
+# PROMPT_REWRITE_TEMPLATE = """
+#             ## Expert persona: You are an AI tasked with clarifying user requirements based on provided conversation history.
+#             ## Context of Conversation: {history}
+#             ## User: {input}
+#             ## Goal: Reiterate the user's request clearly and comprehensively, especially if the context is unclear.
+#             ## Instructions:
+#                 1. Review the conversation history and the user's latest input.
+#                 2. Rephrase the user's question to make it clear and comprehensive, adding necessary context.
+#                 3. Do not add or answer the question, only rephrase for clarity.
+#                 4. If the user's question is already clear, simply return the same question.
+#             ## Example:
+#                 + Input: Lớp nào có nhiều học sinh hơn.
+#                 + Output: Giữa Lớp 3 với lớp 4 thì lớp nào có nhiều học sinh hơn.
+#             ## Output:
+#             """
 PROMPT_REWRITE_TEMPLATE = """
-            ## Expert persona: You are an AI tasked with clarifying user requirements based on provided conversation history.
-            ## Context of Conversation: {history}
-            ## User: {input}
-            ## Goal: Reiterate the user's request clearly and comprehensively, especially if the context is unclear.
+            ## Expert persona: ""Given a chat history and the latest user question \
+                                which might reference context in the chat history,  
+            ## Chat history: {history}
+            ## Latest User question: {input}
+            ## Goal: formulate a standalone question which can be understood without the chat history.
             ## Instructions:
                 1. Review the conversation history and the user's latest input.
-                2. Rephrase the user's question to make it clear and comprehensive, adding necessary context.
-                3. Do not add or answer the question, only rephrase for clarity.
-                4. If the user's question is already clear, simply return the same question.
+                2. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.
+                3. If the user's question is already clear, simply return the same question.
             ## Example:
                 + Input: Lớp nào có nhiều học sinh hơn.
                 + Output: Giữa Lớp 3 với lớp 4 thì lớp nào có nhiều học sinh hơn.
+            ## Contraints:
+                + Do not add or answer the question, only rephrase for clarity.
+                + Ensure the rephrased question is clear and comprehensive.
             ## Output:
+                // Your rephrased question here
             """
 
 PROMPT_REWRITE_QUESTION = PromptTemplate.from_template(PROMPT_REWRITE_TEMPLATE)
@@ -341,3 +360,14 @@ PROMPT_REMINDER_DAILY = PromptTemplate.from_template("""
         ## Output:
 
         """)
+
+
+PROMPT_NORMAL_TALK_HISTORY_SYSTEM = """You are my funny virtual assistant."""
+
+# PROMPT_NORMAL_TALK_HISTORY = ChatPromptTemplate.from_messages(
+#     [
+#         ("system", PROMPT_NORMAL_TALK),
+#         MessagesPlaceholder("history"),
+#         ("human", "{input}"),
+#     ]
+# )

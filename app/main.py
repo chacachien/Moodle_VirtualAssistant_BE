@@ -11,8 +11,10 @@ from app.helpers.exception_handler import CustomException, http_exception_handle
 import logging
 from app.chatbot.taskbot.main import TaskHandle
 
+
 logging.config.fileConfig(settings.LOGGING_CONFIG_FILE, disable_existing_loggers=False)
 def get_application() -> FastAPI:
+
     app = FastAPI(
         title= settings.PROJECT_NAME,
         description='''

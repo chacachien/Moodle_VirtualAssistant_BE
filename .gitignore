@@ -2,6 +2,7 @@ __pycache__/
 venv/
 .DS_Store
 .env
+/.env
 midgration/
 midgration_old/
 alembic_old.ini
@@ -15,3 +16,4 @@ alembic.ini
 alembic_old.ini
 alembic_old/
 
+core/

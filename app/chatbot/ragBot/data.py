@@ -63,7 +63,7 @@ class LoadData:
             content_soup = BeautifulSoup( row['intro'], 'html.parser')
             content_text = content_soup.get_text()
             row['intro'] = content_text
-        return res 
+        return res # return list of dict
     
     def clean_data(self, data):
         try: 
@@ -147,20 +147,6 @@ class LoadData:
 
         id_list = [f'doc{clean_data['id']}_chunk'+str(j) for j in range(len(clean_data['intro']))]
         
-        print("Length of id_list:", len(id_list))
-        print("Length of clean_data['intro']:", len(clean_data['intro']))
-
-        # Print clean_data and id_list for debugging
-        print("Clean data:", clean_data)
-        print("Id list:", id_list)
-        # print id vs intro 
-        # [pc.add_texts(
-        #     texts = [j[1]],
-        #     ids = [j[0]],
-        #     metadatas= [{'title': clean_data['name'], 'course': clean_data['course'], "text": j[1]}],
-        #     batch_size=64,
-        #     embedding_chunk_size=1
-        #     ) for j in zip(id_list, clean_data['intro'])]
         pc.add_texts(
             texts = clean_data['intro'],
             ids = id_list,
@@ -168,13 +154,10 @@ class LoadData:
             batch_size=1,
             embedding_chunk_size=1)
         
-
-    def set_up(self):
-        self.docs = self.load_data()
-        self.docs = [{'id': text['id'],'course':text['course'], 'name': text['name'],'intro': self.split_data(text['intro'])} for text in self.docs]
+    def upload_all_label(self):
         self.create_index()
-        self.update_data(self.docs)
-
+        res = self.load_data()
+        [self.update_data(row) for row in res]
 
 def main():
     def pretty_print_docs(docs):
@@ -184,99 +167,9 @@ def main():
             )
         )
 
-    # res = data.load_data()
-
-
-    # for i in res:
-    #     i['intro'] = data.split_data(i['intro'])
-
-    # # upload data
-    # data.update_data(res)
-
-
-        
-    # # #store into file txt
-    # with open('data.txt', 'w') as file:
-    #     file.write(str(res))
-    
-    # data.split_data()
-    # search = data.embed_data()
-    # data.update_data()
-
-
-    # res = data.docsearch.similarity_search(
-    #     query,  # our search query
-    #     k=3,  # return 3 most relevant docs
-    # )
-    # res = data.docsearch.as_retriever(search_type='mmr')
-    # mat = res.invoke(query)
-    # pretty_print_docs(mat)
-    # res = data.docsearch.max_marginal_relevance_search(query, k=3, fetch_k=10)
-    # pretty_print_docs(res)
-
-    # res = index.fetch(['c42951d4-f3fa-4893-9f22-ad9674ff50e2'])
-
-    # #convert res to json
-    # import json
-    # res = json.loads(res)
-
-    # # get the keys of this json
-    # keys = res.keys()
-    # print(keys)
-
-    # update data
-    # res = index.update(
-    #     id = 'c42951d4-f3fa-4893-9f22-ad9674ff50e2',
-    #     set_metadata= {'title': 'Tác giả', 'text':'(Hồ Xuân Hương, Bà Huyện Thanh Quan, Đoàn Thị Điểm, Ngọc Hân Công Chúa), có những đóng góp vô cùng quan trọng cho văn học chữ Nôm, có rất nhiều tác phẩm văn học chữ Nôm, có khá nhiều nghiên cứu về các tác phẩm văn học chữ Nôm khác, góp phần cho sự phát triển hưng thịnh của văn học chữ Nôm. Trong giai đoạn phát triển chữ Quốc Ngữ và chữ Nôm, chữ Nôm đã được sử dụng trong các tác phẩm thơ ca trào phúng khác nhau, thể hiện thói hóm hỉnh vốn có của người Việt.Lục Vân TiênLà tác phẩm nổi tiếng nhất của Nguyễ``n Đình Chiểu, Lục Vân Tiên không chỉ là một tác phẩm văn học chữ Nôm ca ngợi lòng trung hiếu của một đấng nam nhi, sự vận hành của âm-dương, cũng như câu nói \"qua cơn bỉ cực đến hồi thái lai\" cũng được thể hiện rõ nét trong tác phẩm. Lý tưởng tin tưởng vào sự vận hành của vũ trụ, của quy luật nhân quả đã được Nguyễn Đình Chiểu khéo léo thể hiện để cuộc đời chàng Lục Vân Tiên tuy thăng trầm nhưng cũng đến được bến bờ hạnh phúc.Tỳ Bà TruyệnĐược chuyển thể từ một vở kịch Trung Hoa là Tỳ Bà Ký, Tỳ Bà Truyện là một thể loại văn học chữ Nôm dạng truyện thơ, một thể loại khá nổi tiếng trong giới văn chương đương thời. Tỳ Bà Truyện là một câu chuyện ngụ ngôn mang tính giáo huấn, đề cao cái đẹp thủy chung, tận tâm của người con dâu tên Ngũ Nương. Trải qua bao thăng trầm bể dâu, cô nhất định làm tròn trách nhiệm người con dâu, cũng vì thế mà được người đời ngưỡng mộ vì đức hy sinh và sự tận tụy của mình.Quan Âm Thị KínhKhác với tác phẩm chèo cùng tên, truyện thơ Quan Âm Thị Kính vốn là một tác phẩm văn học chữ Nôm mang đề tài tôn giáo để kể về nguồn gốc của Phật Bà Quan Âm Nghìn Mắt Nghìn Tay. Trong tác phẩm truyện thơ Quan Âm Thị Kính, nhân vật chính là công chúa Diệu Thiên, vì lòng từ bi quyết chí tu hành, bà đã trở thành Quan Âm. Nhiều lần nàng chịu chết thay vì từ bỏ đức tin, lòng từ bi ấy đã bao trùm cả vong hồn dưới âm phủ. Cuối cùng, bà chấp nhận bị cắt đứt tay mình để cứu phụ thân, người luôn tìm cách hãm hại bà.'}
-    # )
-    # print(res)
-    # des = data.pc.describe_index('langchain-demo1')
-    # print(des)
     data = LoadData()
-    # data.create_index()
-    # texts = data.load_data()
-    # [data.update_data(text) for text in texts]
+    data.upload_all_label()
 
-
-    index = data.pc.Index(name=data.index_name)
-    query = 'tên các tác giả có các sáng tác thơ nôm'
-    query = 'thời gian ra đời của chữ nôm'
-    query = "tên các tác phẩm chữ nôm"
-    query  = "việt phục qua các thời kỳ"
-    
-
-    tokenize_query = tokenize(query)
-    print('TOKEN QUERY: ', tokenize_query)
-    vectoreStore = PC(index = index, embedding= data.embeddings, text_key='text')
-    # res = vectoreStore.similarity_search(
-    #     query = tokenize_query,
-    #     k = 4,
-    #     filter={
-    #         'course': 5,
-    #     }
-    # )
-    # res = vectoreStore.max_marginal_relevance_search_by_vector(
-    #     embedding = data.embeddings.embed_query(tokenize_query),
-    #     k = 4,
-    #     fetch_k = 10,
-    #     filter={
-    #         'course': 5,
-    #     }
-    # )
-
-
-    res = vectoreStore.max_marginal_relevance_search(
-        query = tokenize_query,
-        # k = 4,
-        fetch_k = 10,
-        filter={
-            'course': 6,
-        }
-    )
-    # convert from tokenized query to string
-
-    print(res)
-    pretty_print_docs(res)
 if __name__ == "__main__":
     main()
     
