@@ -146,21 +146,7 @@ class LoadData:
 
 
         id_list = [f'doc{clean_data['id']}_chunk'+str(j) for j in range(len(clean_data['intro']))]
-        
-        print("Length of id_list:", len(id_list))
-        print("Length of clean_data['intro']:", len(clean_data['intro']))
 
-        # Print clean_data and id_list for debugging
-        print("Clean data:", clean_data)
-        print("Id list:", id_list)
-        # print id vs intro 
-        # [pc.add_texts(
-        #     texts = [j[1]],
-        #     ids = [j[0]],
-        #     metadatas= [{'title': clean_data['name'], 'course': clean_data['course'], "text": j[1]}],
-        #     batch_size=64,
-        #     embedding_chunk_size=1
-        #     ) for j in zip(id_list, clean_data['intro'])]
         pc.add_texts(
             texts = clean_data['intro'],
             ids = id_list,

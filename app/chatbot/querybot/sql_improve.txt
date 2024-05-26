@@ -1,4 +1,4 @@
-mdl_user:
+mdl_user: store all information about a user
 - id: The unique identifier for the user.
 - auth: The authentication method used by the user.
 - confirmed: Indicates whether the user account has been confirmed.
@@ -7,39 +7,27 @@ mdl_user:
 - suspended: Indicates whether the user account has been suspended.
 - mnethostid: The MNet host ID associated with the user.
 - username: The username of the user.
-- password: The password of the user.
 - idnumber: An identification number associated with the user.
 - firstname: The first name of the user.
 - lastname: The last name of the user.
 - email: The email address of the user.
-- emailstop: Indicates whether the user has stopped receiving emails.
 - phone1: The first phone number of the user.
-- phone2: The second phone number of the user.
-- institution: The institution the user is associated with.
 - department: The department the user is associated with.
 - address: The address of the user.
 - city: The city of the user.
 - country: The country of the user.
-- lang: The preferred language of the user.
-- calendartype: The calendar type preferred by the user.
-- timezone: The timezone preferred by the user.
 - firstaccess: The timestamp of the user's first access.
 - lastaccess: The timestamp of the user's last access.
 - lastlogin: The timestamp of the user's last login.
 - currentlogin: The timestamp of the user's current login.
 - description: Additional description or information about the user.
-- mailformat: The preferred email format of the user.
-- maildigest: Indicates whether the user prefers email digests.
-- maildisplay: The email display option preferred by the user.
-- autosubscribe: Indicates whether the user is auto-subscribed.
-- trackforums: Indicates whether the user's forums are tracked.
 - timecreated: The timestamp of when the user account was created.
 - lastnamephonetic: The phonetic representation of the user's last name.
 - firstnamephonetic: The phonetic representation of the user's first name.
 - middlename: The middle name of the user.
 - alternatename: An alternate name for the user.
 
-mdl_course:
+mdl_course: store information about a course
 - id: The unique identifier for the course.
 - category: The category ID associated with the course.
 - fullname: The full name of the course.
@@ -57,12 +45,10 @@ mdl_course:
 - completionnotify: Indicates whether completion notifications are enabled for the course.
 - originalcourseid: The original course ID associated with the course.
 
-mdl_enrol:
+mdl_enrol: store information about a enrolment. 
 - id: The unique identifier for the enrolment.
-- enrol: The enrolment method used.
 - status: The status of the enrolment.
 - courseid: The ID of the course associated with the enrolment (link to table mdl_course: mdl_course.id).
-- sortorder: The sort order of the enrolment.
 - name: The name of the enrolment.
 - enrolperiod: The enrolment period.
 - enrolstartdate: The start date of the enrolment.
@@ -70,7 +56,7 @@ mdl_enrol:
 - timecreated: The timestamp of when the enrolment was created.
 - timemodified: The timestamp of when the enrolment was last modified.
 
-mdl_user_enrolments:
+mdl_user_enrolments: this is a mapping between mdl_user table and mdl_enrol. Use to define user enrol course.
 - id: The unique identifier for the user enrolment.
 - status: The status of the user enrolment.
 - enrolid: The ID of the enrolment associated with the user (link to table mdl_enrol: mdl_enrol.id).
@@ -79,90 +65,38 @@ mdl_user_enrolments:
 - timeend: The end timestamp of the user enrolment.
 - modifierid: The ID of the modifier associated with the user enrolment.
 - timecreated: The timestamp of when the user enrolment was created.
-- timemodified: The timestamp of when the user enrolment was last modified.
 
-mdl_assign:
+mdl_assign: this table store information about assignments ("bài tập lớn", "bài tập")
 - id: The unique identifier for the assignment.
 - course: The ID of the course associated with the assignment. (Link to table mdl_course: mdl_course.id)
 - name: The name of the assignment.
 - intro: The introduction or description of the assignment.
-- introformat: The format of the introduction text.
-- alwaysshowdescription: Indicates whether the description should always be shown.
-- nosubmissions: Indicates whether submissions are allowed.
-- submissiondrafts: Indicates whether submission drafts are allowed.
-- sendnotifications: Indicates whether notifications are sent.
-- sendlatenotifications: Indicates whether late notifications are sent.
 - duedate: The due date of the assignment.
 - allowsubmissionsfromdate: The date from which submissions are allowed.
 - grade: The grade associated with the assignment.
 - timemodified: The timestamp of when the assignment was last modified.
-- requiresubmissionstatement: Indicates whether a submission statement is required.
 - completionsubmit: Indicates whether submission is required for completion.
-- cutoffdate: The cutoff date for the assignment.
 - gradingduedate: The grading due date for the assignment.
-- teamsubmission: Indicates whether team submission is allowed.
-- requireallteammemberssubmit: Indicates whether all team members are required to submit.
-- teamsubmissiongroupingid: The grouping ID for team submission.
-- blindmarking: Indicates whether blind marking is enabled.
-- hidegrader: Indicates whether the grader is hidden.
-- revealidentities: Indicates whether identities are revealed.
-- attemptreopenmethod: The method used to reopen attempts.
-- maxattempts: The maximum number of attempts allowed.
-- markingworkflow: The marking workflow used.
-- markingallocation: The marking allocation used.
-- sendstudentnotifications: Indicates whether student notifications are sent.
-- preventsubmissionnotingroup: Indicates whether submissions are prevented if not in a group.
-- activity: The activity associated with the assignment.
-- activityformat: The format of the activity.
 - timelimit: The time limit for the assignment.
-- submissionattachments: The submission attachments allowed for the assignment.
 
-
-mdl_quiz:
+mdl_quiz: this table store information about quiz ("bài trắc nghiệm", "bài tập trắc nghiệm")
 - id: The unique identifier for the quiz.
 - course: The ID of the course associated with the quiz (link to table mdl_course: mdl_course.id).
 - name: The name of the quiz.
 - intro: The introduction or description of the quiz.
-- introformat: The format of the introduction text.
 - timeopen: The timestamp when the quiz opens.
 - timeclose: The timestamp when the quiz closes.
 - timelimit: The time limit for completing the quiz.
 - overduehandling: The handling of overdue submissions.
-- graceperiod: The grace period for late submissions.
-- preferredbehaviour: The preferred behavior for the quiz.
-- canredoquestions: Indicates whether questions can be redone.
-- attempts: The number of attempts allowed for the quiz.
-- attemptonlast: Indicates whether the attempt is on the last question.
-- grademethod: The grading method used for the quiz.
-- decimalpoints: The number of decimal points used in grading.
-- questiondecimalpoints: The number of decimal points used for questions.
-- reviewattempt: Indicates whether review of attempts is enabled.
-- reviewcorrectness: Indicates whether review of correctness is enabled.
-- reviewmaxmarks: The maximum marks allowed for review.
-- reviewmarks: The marks obtained during review.
-- reviewspecificfeedback: Indicates whether specific feedback is provided during review.
-- reviewgeneralfeedback: Indicates whether general feedback is provided during review.
-- reviewrightanswer: Indicates whether the correct answers are revealed during review.
-- reviewoverallfeedback: Indicates whether overall feedback is provided during review.
-- questionsperpage: The number of questions displayed per page.
-- navmethod: The navigation method used in the quiz.
-- shuffleanswers: Indicates whether answers are shuffled.
 - sumgrades: The sum of grades for the quiz.
 - grade: The grade obtained for the quiz.
 - timecreated: The timestamp when the quiz was created.
 - timemodified: The timestamp when the quiz was last modified.
 - password: The password required to access the quiz.
-- subnet: The subnet allowed to access the quiz.
-- browsersecurity: The browser security settings for the quiz.
-- delay1: The delay before starting the quiz.
-- delay2: The delay before submitting the quiz.
-- showuserpicture: Indicates whether user pictures are shown.
-- showblocks: Indicates whether blocks are shown.
-- completionattemptsexhausted: Indicates whether completion attempts are exhausted.
-- completionminattempts: The minimum number of attempts required for completion.
-- allowofflineattempts: Indicates whether offline attempts are allowed.
 
-mdl_notifications:
+
+
+mdl_notifications: store the inportant notification of user
 - id: The unique identifier for the notification.
 - useridfrom: The ID of the user who sent the notification.
 - useridto: The ID of the user who received the notification.
@@ -178,3 +112,35 @@ mdl_notifications:
 - timeread: The timestamp when the notification was read.
 - timecreated: The timestamp when the notification was created.
 - customdata: Custom data associated with the notification.
+
+
+
+mdl_label: This is content of a chapter in a course (we can call it by "chương", "nội dung")
+- id: 
+- course: this is course id of this. (Link to table mdl_course: mdl_course.id)
+- name: this is name of this 
+
+mdl_quiz_attempts: this table mark the quiz user attempted. The quiz of user is done when it's "state" is "finished".
+- id
+- quiz
+- user
+- attempt
+- state: = "finished" if use done this quiz. 
+- sumgrades
+
+mdl_assign_submission: this table mark the assignment that is submited of not. If status = submitted, it's done.
+- id
+- assignement: link to assign.id
+- userid: link to user.id
+- status: (= "submitted" if completed)
+
+mdl_course_modules: use to link from label to course 
+- id
+- course: link to course.id 
+- instance: link to mdl_label.id
+
+mdl_course_modules_completion: use to mark the label is completed.
+- id
+- coursemoduleid: link to course.id
+- userid: link to user.id 
+- completionstate: = 1 if completed 
