@@ -231,9 +231,9 @@ def main():
     query  = "việt phục qua các thời kỳ"
     
 
-    tokenize_query = tokenize(query)
-    print('TOKEN QUERY: ', tokenize_query)
-    vectoreStore = PC(index = index, embedding= data.embeddings, text_key='text')
+    # tokenize_query = tokenize(query)
+    # print('TOKEN QUERY: ', tokenize_query)
+    # vectoreStore = PC(index = index, embedding= data.embeddings, text_key='text')
     # res = vectoreStore.similarity_search(
     #     query = tokenize_query,
     #     k = 4,
@@ -251,18 +251,18 @@ def main():
     # )
 
 
-    res = vectoreStore.max_marginal_relevance_search(
-        query = tokenize_query,
-        # k = 4,
-        fetch_k = 10,
-        filter={
-            'course': 6,
-        }
-    )
-    # convert from tokenized query to string
+    # res = vectoreStore.max_marginal_relevance_search(
+    #     query = tokenize_query,
+    #     # k = 4,
+    #     fetch_k = 10,
+    #     filter={
+    #         'course': 6,
+    #     }
+    # )
+    # # convert from tokenized query to string
 
-    print(res)
-    pretty_print_docs(res)
+    # print(res)
+    # pretty_print_docs(res)
 if __name__ == "__main__":
     main()
     
