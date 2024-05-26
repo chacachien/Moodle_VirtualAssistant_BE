@@ -66,7 +66,7 @@ class ChatBot(RootBot):
 
     def improve_message(self, history, user_message):
         prompt = PROMPT_REWRITE_QUESTION
-        chain = prompt | self.model | StrOutputParser()
+        chain = prompt | self.model1_5 | StrOutputParser()
         res = chain.invoke({"history": history, "input": user_message })
         return res
 

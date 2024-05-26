@@ -6,6 +6,7 @@ from langchain.schema.output_parser import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
 from app.chatbot.ragBot.data import LoadData
 from app.services.context_service import SystemService
+from app.services.schedule import ReminderService
 
 class RagBot(RootBot):
     def __init__(self):
@@ -13,6 +14,7 @@ class RagBot(RootBot):
         self.prompt = PROMPT_RAG_IMPROVE
         self.prompt_remind_to_couse = PROMPT_REMIND_TO_COURSE
         self.data = LoadData()
+
 
     def rag(self, user_message, courseId):
         """
@@ -53,13 +55,17 @@ class RagBot(RootBot):
                                     search_type = 'similarity_score_threshold',
                                     search_kwargs = search_kwargs
                                 )
-        
-        print("content: ", context_with_course.invoke(user_message))
-
+        # print("KWARGS: ", search_kwargs)
+        # context_with_course = self.data.docsearch.as_retriever(
+        #                             search_type = 'mmr',
+        #                             search_kwargs = search_kwargs
+        #                         )
+        content =  context_with_course.invoke(user_message)[0].metadata
+        print("content: ",content)
 
         # prompt need "context", "question" and "course_id"
         chain = (
-            {"context": context_with_course , "question": RunnablePassthrough()}|
+            {"context": context_with_course, "question":RunnablePassthrough() }|
             self.prompt|
             self.model|
             StrOutputParser()
@@ -70,21 +76,26 @@ class RagBot(RootBot):
         #     self.model|
         #     StrOutputParser()
         # )
+        
 
         res = chain.invoke(user_message)
 
         if courseId != -1:
             return res
         
-
+        
         chain = (
             self.prompt_remind_to_couse|
-            self.model|
+            self.model1_5|
             StrOutputParser()
         )
-        context = SystemService.get_all_course()
-
-        return  res + "\n" + chain.invoke({"input": user_message, "context": context})
+        course_name = ReminderService.get_coursename(int(content['course']))
+        context = {
+            "course_id": int(content['course']),
+            "course_name": course_name
+        }
+        print('context', context)
+        return chain.invoke({"input": user_message, "context": context, "message": res})
     
 def main():
     chat = RagBot()

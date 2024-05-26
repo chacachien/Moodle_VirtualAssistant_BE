@@ -18,15 +18,16 @@ class SystemService(object):
     def get_all_course():
         try:
             with SystemService.engine.connect() as connection:
-                query = text("SELECT fullname, summary FROM mdl_course where category != 0") #### or topics 
+                query = text("SELECT id, fullname, summary FROM mdl_course where category != 0") #### or topics 
                 result = connection.execute(query)
                 rows = result.fetchall()
                 # convert result to json and return 
                 course_list = []
                 for row in rows:
                     label = {
-                        'name': row[0],
-                        'summary': row[1]
+                        'id': row[0],
+                        'name': row[1],
+                        'summary': row[2]
                         }
                     course_list.append(label)
 

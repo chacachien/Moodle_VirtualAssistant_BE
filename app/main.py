@@ -71,15 +71,17 @@ if __name__ == "__main__":
     timezone = 'Asia/Ho_Chi_Minh'  
     scheduled_time = '16:55'
 
-    schedule.every().day.at(scheduled_time, timezone).do(
-        lambda: run_async_function_sync(daily_job))
+    # schedule.every().day.at(scheduled_time, timezone).do(
+    #     lambda: run_async_function_sync(daily_job))
 
-    schedule.every(1).minutes.do(
-        lambda: run_async_function_sync(scheduled_job)
-    )
+    # schedule.every(1).minutes.do(
+    #     lambda: run_async_function_sync(scheduled_job)
+    # )
 
-    Thread(target=schedule_checker).start()
+    # Thread(target=schedule_checker).start()
 
-    uvicorn.run(app, host="0.0.0.0", port=8000, log_level="info")
-    while True:
-        schedule.run_pending()
+    #uvicorn.run(app,host="0.0.0.0",  port=8000, log_level="info")
+    uvicorn.run("app.main:app", reload=True, reload_dirs='app', host="0.0.0.0", port=8000, log_level="info")
+
+    # while True:
+    #     schedule.run_pending()

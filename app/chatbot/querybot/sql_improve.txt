@@ -128,12 +128,11 @@ mdl_quiz_attempts: this table mark the quiz user attempted. The quiz of user is 
 - state: = "finished" if use done this quiz. 
 - sumgrades
 
-
 mdl_assign_submission: this table mark the assignment that is submited of not. If status = submitted, it's done.
 - id
 - assignement: link to assign.id
 - userid: link to user.id
-- status: = "submitted" is done
+- status: (= "submitted" if completed)
 
 mdl_course_modules: use to link from label to course 
 - id
