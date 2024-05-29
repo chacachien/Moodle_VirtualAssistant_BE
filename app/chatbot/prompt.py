@@ -143,12 +143,6 @@ PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
 
 
 
-
-
-
-
-
-
 # PROMPT_SQL_QUERY = PromptTemplate.from_template(
 #             """You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run.
 #             And you also a virtual assistant for user {id}.
@@ -308,7 +302,7 @@ SYSTEM_PROMPT = """You are a MySQL expert. Given an input question, create a syn
 
 PROMPT_CHAT = ChatPromptTemplate.from_messages(
     [
-        ("system_instruction", SYSTEM_PROMPT),
+        ("system", SYSTEM_PROMPT),
         MessagesPlaceholder("history"),
         ("human", "{input}"),
     ]

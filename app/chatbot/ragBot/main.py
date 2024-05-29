@@ -43,7 +43,7 @@ class RagBot(RootBot):
 
         search_kwargs = {
             "k": 2,
-            "score_threshold": 0.75
+
         } if courseId == -1 else {
              "k": 4,
             'filter': {
@@ -51,15 +51,15 @@ class RagBot(RootBot):
             }
         }
         print("KWARGS: ", search_kwargs)
-        context_with_course = self.data.docsearch.as_retriever(
-                                    search_type = 'similarity_score_threshold',
-                                    search_kwargs = search_kwargs
-                                )
-        # print("KWARGS: ", search_kwargs)
         # context_with_course = self.data.docsearch.as_retriever(
-        #                             search_type = 'mmr',
+        #                             search_type = 'similarity_score_threshold',
         #                             search_kwargs = search_kwargs
         #                         )
+        # print("KWARGS: ", search_kwargs)
+        context_with_course = self.data.docsearch.as_retriever(
+                                    search_type = 'mmr',
+                                    search_kwargs = search_kwargs
+                                )
         content =  context_with_course.invoke(user_message)[0].metadata
         print("content: ",content)
 
@@ -79,7 +79,7 @@ class RagBot(RootBot):
         
 
         res = chain.invoke(user_message)
-
+        print("res1: ", res)
         if courseId != -1:
             return res
         
@@ -90,6 +90,7 @@ class RagBot(RootBot):
             StrOutputParser()
         )
         course_name = ReminderService.get_coursename(int(content['course']))
+        
         context = {
             "course_id": int(content['course']),
             "course_name": course_name

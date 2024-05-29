@@ -75,7 +75,7 @@ class ChatBot(RootBot):
 
         tool, new_user_message  = self.chat_with_tool(user_message)
         res = None
-
+        # try:
         if tool == 'talk':
             print('TOOL TALK')
             res = self.talkBot.talk(user_message, self.__chat_history_buffer)
@@ -92,9 +92,9 @@ class ChatBot(RootBot):
         data_string = json.dumps(memory_data)
         self.__chat_history_buffer.append(data_string)
         return res
+        # except:
+        #     return "Xin lỗi, có gì đó không ổn trong câu hỏi của bạn, bạn có thể gửi lại không?"
     
-
-
 
     def test_chatbot_with_tools(self):
         while True:

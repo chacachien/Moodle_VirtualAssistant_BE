@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from fastapi_sqlalchemy import DBSessionMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.api_v1.api import router
+# from app.api.api_v1.api import router
+from app.api.api_v0.api import router
 
 from app.helpers.exception_handler import CustomException, http_exception_handler
 

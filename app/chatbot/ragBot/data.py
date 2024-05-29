@@ -122,7 +122,6 @@ class LoadData:
 
     def update_data(self, data):
         '''
-
             texts: Iterable[str],
             metadatas: Optional[List[dict]] = None,
             ids: Optional[List[str]] = None,
