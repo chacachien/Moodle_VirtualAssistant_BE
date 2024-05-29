@@ -15,5 +15,3 @@ alembic/
 alembic.ini
 alembic_old.ini
 alembic_old/
-
-core/
