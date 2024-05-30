@@ -1,11 +1,10 @@
-
-# Moodle_VirtualAssistant_BE
+# Chatbot Application
 
 ## Modules Overview
 
 ### Active Module
 
-The Active Module provides real-time alerts and reminders, ensuring users stay on top of their tasks and notifications. It is designed to engage users with timely and relevant information proactively.
+The Active Module provides real-time alerts and reminders, ensuring users stay on top of their tasks and notifications. It is designed to engage users proactively with timely and relevant information.
 
 #### Features:
 
@@ -29,8 +28,9 @@ The Passive Module enhances user interaction by supporting various roles: Talk, 
    - Use NLP (Natural Language Processing) to understand and respond to user inputs effectively.
 
 2. **Rag:**
-   - Implement role-playing scenarios where the chatbot can simulate different characters or roles.
-   - Use case-based responses to provide a more interactive and engaging user experience.
+   - Serve as a document teller who can answer questions relevant to the content of a course.
+   - Provide detailed responses based on course materials and documents.
+   - Utilize content-specific knowledge to enhance the learning experience.
 
 3. **Query:**
    - Handle specific user queries related to data retrieval, such as fetching information from a database or providing detailed answers to specific questions.
