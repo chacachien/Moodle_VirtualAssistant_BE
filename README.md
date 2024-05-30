@@ -1,10 +1,6 @@
 
 # Moodle_VirtualAssistant_BE
 
-uvicorn app.main:app --reload --port 8000
-
-# FastAPI Application
-
 ## Overview
 
 This is a FastAPI application designed to create a virtual assistant chatbot.
@@ -30,7 +26,7 @@ source venv/bin/activate
 1. Clone the repository:
 
     ```bash
-    git clone <repository_url>
+    git clone [this repohttps://github.com/chacachien/Moodle_VirtualAssistant_BE
     ```
 
 2. Navigate to the project directory:
@@ -45,10 +41,12 @@ source venv/bin/activate
     poetry install
     ```
 
-
 ## Usage
 
 To run the FastAPI application, execute the following command:
 
-```bash
-  uvicorn main:app --reload --port 8000
+```python
+    python3 app/main.py
+```
+    
+    
