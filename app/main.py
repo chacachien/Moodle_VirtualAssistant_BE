@@ -12,11 +12,14 @@ import logging
 from app.chatbot.taskbot.main import TaskHandle
 
 
-logging.config.fileConfig(settings.LOGGING_CONFIG_FILE, disable_existing_loggers=False)
+logging.config.fileConfig(settings.LOGGING_CONFIG_FILE,
+                          disable_existing_loggers=False)
+
+
 def get_application() -> FastAPI:
 
     app = FastAPI(
-        title= settings.PROJECT_NAME,
+        title=settings.PROJECT_NAME,
         description='''
         This is a backend service for the FastAPI project.
         The service is a virtual assistant that can help you with your daily tasks.
@@ -31,10 +34,11 @@ def get_application() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    #app.add_middleware(DBSessionMiddleware, db_url=settings.DATABASE_URL)
+    # app.add_middleware(DBSessionMiddleware, db_url=settings.DATABASE_URL)
     app.include_router(router, prefix=settings.API_V1_STR)
     app.add_exception_handler(CustomException, http_exception_handler)
     return app
+
 
 app = get_application()
 if __name__ == "__main__":
@@ -45,6 +49,7 @@ if __name__ == "__main__":
     from threading import Thread
 
     taskBot = TaskHandle()
+
     async def scheduled_job():
         print('start checking')
         taskBot.run()
@@ -58,30 +63,28 @@ if __name__ == "__main__":
             schedule.run_pending()
             time.sleep(1)
 
-
-    def run_async_function_sync( func):
+    def run_async_function_sync(func):
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         loop.run_until_complete(func())
-    
 
-    #schedule.every(41).minutes.do(lambda: run_async_function_sync(scheduled_job))
+    # schedule.every(41).minutes.do(lambda: run_async_function_sync(scheduled_job))
     import pytz
     from datetime import datetime
-    timezone = 'Asia/Ho_Chi_Minh'  
-    scheduled_time = '16:55'
+    timezone = 'Asia/Ho_Chi_Minh'
+    scheduled_time = '22:37'
 
-    # schedule.every().day.at(scheduled_time, timezone).do(
-    #     lambda: run_async_function_sync(daily_job))
+    schedule.every().day.at(scheduled_time, timezone).do(
+        lambda: run_async_function_sync(daily_job))
 
-    # schedule.every(1).minutes.do(
-    #     lambda: run_async_function_sync(scheduled_job)
-    # )
+    schedule.every(30).seconds.do(  # minutes/seconds
+        lambda: run_async_function_sync(scheduled_job)
+    )
 
-    # Thread(target=schedule_checker).start()
+    Thread(target=schedule_checker).start()
 
-    #uvicorn.run(app,host="0.0.0.0",  port=8000, log_level="info")
-    uvicorn.run("app.main:app", reload=True, reload_dirs='app', host="0.0.0.0", port=8000, log_level="info")
+    uvicorn.run(app, host="0.0.0.0",  port=8000, log_level="info")
+    # uvicorn.run("app.main:app", reload=True, reload_dirs='app', host="0.0.0.0", port=8000, log_level="info")
 
-    # while True:
-    #     schedule.run_pending()
+    while True:
+        schedule.run_pending()

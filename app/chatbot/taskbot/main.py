@@ -13,7 +13,7 @@ from app.chatbot.ragBot.data import LoadData
 class TaskHandle():
     def __init__(self):
         super().__init__()
-        self.TIME_INTERVAL = 1*60
+        self.TIME_INTERVAL = 30 #30/60
         DATABASE_URL = get_url_notsync()
         self.engine = create_engine(DATABASE_URL)
         self.reminder = Reminder()

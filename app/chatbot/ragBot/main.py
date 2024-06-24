@@ -43,7 +43,7 @@ class RagBot(RootBot):
 
         search_kwargs = {
             "k": 2,
-            "score_threshold": 0.75
+  
         } if courseId == -1 else {
              "k": 4,
             'filter': {
@@ -51,15 +51,15 @@ class RagBot(RootBot):
             }
         }
         print("KWARGS: ", search_kwargs)
-        context_with_course = self.data.docsearch.as_retriever(
-                                    search_type = 'similarity_score_threshold',
-                                    search_kwargs = search_kwargs
-                                )
-        # print("KWARGS: ", search_kwargs)
         # context_with_course = self.data.docsearch.as_retriever(
-        #                             search_type = 'mmr',
+        #                             search_type = 'similarity_score_threshold',
         #                             search_kwargs = search_kwargs
         #                         )
+        # print("KWARGS: ", search_kwargs)
+        context_with_course = self.data.docsearch.as_retriever(
+                                    search_type = 'mmr',
+                                    search_kwargs = search_kwargs
+                                )
         content =  context_with_course.invoke(user_message)[0].metadata
         print("content: ",content)
 

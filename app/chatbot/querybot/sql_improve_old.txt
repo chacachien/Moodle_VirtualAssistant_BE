@@ -45,7 +45,7 @@ mdl_course: store information about a course
 - completionnotify: Indicates whether completion notifications are enabled for the course.
 - originalcourseid: The original course ID associated with the course.
 
-mdl_enrol: this is linked to mdl_user_enrolments and store information about a enrolment of any users. Combine data of this and mdl_user_enrolments can give answers about courses that user enroled. ("đăng ký khóa học", "học khóa học")
+mdl_enrol: store information about a enrolment. 
 - id: The unique identifier for the enrolment.
 - status: The status of the enrolment.
 - courseid: The ID of the course associated with the enrolment (link to table mdl_course: mdl_course.id).
@@ -56,7 +56,7 @@ mdl_enrol: this is linked to mdl_user_enrolments and store information about a e
 - timecreated: The timestamp of when the enrolment was created.
 - timemodified: The timestamp of when the enrolment was last modified.
 
-mdl_user_enrolments: this is a mapping between mdl_user table and mdl_enrol and is used to define which enrolment belongs to a user.
+mdl_user_enrolments: this is a mapping between mdl_user table and mdl_enrol. Use to define user enrol course.
 - id: The unique identifier for the user enrolment.
 - status: The status of the user enrolment.
 - enrolid: The ID of the enrolment associated with the user (link to table mdl_enrol: mdl_enrol.id).
@@ -66,33 +66,34 @@ mdl_user_enrolments: this is a mapping between mdl_user table and mdl_enrol and 
 - modifierid: The ID of the modifier associated with the user enrolment.
 - timecreated: The timestamp of when the user enrolment was created.
 
-mdl_assign: this table store information about assignments ("bài tập lớn", "bài tiểu luận","tiểu luận")
-- id: The unique identifier for the assignment.("mã")
+mdl_assign: this table store information about assignments ("bài tập lớn", "bài tập")
+- id: The unique identifier for the assignment.
 - course: The ID of the course associated with the assignment. (Link to table mdl_course: mdl_course.id)
-- name: The name of the assignment. ("tên")
+- name: The name of the assignment.
 - intro: The introduction or description of the assignment.
-- duedate: The due date of the assignment. ("ngày hết hạn")
+- duedate: The due date of the assignment.
 - allowsubmissionsfromdate: The date from which submissions are allowed.
-- grade: The grade associated with the assignment. ("điểm")
+- grade: The grade associated with the assignment.
 - timemodified: The timestamp of when the assignment was last modified.
 - completionsubmit: Indicates whether submission is required for completion.
 - gradingduedate: The grading due date for the assignment.
 - timelimit: The time limit for the assignment.
 
-mdl_quiz: this table store information about quiz ("bài tập","bài trắc nghiệm", "bài tập trắc nghiệm")
+mdl_quiz: this table store information about quiz ("bài trắc nghiệm", "bài tập trắc nghiệm")
 - id: The unique identifier for the quiz.
 - course: The ID of the course associated with the quiz (link to table mdl_course: mdl_course.id).
-- name: The name of the quiz. ("tên")
+- name: The name of the quiz.
 - intro: The introduction or description of the quiz.
 - timeopen: The timestamp when the quiz opens.
-- timeclose: The timestamp when the quiz closes.("ngày hết hạn")
+- timeclose: The timestamp when the quiz closes.
 - timelimit: The time limit for completing the quiz.
 - overduehandling: The handling of overdue submissions.
-- sumgrades: The sum of grades for the quiz. ("điểm tổng","điểm cuối")
+- sumgrades: The sum of grades for the quiz.
 - grade: The grade obtained for the quiz.
 - timecreated: The timestamp when the quiz was created.
 - timemodified: The timestamp when the quiz was last modified.
 - password: The password required to access the quiz.
+
 
 
 mdl_notifications: store the inportant notification of user
@@ -114,33 +115,32 @@ mdl_notifications: store the inportant notification of user
 
 
 
-mdl_label: This is content of a chapter in a course (we can call it by "chương")
-- id: store unique code of every label.
+mdl_label: This is content of a chapter in a course (we can call it by "chương", "nội dung")
+- id: 
 - course: this is course id of this. (Link to table mdl_course: mdl_course.id)
-- name: this is the name of each label in a course ("chương")
-- intro: write with HTML format, be used to contain contents of each title or label ("nội dung của chương")
+- name: this is name of this 
 
-mdl_quiz_attempts: this table mark the quiz's user attempted. The quiz of user is done when it's "state" is "finished".
-- id: store unique code of every attempts.
-- quiz: link to mdl_uqiz, base on id
-- user: link to mdl_user.id ("người dùng")
-- attempt: 
-- state: base on boolean value from the comparision of the value to "finished"  ("trạng thái")
-- sumgrades: express total points of an attempt
+mdl_quiz_attempts: this table mark the quiz user attempted. The quiz of user is done when it's "state" is "finished".
+- id
+- quiz 
+- user
+- attempt
+- state: = "finished" if user done this quiz. 
+- sumgrades
 
-mdl_assign_submission: this table mark the assignment that is submited of not. If status = submitted, it's done. ("nộp bài tập", "nộp bài tập lớn")
-- id: unique code of each submission of a assignment of a user.
-- assignement: link to mdl_assign.id
-- userid: link to mdl_user.id
-- status: base on boolean value from the comparision of the value to "submitted" 
+mdl_assign_submission: this table mark the assignment that is submited of not. If status = submitted, it's done.
+- id
+- assignement: link to assign.id
+- userid: link to user.id
+- status: (= "submitted" if completed)
 
 mdl_course_modules: use to link from label to course 
-- id: unique code of each label of a course and linked to mdl_label 
-- course: link to mdl_course.id 
+- id
+- course: link to course.id 
 - instance: link to mdl_label.id
 
-mdl_course_modules_completion: use to mark the label is completed if (completionstate == 1) is true. This can infer the progress of a use in a course. ("tiến độ")
-- id: unique code of each completions
-- coursemoduleid: link to mdl_course.id
-- userid: link to mdl_user.id 
-- completionstate: base on boolean value from the comparision of the value to 1 ("tiến độ")
+mdl_course_modules_completion: use to mark the label is completed.
+- id
+- coursemoduleid: link to course.id
+- userid: link to user.id 
+- completionstate: = 1 if completed 

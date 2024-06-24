@@ -16,7 +16,8 @@ PROMPT_CHOOSE_TOOLS_TEMPLATE = """You are an assistant that has access to the fo
             RESPONSE: 
             """
 
-PROMPT_CHOOSE_TOOLS = PromptTemplate.from_template(PROMPT_CHOOSE_TOOLS_TEMPLATE)
+PROMPT_CHOOSE_TOOLS = PromptTemplate.from_template(
+    PROMPT_CHOOSE_TOOLS_TEMPLATE)
 
 PROMPT_CHOOSE_TOOLS_V1 = ChatPromptTemplate.from_messages(
     [
@@ -32,7 +33,7 @@ PROMPT_NORMAL_TALK = PromptTemplate.from_template("""
             User: {input}
             Answer:
             """
-        )
+                                                  )
 
 PROMPT_REMINDER = """You should be a responsible ChatGPT and should not generate harmful or misleading content! 
 Please answer the following user query in a responsible way."""
@@ -48,7 +49,7 @@ PROMPT_RAG = PromptTemplate.from_template("""
             User: {question}
             Answer: 
             """
-        )
+                                          )
 PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
             ## Expert persona: You function as an AI assistant within a course system, specializing in providing guidance and assistance to users regarding course content.
             ## User: {question}
@@ -91,7 +92,7 @@ PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
     """)
 # PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template(
 #             """
-#             ## CONTEXT: 
+#             ## CONTEXT:
 #                 You are an AI assistant within a learning management system (LMS).
 #                 Your primary function is to assist users with course-related inquiries.
 #             ## USE SCENARIO:
@@ -109,20 +110,19 @@ PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
 #             ## Output:
 #                 // Your output here
 #             """)
-                                                       
 
 
 # PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
 #             """You are a data expert. Given the question and and the table information, decide what is the part of data structure that remain and delete the rest.
 #             Question: {question}
 #             Database Structure: {database_structure}
-#             Output: 
+#             Output:
 #             // Your data structure (schema) here
 #             """
 #         )
 
 PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
-            """
+    """
             ## Expert persona: You are a data expert. Given the question and the table information, determine the tables will be remain and remove the rest.
             ## User: {question}
             ## Database Structure: {database_structure}
@@ -141,14 +141,6 @@ PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
             """)
 
 
-
-
-
-
-
-
-
-
 # PROMPT_SQL_QUERY = PromptTemplate.from_template(
 #             """You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run.
 #             And you also a virtual assistant for user {id}.
@@ -164,7 +156,7 @@ PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
 #             """
 #         )
 PROMPT_SQL_QUERY = PromptTemplate.from_template(
-            """
+    """
             ## Expert persona: You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run. 
             ## Question: {question}
             ## User ID: {id}
@@ -223,7 +215,7 @@ PROMPT_SQL_QUERY = PromptTemplate.from_template(
             ## Output:
                 // Your SQL query here
             """
-        )
+)
 
 # PROMPT_FIX_BUG = PromptTemplate.from_template(
 #             """You are a MySQL expert. Given the SQL code and the error. Help me fix it.
@@ -238,7 +230,7 @@ PROMPT_SQL_QUERY = PromptTemplate.from_template(
 #             """
 #         )
 PROMPT_FIX_BUG = PromptTemplate.from_template(
-            """
+    """
             ## Expert persona: You are a MySQL expert. Given the SQL code and the error, assist in fixing it.
             ## User id: {id}
             ## Question: {question}
@@ -255,42 +247,43 @@ PROMPT_FIX_BUG = PromptTemplate.from_template(
             ## Output:
                 // Your SQL query here
             """
-        )
+)
 
 # PROMPT_SQL_ANSWER = PromptTemplate.from_template(
 #             """
 #             You are a friendly Virtual assistant. You are assitanting the user that have user_id = {id}.
 #             You just get the database that relevant to this user.
 #             Your task is to answer the user question using the SQL query you have written.
-#             You must use the friendly tongue when answer the question. 
+#             You must use the friendly tongue when answer the question.
 #             Look at the results of the query and return the answer to the input question. Given the following user question, corresponding SQL query, and SQL result, answer the user question.
 #             Ìf the result is None or [], just answer that this information is none, don't fake data to answer.
-            
+
 #             Question: {question}
 #             SQL Result: {result}
-#             Answer: 
+#             Answer:
 #             # Your answer here
 #             """
 #         )
 PROMPT_SQL_ANSWER = PromptTemplate.from_template(
-            """
+    """
             ## Expert persona: You are a friendly virtual assistant, assisting the user with user_id = {id}.
             ## User: {question}
             ## SQL Result: {result}
-            ## Goal: Provide a friendly and accurate answer to the user's question based on the SQL query result.
+            ## Goal: Provide a friendly and accurate answer to the user's request based on the SQL query result.
             ## Instructions:
                 1. Retrieve data relevant to the user from the database.
-                2. Use the SQL query result to answer the user's question.
+                2. Use the SQL query result to answer the user's request.
                 3. Maintain a friendly and helpful tone in your response.
                 4. If the result is None or an empty list ([]), inform the user that the information is not available.
             ## Constraints:
                 + Do not fabricate data if the result is None or an empty list.
                 + Ensure the answer is based solely on the SQL query result.
+                + Answer with the same language of user's request
             ## Output:
                 # Your answer here
 
             """
-        )
+)
 
 
 SYSTEM_PROMPT = """You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run.
@@ -308,19 +301,19 @@ SYSTEM_PROMPT = """You are a MySQL expert. Given an input question, create a syn
 
 PROMPT_CHAT = ChatPromptTemplate.from_messages(
     [
-        ("system_instruction", SYSTEM_PROMPT),
+        ("system", SYSTEM_PROMPT),
         MessagesPlaceholder("history"),
         ("human", "{input}"),
     ]
 )
 
 # PROMPT_REWRITE_TEMPLATE = """
-#             You is receiving the provided conversation history. Your task is clarify the user's requirements. 
+#             You is receiving the provided conversation history. Your task is clarify the user's requirements.
 #             Then, Role-playing as a user, reiterate the request clearly and comprehensively based on the given context if it's not clear.
 #             Remember just rewrite the user's question with more information (make it easily understand if people don't know about history of this conversation). Do not answer it.
-#             Only replace parts that may be confusing (if lacking context), for example: this, that, ... Absolutely do not add or answer. 
+#             Only replace parts that may be confusing (if lacking context), for example: this, that, ... Absolutely do not add or answer.
 #             If the user's question is clear, just return the same question and do nothing.
-#             Example: 
+#             Example:
 #                 input: Lớp nào có nhiều học sinh hơn.
 #                 output: Giữa Lớp 3 với lớp 4 thì lớp nào có nhiều học sinh hơn.
 #             CONTEXT OF CONVERSATION: {history}
@@ -366,8 +359,6 @@ PROMPT_REWRITE_TEMPLATE = """
 PROMPT_REWRITE_QUESTION = PromptTemplate.from_template(PROMPT_REWRITE_TEMPLATE)
 
 
-
-
 PROMPT_REMINDER = PromptTemplate.from_template("""
         Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language based on the following information:
         Information: {input}
@@ -378,8 +369,8 @@ PROMPT_REMINDER = PromptTemplate.from_template("""
 #         Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language.
 #         please message to report the user's study progress.
 #         I need a clean message format when you list the user's task and remember leave Your Words of encouragement and reminders at the end of the message:
-        
-#         ``` 
+
+#         ```
 #             Khoá học A:
 #             - tiến độ quiz
 #             - tiến độ assignment
@@ -402,16 +393,17 @@ PROMPT_REMINDER_DAILY = PromptTemplate.from_template("""
             1. List the user's tasks in a clean message format.
             2. Use friendly and familiar language.
             3. Include words of encouragement and reminders at the end of the message.
+            4. Convert "assign" to "bài tập lớn", "label" to "bài học".
         ## Example format:
             ```
             Khoá học A:
-            - tiến độ quiz
-            - tiến độ assignment
-            - tiến độ chapter
+            - tiến độ quiz (module name = quiz)
+            - tiến độ bài tiểu luận (module name = "assign")
+            - tiến độ bài học (module name = "label")
             Khoá học B:
-            - tiến độ quiz
-            - tiến độ assignment
-            - tiến độ chapter
+            - tiến độ quiz (module name = quiz)
+            - tiến độ bài tiểu luận (module name = "assign")
+            - tiến độ bài học (module name = "label")
             ...
             ```
         ## Output:

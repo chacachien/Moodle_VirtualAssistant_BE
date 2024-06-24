@@ -150,23 +150,25 @@ class ReminderService(object):
         try:
             with ReminderService.engine.connect() as connection:
                 query = text("""
-                    SELECT 
-                    	c.fullname,
-                        cm.course AS course_id,
-                        mc.name AS module_name,
-                        COUNT(cmc.id) AS completed_modules,
-                        COUNT(cm.id) AS total_modules,
-                        COUNT(cmc.id) / COUNT(cm.id) * 100 AS completion_percentage
-                    FROM 
-                        mdl_course_modules cm
-                    JOIN 
-                        mdl_modules mc ON cm.module = mc.id
-                    LEFT JOIN 
-                        mdl_course_modules_completion cmc ON cm.id = cmc.coursemoduleid AND cmc.userid = :user_id
-                    JOIN mdl_course c on c.id = cm.course
-                    WHERE mc.name = 'quiz' or mc.name = 'assign' or mc.name = 'label'
-                    GROUP BY 
-                        cm.course, mc.name;
+                    SELECT
+                    c.fullname AS course_name,
+                    cm.course AS course_id,
+                    mc.name AS module_name,
+                    COUNT(cmc.id) AS completed_modules,
+                    COUNT(cm.id) AS total_modules,
+                    COUNT(cmc.id) / COUNT(cm.id) * 100 AS completion_percentage
+                    FROM mdl_user u
+                    JOIN mdl_user_enrolments ue ON u.id = ue.userid
+                    JOIN mdl_enrol e ON ue.enrolid = e.id
+                    JOIN mdl_course c ON e.courseid = c.id
+                    JOIN mdl_course_modules cm ON cm.course = c.id
+                    JOIN mdl_modules mc ON cm.module = mc.id
+                    LEFT JOIN mdl_course_modules_completion cmc ON cm.id = cmc.coursemoduleid AND cmc.userid = u.id
+                    WHERE
+                        (mc.name = 'quiz' OR mc.name = 'assign' OR mc.name = 'label')
+                        AND u.id = :user_id
+                    GROUP BY
+                        c.fullname, cm.course, mc.name;
                 """)
                 result = connection.execute(
                     query.bindparams(
