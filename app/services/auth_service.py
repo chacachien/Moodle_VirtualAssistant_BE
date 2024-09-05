@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from fastapi.security import HTTPAuthorizationCredentials, OAuth2PasswordBearer, OAuth2PasswordRequestForm, HTTPBearer
 
-from core.config import settings
+from app.core.config import settings
 
 
 def auth_wrapper(auth: HTTPAuthorizationCredentials = Security(HTTPBearer())):

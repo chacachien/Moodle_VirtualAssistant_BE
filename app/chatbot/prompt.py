@@ -1,6 +1,6 @@
 
 from cmd import PROMPT
-from langchain import PromptTemplate
+from langchain_core.prompts import PromptTemplate # type: ignore
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 PROMPT_CHOOSE_TOOLS_TEMPLATE = """You are an assistant that has access to the following set of tools. Here are the names and descriptions for each tool:
@@ -139,6 +139,12 @@ PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
                 // Your data structure (schema) here
 
             """)
+
+
+
+
+
+
 
 
 

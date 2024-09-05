@@ -1,13 +1,13 @@
 from hmac import new
 import token
 
-from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
+from langchain_text_splitters import CharacterTextSplitter, RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import TextLoader
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.document_loaders import GoogleDriveLoader
 from numpy import mat
 from pinecone import PodSpec, Pinecone
-from langchain_community.vectorstores import Pinecone as PC
+from langchain_pinecone import PineconeVectorStore as PC
 from sympy import Q
 from app.core.config import get_url_notsync
 from sqlalchemy import create_engine, MetaData, Table, text

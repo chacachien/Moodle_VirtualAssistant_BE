@@ -50,7 +50,7 @@ class RagBot(RootBot):
                 'course': courseId,
             }
         }
-        print("KWARGS: ", search_kwargs)
+        # print("KWARGS: ", search_kwargs)
         # context_with_course = self.data.docsearch.as_retriever(
         #                             search_type = 'similarity_score_threshold',
         #                             search_kwargs = search_kwargs
@@ -79,7 +79,7 @@ class RagBot(RootBot):
         
 
         res = chain.invoke(user_message)
-        print("res1: ", res)
+
         if courseId != -1:
             return res
         
@@ -90,7 +90,6 @@ class RagBot(RootBot):
             StrOutputParser()
         )
         course_name = ReminderService.get_coursename(int(content['course']))
-        
         context = {
             "course_id": int(content['course']),
             "course_name": course_name
@@ -100,21 +99,22 @@ class RagBot(RootBot):
     
 def main():
     chat = RagBot()
+    
     question = "Cuộc chiến tranh nhà Ngô chống lại quân đội nước nào"
     question = 'vì sao có chữ nôm'
     question = 'đặc điểm tiếng việt'
     question = 'kể tên các tác phẩm chữ nôm'
     question = 'tác phẩm lục vân tiên nói về điều gì'
     question = 'tóm tắt toàn bộ nội dung khoá học'
-    question = 'các loại việt phục được nêu ra trong bài'
     question = 'ML là gì'
     question = 'tác giả của cánh đồng bất tận'
-
-    # res = chat.rag(question, -1)
-    # print(res)
+    question = 'các loại việt phục được nêu ra trong bài'
+    chat.model = chat.model1_5
+    res = chat.rag(question, -1)
+    print(res)
+    return
     from langchain.chains import create_history_aware_retriever
     from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-
     contextualize_q_system_prompt = """Given a chat history and the latest user question \
     which might reference context in the chat history, formulate a standalone question \
     which can be understood without the chat history. Do NOT answer the question, \
@@ -126,7 +126,7 @@ def main():
             ("human", "{input}"),
         ]
     )
-    llm = chat.model
+    llm = chat.model1_5
     chat.data.embed_data()
     retriever = chat.data.docsearch.as_retriever()
     history_aware_retriever = create_history_aware_retriever(
@@ -163,13 +163,13 @@ def main():
     store = {}
 
     from langchain_core.chat_history import BaseChatMessageHistory
-    from langchain_community.chat_message_histories import ChatMessageHistory
+    from langchain_core.chat_history import InMemoryChatMessageHistory
     from langchain_core.runnables.history import RunnableWithMessageHistory
 
 
     def get_session_history(session_id: str) -> BaseChatMessageHistory:
         if session_id not in store:
-            store[session_id] = ChatMessageHistory()
+            store[session_id] = InMemoryChatMessageHistory()
         return store[session_id]
 
 
@@ -180,19 +180,18 @@ def main():
         history_messages_key="chat_history",
         output_messages_key="answer",
     )
-    
+    import time
     while True:
         user_message = input("User: ")
         chat_history.append(HumanMessage(user_message))
+        s = time.time()
         res = conversational_rag_chain.invoke({"input": user_message},
                                 config={
                                     "configurable": {"session_id": "abc123"}
                                 }, )['answer']
+        e = time.time()
+        print("TIME: ", e-s)
         print("Bot: ", res)
-        
-
-
-
 
 if __name__ == '__main__':
     main()

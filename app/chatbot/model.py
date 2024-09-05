@@ -1,4 +1,5 @@
 from asyncio import get_event_loop
+from chunk import Chunk
 import collections
 from app.chatbot.prompt import PROMPT_CHOOSE_TOOLS, PROMPT_CHOOSE_TOOLS_V1, PROMPT_REWRITE_QUESTION
 from app.chatbot.tools import Tool
@@ -71,29 +72,40 @@ class ChatBot(RootBot):
         return res
 
 
-    def get_response(self, user_message, chatId, courseId):
+    async def get_response(self, user_message, chatId, courseId):
+        chain = self.talkBot.prompt | self.talkBot.model | StrOutputParser()
+        for chunk in chain.stream({"context":[], "input":user_message}):
+            print("CHUNKKKKKKKKKK: ",   chunk)
+            yield chunk
 
-        tool, new_user_message  = self.chat_with_tool(user_message)
-        res = None
-        # try:
-        if tool == 'talk':
-            print('TOOL TALK')
-            res = self.talkBot.talk(user_message, self.__chat_history_buffer)
+        # import time
+        # s = time.time()
+        # tool, new_user_message  = self.chat_with_tool(user_message)
+        # res = None
 
-        if tool == 'rag':
-            print('TOOL RAG')
-            res = self.ragBot.rag(user_message, courseId)
+        # if tool == 'talk':
+        #     print('TOOL TALK')
+        #     #res = self.talkBot.talk(user_message, self.__chat_history_buffer)
+        #     #res = self.talkBot.talk_stream(user_message, self.__chat_history_buffer)
 
-        if tool == 'query':
-            print('TOOL QUERY')
-            res = self.queryBot.query(new_user_message, chatId)
+        #     chain = self.talkBot.prompt | self.talkBot.model | StrOutputParser()
+        #     async for chunk in chain.stream({"context":history, "input":user_message}):
+        #         yield(chunk)
+            
+        # if tool == 'rag':
+        #     print('TOOL RAG')
+        #     res = self.ragBot.rag(user_message, courseId)
 
-        memory_data = {"user": user_message, "ai": res}
-        data_string = json.dumps(memory_data)
-        self.__chat_history_buffer.append(data_string)
-        return res
-        # except:
-        #     return "Xin lỗi, có gì đó không ổn trong câu hỏi của bạn, bạn có thể gửi lại không?"
+        # if tool == 'query':
+        #     print('TOOL QUERY')
+        #     res = self.queryBot.query(new_user_message, chatId)
+
+        # memory_data = {"user": user_message, "ai": res}
+        # data_string = json.dumps(memory_data)
+        # self.__chat_history_buffer.append(data_string)
+        # e = time.time()
+        # print("TIME: ", e-s)
+        #return res
     
 
     def test_chatbot_with_tools(self):
@@ -111,10 +123,18 @@ if __name__ == "__main__":
     bot = ChatBot()
     # loop = get_event_loop()
     # loop.run_until_complete(bot.test_chatbot_with_tools())
+    import time
+    s = time.time()
     history = [
         {"user": "hi", 'ai': 'hello, how can i assist you today'},
         {"user": "what is course of me", 'ai': 'you have 2 courses: image processing course and mobile app course'}
     ]
     user_message = "Khóa học nào nhiều bài tập hơn"
     res = bot.improve_message(history, user_message)
+
+    ans = bot.get_response(user_message, 1, 1)
     print(res)
+    print(ans)
+    e = time.time()
+    print("TIME: ", e-s)
+

@@ -18,10 +18,9 @@ from fastapi import APIRouter, Depends, HTTPException, Security
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from passlib.context import CryptContext
+# from passlib.context import CryptContext
 from fastapi.security import HTTPAuthorizationCredentials, OAuth2PasswordBearer, OAuth2PasswordRequestForm, HTTPBearer
-# from jose import JWTError, jwt
-from core.config import settings
+from app.core.config import settings
 
 # def decode_token( token):
 #     try:

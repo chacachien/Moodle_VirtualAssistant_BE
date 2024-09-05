@@ -36,14 +36,20 @@ class ChatService(object):
                 content = message.content,
                 chatId = message.chatId,
                 role = TypeRoleChoices.USER,
-
             )
             session.add(message_obj)
             await session.commit()
             await session.refresh(message_obj)
 
-            res = ChatService.chatbot.get_response(message.content, message.chatId, message.courseId)
-            # add response into table
+
+
+            #res = ChatService.chatbot.get_response(message.content, message.chatId, message.courseId)
+            # just test
+            async def response_generator():
+                async for chunk in ChatService.chatbot.get_response(message.content, message.chatId, message.courseId):
+                    yield chunk
+            
+            return response_generator()
             if res is not None:
                 message_obj_res = Message(
                     content= res,
