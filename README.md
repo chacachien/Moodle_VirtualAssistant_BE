@@ -81,3 +81,10 @@ To run the FastAPI application, execute the following command:
     python3 app/main.py
 ```
     
+## Note for team member:
+Before run the app, to avoid error remember:
+1. Check the env file
+2. Update pyproject by this command:
+```
+   poetry install
+```
