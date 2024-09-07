@@ -7,8 +7,7 @@ midgration/
 midgration_old/
 alembic_old.ini
 alembic.ini
-poetry.lock
-pyproject.toml
+
 api.http
 core/
 alembic/
