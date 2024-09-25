@@ -12,7 +12,7 @@ import logging
 from app.chatbot.taskbot.main import TaskHandle
 
 
-from fastapi_utils.timing import add_timing_middleware, record_timing
+#from fastapi_utils.timing import add_timing_middleware, record_timing
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler()
@@ -52,7 +52,7 @@ def get_application() -> FastAPI:
 
     app.include_router(router, prefix=settings.API_V1_STR)
     app.add_exception_handler(CustomException, http_exception_handler)
-    add_timing_middleware(app, record=logger.info, prefix="app")
+    #add_timing_middleware(app, record=logger.info, prefix="app")
 
     return app
 

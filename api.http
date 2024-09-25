@@ -1,5 +1,5 @@
 #health check
-GET http://localhost:5000/api/v1/
+GET http://localhost:5001/api/v1/
 
 # get chat history
 ###
@@ -9,18 +9,18 @@ Authorization: Bearer c53719b17b93ba017e6864ff3adb3e28
 
 ###
 # send message
-POST http://localhost:5000/api/v1/chat
+POST http://localhost:5001/api/v1/chat
 Content-Type: application/json
 
 {
-    "content": "chữ nôm ra đời trong hoàn cảnh nào?",
+    "content": "count from 1 to 100",
     "chatId": 2,
     "role": 1,
     "courseId": 11
 }
 ###
 # send message
-POST http://localhost:5000/api/v1/chat
+POST http://localhost:5001/api/v1/chat
 Content-Type: application/json
 
 {

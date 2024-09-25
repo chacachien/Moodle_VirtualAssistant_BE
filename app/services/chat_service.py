@@ -48,7 +48,7 @@ class ChatService(object):
             async def response_generator():
                 async for chunk in ChatService.chatbot.get_response(message.content, message.chatId, message.courseId):
                     yield chunk
-            
+                yield "Button here"
             return response_generator()
             if res is not None:
                 message_obj_res = Message(

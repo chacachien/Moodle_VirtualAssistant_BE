@@ -43,7 +43,7 @@ def main():
     while True:
         message = input("user: ")
         s = time.time()
-        response = bot.model_gg_1.invoke(message)
+        response = bot.groq.invoke(message)
         e = time.time()
         print("TIME: ", e-s)
         print(response.content)
