@@ -13,7 +13,7 @@ POST http://localhost:5001/api/v1/chat
 Content-Type: application/json
 
 {
-    "content": "count from 1 to 100",
+    "content": "make a poetry about rust",
     "chatId": 2,
     "role": 1,
     "courseId": 11

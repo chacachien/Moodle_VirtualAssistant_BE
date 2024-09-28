@@ -32,37 +32,69 @@ class ChatService(object):
     async def send_message(message: MessageCreate, session: AsyncSession):
         try:
             # add message into table
-            message_obj = Message(
-                content = message.content,
-                chatId = message.chatId,
-                role = TypeRoleChoices.USER,
-            )
-            session.add(message_obj)
-            await session.commit()
-            await session.refresh(message_obj)
-
-
-
             #res = ChatService.chatbot.get_response(message.content, message.chatId, message.courseId)
             # just test
-            async def response_generator():
-                async for chunk in ChatService.chatbot.get_response(message.content, message.chatId, message.courseId):
-                    yield chunk
-                yield "Button here"
-            return response_generator()
-            if res is not None:
-                message_obj_res = Message(
-                    content= res,
-                    chatId= message.chatId,
-                    role = TypeRoleChoices.BOT,
-                )
-                session.add(message_obj_res)
-                await session.commit()
-                await session.refresh(message_obj_res)
 
-                return res
-            else:
-                return "Sorry, I don't understand"
+        # First save the user's message to the database
+            user_message = Message(
+                content=message.content,
+                chatId=message.chatId,
+                role=TypeRoleChoices.USER,
+            )
+            session.add(user_message)
+            await session.commit()
+            await session.refresh(user_message)
+
+            # To store the complete bot response for saving later
+            full_bot_response = []
+
+            async def response_generator():
+                try:
+                    async for chunk in ChatService.chatbot.get_response(
+                        message.content, message.chatId, message.courseId
+                    ):
+                        # Append each chunk to full_bot_response so that we can save it later
+                        full_bot_response.append(chunk)
+                        # Stream the chunk
+                        yield chunk
+                except Exception as e:
+                    print(e)
+                    raise HTTPException(
+                        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                        detail="Error in generating response"
+                    )
+
+            # Start streaming the response
+            return response_generator(), full_bot_response
+
+            # async def response_generator():
+            #     async for chunk in ChatService.chatbot.get_response(message.content, message.chatId, message.courseId):
+            #         yield chunk
+            #     yield "Button here"
+            # return response_generator()
+        
+            # message_obj = Message(
+            #     content = message.content,
+            #     chatId = message.chatId,
+            #     role = TypeRoleChoices.USER,
+            # )
+            # session.add(message_obj)
+            # await session.commit()
+            # await session.refresh(message_obj)
+
+            # if res is not None:
+            #     message_obj_res = Message(
+            #         content= res,
+            #         chatId= message.chatId,
+            #         role = TypeRoleChoices.BOT,
+            #     )
+            #     session.add(message_obj_res)
+            #     await session.commit()
+            #     await session.refresh(message_obj_res)
+
+            #     return res
+            # else:
+            #     return "Sorry, I don't understand"
         except Exception as e:
             print(e)
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
