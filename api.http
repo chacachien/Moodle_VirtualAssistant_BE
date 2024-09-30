@@ -1,6 +1,15 @@
 #health check
 GET http://localhost:5001/api/v1/
 
+
+### update all document
+GET http://localhost:5001/api/v1/document/all
+
+
+### update all document into postgres
+GET http://localhost:5001/api/v1/documentpostgre/all
+
+
 # get chat history
 ###
 GET http://localhost:8000/api/v1/chat?chatid=2

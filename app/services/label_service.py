@@ -24,6 +24,7 @@ class LabelService(object):
                 # convert result to json and return 
                 label_list = []
                 for row in rows:
+                    print(row)
                     label = {
                         'id': row[0],
                         'course': row[1],
@@ -31,7 +32,7 @@ class LabelService(object):
                         'intro': row[3],
                         'timemodified': row[5]                    }
                     label_list.append(label)
-
+                print(label_list)
                 # Return the list of JSON objects
                 return label_list
         except Exception as e:

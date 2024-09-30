@@ -1,4 +1,5 @@
 from hmac import new
+import math
 import token
 
 from langchain_text_splitters import CharacterTextSplitter, RecursiveCharacterTextSplitter
@@ -6,10 +7,10 @@ from langchain_community.document_loaders import TextLoader
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.document_loaders import GoogleDriveLoader
 from numpy import mat
-from pinecone import PodSpec, Pinecone
-from langchain_pinecone import PineconeVectorStore as PC
+
+
 from sympy import Q
-from app.core.config import get_url_notsync
+from app.core.config import get_url_notsync, get_url_vector
 from sqlalchemy import create_engine, MetaData, Table, text
 from app.services.label_service import LabelService
 from bs4 import BeautifulSoup
@@ -19,6 +20,12 @@ import sys
 import os
 import dotenv
 import ast
+import psycopg2
+import pgvector
+from psycopg2.extras import execute_values
+from pgvector.psycopg2 import register_vector
+
+import numpy as np
 
 
 dotenv.load_dotenv()
@@ -26,15 +33,11 @@ dotenv.load_dotenv()
 class LoadData:
     def __init__(self):
         self.docs = None
-        self.pc= Pinecone(
-            api_key= os.getenv("PINECONE_API_KEY"),
-            environment='gcp-starter'
-        )
-        self.index_name = "ragbot"
-        self.folder_id = '10ZN2ztM_WC00CyktKSZENS2LULbdJkNP'
-        DATABASE_URL = get_url_notsync()
+        #self.index_name = "ragbot"
+        #self.folder_id = '10ZN2ztM_WC00CyktKSZENS2LULbdJkNP'
+        DATABASE_URL = get_url_vector()
         self.engine = create_engine(DATABASE_URL)
-
+        self.conn = psycopg2.connect(DATABASE_URL)
 
 ###
             # from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -54,7 +57,7 @@ class LoadData:
 
         #self.embeddings = HuggingFaceEmbeddings(model_name=self.vietnamese_model)
         self.docsearch = None
-        self.PC = None
+
 
     def load_data(self):
         res = LabelService.get_all_label()
@@ -76,7 +79,6 @@ class LoadData:
 
 
     def split_data(self, data: str):
-
         # text_splitter = CharacterTextSplitter(
         #         # separator="\n\n",
         #         chunk_size=100,
@@ -108,58 +110,76 @@ class LoadData:
 
     def create_index(self):
 
-        if self.index_name not in self.pc.list_indexes().names():
-        # Create new Index
-            self.pc.create_index(name=self.index_name, metric="euclidean", dimension=768, spec=PodSpec(environment="gcp-starter"))
-            # docsearch = PC.from_texts(self.docs, self.embeddings, index_name=self.index_name)
-
-    def embed_data(self):
-
-        docsearch = PC.from_existing_index(self.index_name, self.embeddings)
-        self.docsearch = docsearch
-        return docsearch
+        # if don't find table, create one
+        # but still do it by sql for simple
+        pass
+    def get_embedding(self, document):
+        data = self.embeddings.embed_query(document)
+        print("Data:", data)
+        return data
     
 
     def update_data(self, data):
-        '''
-            texts: Iterable[str],
-            metadatas: Optional[List[dict]] = None,
-            ids: Optional[List[str]] = None,
-            namespace: Optional[str] = None,
-            batch_size: int = 32,
-            embedding_chunk_size: int = 1000,
-            ------
-            data =  {
-                'id':,
-                'course':,
-                'name':,
-                'intro': string
-            }
-        '''
         # print('data: ', data)
         clean_data = self.clean_data(data)
         print("clean: ", clean_data)
         # print('CLEAN DATA: ', clean_data)
         clean_data['intro'] = self.split_data(clean_data['intro']) 
-        pc = PC(index= self.pc.Index(name=self.index_name), embedding=self.embeddings, text_key='text')
+        #pc = PC(index= self.pc.Index(name=self.index_name), embedding=self.embeddings, text_key='text')
 
 
-        id_list = [f'doc{clean_data['id']}_chunk'+str(j) for j in range(len(clean_data['intro']))]
-        
-        pc.add_texts(
-            texts = clean_data['intro'],
-            ids = id_list,
-            metadatas= [{'title': clean_data['name'], 'course': clean_data['course'], "text":i } for i in clean_data['intro']],
-            batch_size=1,
-            embedding_chunk_size=1)
-        
+        #id_list = [f'doc{clean_data['id']}_chunk'+str(j) for j in range(len(clean_data['intro']))]
+        data_list = [
+                (
+                    clean_data['name'],             # Title
+                    f'doc{clean_data["id"]}_chunk{j}',  # URL (or document identifier for chunk)
+                    intro_chunk,                    # Content
+                    len(intro_chunk.split()),       # Tokens (word count in the chunk)
+                    np.array(self.get_embedding(intro_chunk))  # data type: vector
+                )
+                for j, intro_chunk in enumerate(clean_data['intro'])
+            ]
+        embedding = np.array(self.get_embedding(clean_data['intro'][0]))
+        print("Embedding shape:", embedding.shape)
+
+        register_vector(self.conn)
+        cur = self.conn.cursor()
+        execute_values(cur, """INSERT INTO embeddings (title, url, content, tokens, embedding) VALUES %s ON CONFLICT (url) 
+                                DO UPDATE SET 
+                                title = excluded.title,
+                                content = excluded.content,
+                                tokens = excluded.tokens,
+                                embedding = excluded.embedding""", data_list)
+
+        self.conn.commit()
+
+
     def upload_all_label(self):
-        print("start create index")
-        self.create_index()
-        print("start load data")
-        res = self.load_data()
-        print("start update data")
-        [self.update_data(row) for row in res]
+        # print("start create index")
+        # self.create_index()
+        # print("start load data")
+        # res = self.load_data()
+        # print("start update data")
+        # [self.update_data(row) for row in res]
+        self.create_index_for_db()
+
+    def create_index_for_db(self): 
+        cur = self.conn.cursor()
+        cur.execute("SELECT COUNT(*) as cnt FROM embeddings;")
+        num_records = cur.fetchone()[0]
+        print("Number of vector records in table: ", num_records,"\n")
+        # Correct output should be 129
+
+
+        num_lists = num_records / 1000
+        if num_lists < 10:
+            num_lists = 10
+        if num_records > 1000000:
+            num_lists = math.sqrt(num_records)
+        #use the cosine distance measure, which is what we'll later use for querying
+        cur.execute(f'CREATE INDEX ON embeddings USING ivfflat (embedding vector_cosine_ops) WITH (lists = {num_lists});')
+        
+        self.conn.commit()
 
 def main():
     def pretty_print_docs(docs):

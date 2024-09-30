@@ -94,3 +94,19 @@ WITH (
 )
 TABLESPACE pg_default;
 
+
+
+
+--- create table embedding
+CREATE EXTENSION IF NOT EXISTS vector
+
+CREATE TABLE embeddings (
+            id bigserial primary key, 
+            title text,
+            url text,
+            content text,
+            tokens integer,
+            embedding vector(768)
+            )
+ALTER TABLE embeddings
+ADD CONSTRAINT unique_url UNIQUE (url);

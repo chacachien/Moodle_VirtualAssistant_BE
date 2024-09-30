@@ -51,11 +51,12 @@ class ChatService(object):
             async def response_generator():
                 try:
                     async for chunk in ChatService.chatbot.get_response(
-                        message.content, message.chatId, message.courseId
+                        message.content, message.chatId, message.courseId, 1
                     ):
                         # Append each chunk to full_bot_response so that we can save it later
                         full_bot_response.append(chunk)
                         # Stream the chunk
+
                         yield chunk
                 except Exception as e:
                     print(e)
@@ -117,7 +118,7 @@ class ChatService(object):
                     message_deleted = MessageDeleted(
                         content=message.content,
                         chatId=message.chatId,
-                        role=message.role
+                        role=TypeRoleChoices.USER
                     )
                     session.add(message_deleted)
                 

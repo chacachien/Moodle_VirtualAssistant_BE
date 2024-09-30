@@ -78,7 +78,8 @@ PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
             1. Use the information of the course in the system to remind the user to go to the course page that is relevant to the user's question.
             2. If the course information is not relevant to the user's question, just say the system does not have any course that is relevant to the user's question and do nothing further. 
             3. Otherwise, if the user message and course information match, remind the user to visit the course page to get more information. Link to course page: 
-                http://localhost/moodle/course/view.php?id=[courseid]
+                course/view.php?id=[courseid]
+            4. Response the link as a markdown button. example: [Visit OpenAI!](https://www.openai.com/)
         ## Constraints:
             + Ensure the reminder is polite and encouraging.
             + Provide a friendly and helpful message to the user.

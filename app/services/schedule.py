@@ -1,5 +1,5 @@
 from app.models.reminder_model import *
-from app.models.message_model import Message, MessageCreate
+from app.models.message_model import Message, MessageCreate, TypeRoleChoices
 from sqlmodel import select, delete, insert
 from fastapi import HTTPException
 from starlette import status
@@ -262,7 +262,7 @@ class ReminderService(object):
                 query = insert(Message).values(
                     chatId = message.chatId,
                     content = message.content,
-                    role = message.role
+                    role = TypeRoleChoices.USER
                 )
                 res = connection.execute(
                     query

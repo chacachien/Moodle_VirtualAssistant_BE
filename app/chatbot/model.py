@@ -45,6 +45,7 @@ class ChatBot(RootBot):
         return messages
 
     def chat_with_tool(self, user_message):
+
         history = self.__chat_history_buffer
         user_message = self.improve_message(history, user_message)
         
@@ -72,12 +73,30 @@ class ChatBot(RootBot):
         return res
 
 
-    async def get_response(self, user_message, chatId, courseId):
-        chain = self.talkBot.prompt | self.talkBot.model | StrOutputParser()
-        for chunk in chain.stream({"context":[], "input":user_message}):
-            print("CHUNKKKKKKKKKK: ",   chunk)
-            yield chunk
+    async def get_response(self, user_message, chatId, courseId, role):
+        # chain = self.talkBot.prompt | self.talkBot.model | StrOutputParser()
+        # for chunk in chain.stream({"context":[], "input":user_message}):
+        #     print("CHUNKKKKKKKKKK: ",   chunk)
+        #     yield chunk
 
+        if role == 1:
+            async for chunk in self.ragBot.rag(user_message, courseId):
+                yield chunk
+        # if role ==0:
+        #     tool, new_user_message  = self.chat_with_tool(user_message)
+            
+
+        # elif role == 1:
+        #     async for chunk in self.ragBot.rag(user_message, courseId):
+        #         yield chunk
+
+
+        # elif role ==2:
+        #     pass
+        # elif role == 3:
+        #     pass
+        # else:
+        #     pass
         # import time
         # s = time.time()
         # tool, new_user_message  = self.chat_with_tool(user_message)

@@ -1,22 +1,146 @@
 from calendar import c
 from re import search
+from time import sleep
 from app.chatbot.root import RootBot
 from app.chatbot.prompt import PROMPT_RAG, PROMPT_RAG_IMPROVE, PROMPT_REMIND_TO_COURSE
 from langchain.schema.output_parser import StrOutputParser
 from langchain.schema.runnable import RunnablePassthrough
 from app.chatbot.ragBot.data import LoadData
+from app.chatbot.ragBot.pgData import LoadData as LoadDataPg
 from app.services.context_service import SystemService
 from app.services.schedule import ReminderService
+import asyncio
+
+import numpy as np
+import pgvector.psycopg2
+
+# class RagBot(RootBot):
+#     def __init__(self):
+#         super().__init__()
+#         self.prompt = PROMPT_RAG_IMPROVE
+#         self.prompt_remind_to_couse = PROMPT_REMIND_TO_COURSE
+#         self.data = LoadData()
+
+
+#     async def rag(self, user_message, courseId):
+#         """
+#             def as_retriever(self, **kwargs: Any) -> VectorStoreRetriever:
+#         Return VectorStoreRetriever initialized from this VectorStore.
+
+#         Args:
+#             search_type (Optional[str]): Defines the type of search that
+#                 the Retriever should perform.
+#                 Can be "similarity" (default), "mmr", or
+#                 "similarity_score_threshold".
+#             search_kwargs (Optional[Dict]): Keyword arguments to pass to the
+#                 search function. Can include things like:
+#                     k: Amount of documents to return (Default: 4)
+#                     score_threshold: Minimum relevance threshold
+#                         for similarity_score_threshold
+#                     fetch_k: Amount of documents to pass to MMR algorithm (Default: 20)
+#                     lambda_mult: Diversity of results returned by MMR;
+#                         1 for minimum diversity and 0 for maximum. (Default: 0.5)
+#                     filter: Filter by document metadata
+#         """
+
+#         yield "Tìm kiếm thông tin\n"
+
+#         self.data.embed_data()
+#         # context = self.data.docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
+#         # context_max = self.data.docsearch.as_retriever(search_type='mmr', search_kwargs={"k": 3})
+#         # context_max_search = self.data.docsearch.max_marginal_relevance_search(user_message, k=3, fetch_k=10)
+
+#         search_kwargs = {
+#             "k": 2,
+        
+#         } if courseId == -1 else {
+#              "k": 4,
+#             'filter': {
+#                 'course': courseId,
+#             }
+#         }
+#         yield "Phân tích tài liệu\n"
+
+#         # print("KWARGS: ", search_kwargs)
+#         # context_with_course = self.data.docsearch.as_retriever(
+#         #                             search_type = 'similarity_score_threshold',
+#         #                             search_kwargs = search_kwargs
+#         #                         )
+#         # print("KWARGS: ", search_kwargs)
+#         context_with_course = self.data.docsearch.as_retriever(
+#                                     search_type = 'mmr',
+#                                     search_kwargs = search_kwargs
+#                                 )
+#         content =  context_with_course.invoke(user_message)[0].metadata
+
+#         yield "Nội dung sẳn sàng\n"
+#         #await asyncio.sleep(0.1)  # Small delay to ensure this message is sent first
+
+#         # prompt need "context", "question" and "course_id"
+
+#         # chain = (
+#         #     {"context": context_with_course , "question": RunnablePassthrough()}|
+#         #     self.prompt|
+#         #     self.model|
+#         #     StrOutputParser()
+#         # )
+        
+
+#         # res = chain.invoke(user_message)
+#         yield "&start&\n"
+#         if courseId != -1:
+#             chain = (
+#                 {"context": context_with_course, "question":RunnablePassthrough() }|
+#                 self.prompt|
+#                 self.model|
+#                 StrOutputParser()
+#             )
+
+#             for chunk in chain.stream(user_message):
+
+#                 yield chunk  # Yield each chunk as it's generated
+#         else:
+#             chain = (
+#                 self.prompt_remind_to_couse|
+#                 self.model1_5|
+#                 StrOutputParser()
+#             )
+#             course_name = ReminderService.get_coursename(int(content['course']))
+#             context = {
+#                 "course_id": int(content['course']),
+#                 "course_name": course_name
+#             }
+#             for chunk in chain.stream({"input": user_message, "context": context}):
+
+#                 yield chunk 
+
+
+from psycopg2.extras import execute_values
+from pgvector.psycopg2 import register_vector
 
 class RagBot(RootBot):
     def __init__(self):
         super().__init__()
         self.prompt = PROMPT_RAG_IMPROVE
         self.prompt_remind_to_couse = PROMPT_REMIND_TO_COURSE
-        self.data = LoadData()
+        self.data = LoadDataPg()
 
 
-    def rag(self, user_message, courseId):
+
+# Helper function: Get top 3 most similar documents from the database
+    def get_top3_similar_docs(self, query_embedding):
+        embedding_array = np.array(query_embedding)
+        # Register pgvector extension
+        register_vector(self.data.conn)
+        cur = self.data.conn.cursor()
+        # Get the top 3 most similar documents using the KNN <=> operator
+        cur.execute("SELECT content FROM embeddings ORDER BY embedding <=> %s LIMIT 3", (embedding_array,))
+        top3_docs = cur.fetchall()
+        return top3_docs
+
+
+
+    async def rag(self, user_message, courseId):
         """
             def as_retriever(self, **kwargs: Any) -> VectorStoreRetriever:
         Return VectorStoreRetriever initialized from this VectorStore.
@@ -36,40 +160,45 @@ class RagBot(RootBot):
                         1 for minimum diversity and 0 for maximum. (Default: 0.5)
                     filter: Filter by document metadata
         """
-        self.data.embed_data()
+
+        yield "Tìm kiếm thông tin\n"
+
+   
         # context = self.data.docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
         # context_max = self.data.docsearch.as_retriever(search_type='mmr', search_kwargs={"k": 3})
         # context_max_search = self.data.docsearch.max_marginal_relevance_search(user_message, k=3, fetch_k=10)
 
         search_kwargs = {
             "k": 2,
-
+        
         } if courseId == -1 else {
              "k": 4,
             'filter': {
                 'course': courseId,
             }
         }
+        yield "Phân tích tài liệu\n"
+
         # print("KWARGS: ", search_kwargs)
         # context_with_course = self.data.docsearch.as_retriever(
         #                             search_type = 'similarity_score_threshold',
         #                             search_kwargs = search_kwargs
         #                         )
         # print("KWARGS: ", search_kwargs)
-        context_with_course = self.data.docsearch.as_retriever(
-                                    search_type = 'mmr',
-                                    search_kwargs = search_kwargs
-                                )
-        content =  context_with_course.invoke(user_message)[0].metadata
-        print("content: ",content)
+        # context_with_course = self.data.docsearch.as_retriever(
+        #                             search_type = 'mmr',
+        #                             search_kwargs = search_kwargs
+        #                         )
+        # content =  context_with_course.invoke(user_message)[0].metadata
+        content = self.get_top3_similar_docs(self.data.get_embedding(user_message))
+        print(f"Content 1: {content[0][0]}")
+        print(f"Content 2: {content[1][0]}")
+        print(f"Content 3: {content[2][0]}")
+        yield "Nội dung sẳn sàng\n"
+        #await asyncio.sleep(0.1)  # Small delay to ensure this message is sent first
 
         # prompt need "context", "question" and "course_id"
-        chain = (
-            {"context": context_with_course, "question":RunnablePassthrough() }|
-            self.prompt|
-            self.model|
-            StrOutputParser()
-        )
+
         # chain = (
         #     {"context": context_with_course , "question": RunnablePassthrough()}|
         #     self.prompt|
@@ -78,25 +207,35 @@ class RagBot(RootBot):
         # )
         
 
-        res = chain.invoke(user_message)
-
+        # res = chain.invoke(user_message)
+        yield "&start&\n"
         if courseId != -1:
-            return res
-        
-        
-        chain = (
-            self.prompt_remind_to_couse|
-            self.model1_5|
-            StrOutputParser()
-        )
-        course_name = ReminderService.get_coursename(int(content['course']))
-        context = {
-            "course_id": int(content['course']),
-            "course_name": course_name
-        }
-        print('context', context)
-        return chain.invoke({"input": user_message, "context": context, "message": res})
-    
+            context_str = " \n ".join([content[i][0] if i < len(content) else "" for i in range(3)])
+
+            from langchain_core.runnables import RunnableMap
+
+            chain = (
+                self.prompt|
+                self.model|
+                StrOutputParser()
+            )
+            for chunk in chain.stream({"question": user_message, "context": context_str}):
+                yield chunk  # Yield each chunk as it's generated
+        else:
+            chain = (
+                self.prompt_remind_to_couse|
+                self.model1_5|
+                StrOutputParser()
+            )
+            course_name = ReminderService.get_coursename(int(content['course']))
+            context = {
+                "course_id": int(content['course']),
+                "course_name": course_name
+            }
+            for chunk in chain.stream({"input": user_message, "context": context}):
+
+                yield chunk 
+             
 def main():
     chat = RagBot()
     
