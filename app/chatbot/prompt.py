@@ -194,18 +194,18 @@ PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
 #         )
 PROMPT_SQL_QUERY = PromptTemplate.from_template(
             """
-            ## Expert persona: You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run. 
+            ## Expert persona: You are a POSTGRESQL expert. Given an input question, create a syntactically correct POSTGRESQL query to run. 
             ## Question: {question}
             ## User ID: {id}
             ## Database Structure: {database_structure}
-            ## Goal: Generate a correct and efficient MySQL query based on the input question.
+            ## Goal: Generate a correct and efficient POSTGRESQL query based on the input question.
             ## Instructions:
                 1. Construct a SELECT query to retrieve data relevant to the question.
                 2. Use the LIMIT clause to return at most 5 results, unless otherwise specified by the user.
                 4. Use only the column names present in the provided tables.
                 5. Ensure queries do not modify the database; use SELECT commands only.
                 6. Utilize the CURRENT_DATE function for queries involving "today."
-                7. Use "SELECT FROM_UNIXTIME(MAX(DATE))" for datetime columns stored as bigint in MySQL.
+                7. Use "SELECT FROM_UNIXTIME(MAX(DATE))" for datetime columns stored as bigint in POSTGRESQL.
             ## Constraints:
                 + Do not query columns that do not exist.
                 + Be precise about which column belongs to which table.
@@ -213,13 +213,13 @@ PROMPT_SQL_QUERY = PromptTemplate.from_template(
                 + Return the SQL code only.
                 + Do not call user by their id.
             ## Example:
-                - Question: "Tôi đang tham gia khoa học nào?"
+                - Question: "Tôi đang tham gia khóa học nào?"
                 - Output:   SELECT c.id AS course_id, c.fullname AS course_name, ue.timestart AS enrolment_start, ue.timeend AS enrolment_end
                             FROM mdl_user u
                             JOIN mdl_user_enrolments ue ON u.id = ue.userid
                             JOIN mdl_enrol e ON ue.enrolid = e.id
                             JOIN mdl_course c ON e.courseid = c.id
-                            WHERE u.id = :user_id
+                            WHERE u.id = {id}
                             ORDER BY ue.timestart DESC
                             LIMIT 5;
                 - Question: "Tôi đang có những bài quiz nào?",
@@ -229,7 +229,7 @@ PROMPT_SQL_QUERY = PromptTemplate.from_template(
                             JOIN mdl_enrol e ON ue.enrolid = e.id
                             JOIN mdl_course c ON e.courseid = c.id
                             JOIN mdl_quiz q ON q.course = c.id
-                            WHERE u.id = :user_id
+                            WHERE u.id = {id}
                             ORDER BY c.fullname, q.name
                             LIMIT 5;
                 - Question: "tôi đang có những assignment nào?", 
@@ -246,7 +246,7 @@ PROMPT_SQL_QUERY = PromptTemplate.from_template(
                                 JOIN mdl_assign a ON c.id = a.course
                                 LEFT JOIN mdl_assign_submission s ON a.id = s.assignment AND u.id = s.userid
                             WHERE
-                                u.id = :user_id
+                                u.id = {id}
                             ORDER BY
                             a.duedate;'
             ## Output:

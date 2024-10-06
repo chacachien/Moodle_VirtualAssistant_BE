@@ -50,7 +50,7 @@ class QueryBot(RootBot):
 
                         chain = (
                             self.sql_query_prompt
-                            | self.groq
+                            | self.model
                             | StrOutputParser()
                         )
                         execute_query = chain.invoke({"id": id,"question": question, "database_structure": database_structure })

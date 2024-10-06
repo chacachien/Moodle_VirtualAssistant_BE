@@ -85,7 +85,7 @@ class ChatBot(RootBot):
             role = self.chat_with_tool(user_message)
 
 
-        if role == 1:
+        if role == 10:
             async for chunk in self.ragBot.rag(user_message, courseId):
                 full_bot_response.append(chunk)
                 yield chunk
@@ -95,8 +95,8 @@ class ChatBot(RootBot):
 
 
 
-        elif role == 10:
-            async for chunk in self.queryBot.query(user_message, courseId):
+        elif role == 1:
+            async for chunk in self.queryBot.query(user_message, chatId):
                 full_bot_response.append(chunk)
                 yield chunk
 

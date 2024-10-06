@@ -23,12 +23,12 @@ async def get_history(
                     chatid: Annotated[int | None, Query()]=None,
                     #chat_service: ChatService = Depends(),
                     session:AsyncSession=Depends(get_session),
-                    user = Depends(auth_wrapper)
+                    #user = Depends(auth_wrapper)
                     ):
     #user =auth_wrapper(3)  # Passing chatId to the auth wrapper
 
-    if user == 0:
-        raise HTTPException(status_code=401, detail="Invalid token")
+    # if user == 0:
+    #     raise HTTPException(status_code=401, detail="Invalid token")
 
     print("GET HISTORY OF ", chatid)
     history = await ChatServiceV2.get_chat_history(chatid)
