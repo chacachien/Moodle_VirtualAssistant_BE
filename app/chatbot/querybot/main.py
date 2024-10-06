@@ -23,35 +23,34 @@ class QueryBot(RootBot):
         return text
 
 
-    def query(self, question: str, id: int):
-
-
+    async def query(self, question: str, id: int):
         structure_chain = (
             self.structure_prompt
             | self.model
             | StrOutputParser()
         )
         self.table_info = self.get_table_info() if self.table_info== '' else self.table_info
-
-        thres_hold = 3
+        print('PROMPT: ', self.structure_prompt)
+        print("----------")
+        threshold = 3
         flag = False
-        for j in range(thres_hold): 
+        query_result = ''
+        for j in range(threshold):
             if flag: break
             database_structure = structure_chain.invoke({ "question": question, "database_structure": self.table_info})
-            print('PROMPT: ', self.structure_prompt)
-            print("----------")
+
             print("DATABASE STRUCTURE: ",database_structure) 
             print("----------")
             sql_code = ''
             err = ''
-            query_result = ''
+
             for i in range(3):
                 try:
                     if err !='':
-                        require_prompt = self.sql_query_prompt
+
                         chain = (
-                            require_prompt
-                            | self.model
+                            self.sql_query_prompt
+                            | self.groq
                             | StrOutputParser()
                         )
                         execute_query = chain.invoke({"id": id,"question": question, "database_structure": database_structure })
@@ -64,6 +63,9 @@ class QueryBot(RootBot):
                         sql_code = execute_query
                         # try the sql query 
                         query_result  = self.db.run(execute_query)
+                        print("RESULT query: ", query_result)
+                        print("----------")
+
                         flag = True
                         break
                     else:
@@ -71,7 +73,7 @@ class QueryBot(RootBot):
                         # call to get the sql 
                         chain = (
                             require_prompt
-                            | self.model
+                            | self.groq
                             | StrOutputParser()
                         )
                         execute_query = chain.invoke({"id": id, "question": question, "database_structure": database_structure, "SQL_code": sql_code, 'Error':{err}})
@@ -86,17 +88,21 @@ class QueryBot(RootBot):
                     print(e)
                     err = e
                     continue
-        print("query_result: ",query_result)
-        print("----------")
+            print("query_result: ",query_result)
+        print("------------------------------------------------------------------------------------------")
 
         answer_prompt = PROMPT_SQL_ANSWER
         chain = (
             answer_prompt
-            | self.model
+            | self.model1_5
             | StrOutputParser()
         )
-        final_result = chain.invoke({'id': id, "question": question, "result": query_result})
-        return final_result
+        #final_result = chain.invoke({'id': id, "question": question, "result": query_result})
+        full_bot_message = []
+        for chunk in chain.stream({'id': id, "question": question, "result": query_result}):
+            yield chunk
+
+
     
     def test(self):
         while True:

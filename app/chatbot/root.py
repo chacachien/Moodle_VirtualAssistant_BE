@@ -19,16 +19,19 @@ class RootBot:
         #   huggingfacehub_api_token=os.getenv('HUGGINGFACE_API_KEY')
         # )
         self.model = ChatGoogleGenerativeAI(model="gemini-1.0-pro-latest")
-        self.model_openai = ChatOpenAI(model="gpt-3.5-turbo", temperature=0,  api_key=os.getenv("OPENAI_API_KEY"))
+        self.model_openai = ChatOpenAI(model="gpt-3.5-turbo", temperature=0,  api_key=os.getenv("OPENAI_API_KEY"), max_tokens=1000)
         self.groq = ChatGroq(
                     #model="mixtral-8x7b-32768",
                     #model = "llama3-groq-8b-8192-tool-use-preview",
-                    model ="llama3-70b-8192",
+                    #model ="llama3-70b-8192",
+                    model = "gemma2-9b-it",
+                    #model = ""
                     temperature=0,
                     max_tokens=None,
                     timeout=None,
                     max_retries=2,
                     )
+        
 
 def main():
     import time

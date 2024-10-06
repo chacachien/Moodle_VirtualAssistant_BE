@@ -59,7 +59,7 @@ async def send_message(
 
     # Return the streamed response to the client
     return StreamingResponse(streaming_response(), media_type='text/plain')
-    return StreamingResponse(await chat_service.send_message(message, session), media_type='text/plain')
+    return StreamingResponse(await send_message(message, session), media_type='text/plain')
     # if user == 'fail':
     #     raise HTTPException(status_code=401, detail="Invalid token")
 

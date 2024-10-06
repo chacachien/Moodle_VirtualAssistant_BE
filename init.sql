@@ -100,13 +100,14 @@ TABLESPACE pg_default;
 --- create table embedding
 CREATE EXTENSION IF NOT EXISTS vector
 
-CREATE TABLE embeddings (
-            id bigserial primary key, 
+CREATE TABLE embeddings_v2 (
+            id bigserial primary key,
+            courseId interger,
             title text,
             url text,
             content text,
             tokens integer,
             embedding vector(768)
             )
-ALTER TABLE embeddings
+ALTER TABLE embeddings_v2
 ADD CONSTRAINT unique_url UNIQUE (url);

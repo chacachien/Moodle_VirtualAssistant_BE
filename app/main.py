@@ -4,7 +4,8 @@ from fastapi import FastAPI
 from fastapi_sqlalchemy import DBSessionMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from app.core.config import settings
-from app.api.api_v1.api import router
+
+from app.api.api_v2.api import router
 
 from app.helpers.exception_handler import CustomException, http_exception_handler
 
@@ -50,7 +51,7 @@ def get_application() -> FastAPI:
     )
     #app.add_middleware(DBSessionMiddleware, db_url=settings.DATABASE_URL)
 
-    app.include_router(router, prefix=settings.API_V1_STR)
+    app.include_router(router, prefix=settings.API_V2_STR)
     app.add_exception_handler(CustomException, http_exception_handler)
     #add_timing_middleware(app, record=logger.info, prefix="app")
 

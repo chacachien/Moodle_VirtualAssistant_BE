@@ -18,7 +18,35 @@ PROMPT_CHOOSE_TOOLS_TEMPLATE = """You are an assistant that has access to the fo
 
 PROMPT_CHOOSE_TOOLS = PromptTemplate.from_template(PROMPT_CHOOSE_TOOLS_TEMPLATE)
 
+PROMPT_CHOOSE_TOOLS_V2 = PromptTemplate.from_template("""
+            ##Expert persona: You are an assistant that has access to the following set of tools. Here are the names and descriptions for each tool:
+               Tool 1 => Used for casual conversation or general queries.
+               Tool 2 =>  Used for retrieving information based on search results or external knowledge.
+                Tool 3 =>  Used for querying specific data like course details or user participation.
+            ##GOAL: Given the user input, return the name of the tool to use. The input of the tool is {input}.
+            ##Instructions:
+                1. Review the user input.
+                2. Determine the most appropriate tool based on the nature of the query.
+                3. Return the number corresponding of the tool to use.
+                4. If unsure, return a text remind the user: choose which is the person you want to talk to - professor or assistant or friend.
+            ## Constraints:
+                + Return your response as a number corresponding to the tool. (1, 2, or 3) 
+                + Just use those tool that given, not try to access anything else. If you don't know what is the right tool.
+                + If the result is the number, just return only one character of the number.
+                
+            ##INPUT: {input}
+            Remember Return your response as a JSON blob with 'name' and 'arguments' 
+            EXAMPLE: 
+                    + "input": "Chào cậu" --> 1
+                    + "input": "Giải thích sự tăng trưởng của Việt Nam" --> 2
+                    + "input": "tôi đang tham gia những khóa học nào" --> 3
+            RESPONSE: 
+"""                                                 
+)
+
+
 PROMPT_CHOOSE_TOOLS_V1 = ChatPromptTemplate.from_messages(
+
     [
         ("system", PROMPT_CHOOSE_TOOLS_TEMPLATE),
         MessagesPlaceholder("history"),
@@ -58,7 +86,7 @@ PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
                 1. Use the provided course content to craft accurate responses.
                 2. If uncertain, politely inform the user that you don't have the answer.
                 3. When confident, provide concise and insightful assistance, not just itemize.
-
+            
             ## Constraints:
                 + Only use the content of Context to answer user.
                 + Ensure responses remain pertinent to the course material.
@@ -78,8 +106,8 @@ PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
             1. Use the information of the course in the system to remind the user to go to the course page that is relevant to the user's question.
             2. If the course information is not relevant to the user's question, just say the system does not have any course that is relevant to the user's question and do nothing further. 
             3. Otherwise, if the user message and course information match, remind the user to visit the course page to get more information. Link to course page: 
-                course/view.php?id=[courseid]
-            4. Response the link as a markdown button. example: [Visit OpenAI!](https://www.openai.com/)
+                http://localhost:8080/moodle4113/course/view.php?id=[courseid]
+            4. Response the link as a markdown button. example: [Khóa học lịch sử việt phục!](http://localhost:8080/moodle4113/course/view.php?id=134)
         ## Constraints:
             + Ensure the reminder is polite and encouraging.
             + Provide a friendly and helpful message to the user.
@@ -354,12 +382,14 @@ PROMPT_REWRITE_TEMPLATE = """
                 1. Review the conversation history and the user's latest input.
                 2. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.
                 3. If the user's question is already clear, simply return the same question.
+                4. Use the same language with user to response the message.
             ## Example:
                 + Input: Lớp nào có nhiều học sinh hơn.
                 + Output: Giữa Lớp 3 với lớp 4 thì lớp nào có nhiều học sinh hơn.
             ## Contraints:
                 + Do not add or answer the question, only rephrase for clarity.
                 + Ensure the rephrased question is clear and comprehensive.
+                + Make sure to use familiar language with user's language.
             ## Output:
                 // Your rephrased question here
             """

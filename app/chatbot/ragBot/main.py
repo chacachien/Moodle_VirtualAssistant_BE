@@ -1,6 +1,10 @@
 from calendar import c
 from re import search
 from time import sleep
+
+import groq
+from passlib.utils.handlers import parse_int
+
 from app.chatbot.root import RootBot
 from app.chatbot.prompt import PROMPT_RAG, PROMPT_RAG_IMPROVE, PROMPT_REMIND_TO_COURSE
 from langchain.schema.output_parser import StrOutputParser
@@ -134,7 +138,7 @@ class RagBot(RootBot):
         register_vector(self.data.conn)
         cur = self.data.conn.cursor()
         # Get the top 3 most similar documents using the KNN <=> operator
-        cur.execute("SELECT content FROM embeddings ORDER BY embedding <=> %s LIMIT 3", (embedding_array,))
+        cur.execute("SELECT content, courseid FROM embeddings_v2 ORDER BY embedding <=> %s LIMIT 3", (embedding_array,))
         top3_docs = cur.fetchall()
         return top3_docs
 
@@ -163,20 +167,19 @@ class RagBot(RootBot):
 
         yield "Tìm kiếm thông tin\n"
 
-   
         # context = self.data.docsearch.as_retriever(search_type="similarity", search_kwargs={"k": 3})
         # context_max = self.data.docsearch.as_retriever(search_type='mmr', search_kwargs={"k": 3})
         # context_max_search = self.data.docsearch.max_marginal_relevance_search(user_message, k=3, fetch_k=10)
 
-        search_kwargs = {
-            "k": 2,
+        # search_kwargs = {
+        #     "k": 2,
         
-        } if courseId == -1 else {
-             "k": 4,
-            'filter': {
-                'course': courseId,
-            }
-        }
+        # } if courseId == -1 else {
+        #      "k": 4,
+        #     'filter': {
+        #         'course': courseId,
+        #     }
+        # }
         yield "Phân tích tài liệu\n"
 
         # print("KWARGS: ", search_kwargs)
@@ -190,11 +193,12 @@ class RagBot(RootBot):
         #                             search_kwargs = search_kwargs
         #                         )
         # content =  context_with_course.invoke(user_message)[0].metadata
+
         content = self.get_top3_similar_docs(self.data.get_embedding(user_message))
-        print(f"Content 1: {content[0][0]}")
-        print(f"Content 2: {content[1][0]}")
-        print(f"Content 3: {content[2][0]}")
-        yield "Nội dung sẳn sàng\n"
+        #print(f"Whole content: {content}")
+        # print(f"Content 1: {content[0][0]}")
+        # print(f"Content 2: {content[1][0]}")
+        # print(f"Content 3: {content[2][0]}")
         #await asyncio.sleep(0.1)  # Small delay to ensure this message is sent first
 
         # prompt need "context", "question" and "course_id"
@@ -205,37 +209,41 @@ class RagBot(RootBot):
         #     self.model|
         #     StrOutputParser()
         # )
-        
+
 
         # res = chain.invoke(user_message)
-        yield "&start&\n"
-        if courseId != -1:
+        #print(f"{len(content)} must in LIST COURSE: {type(content[0][1])}, {content[1][1]}, {content[2][1]}")
+        yield "Nội dung sẳn sàng\n"
+        list_course = [content[0][1], content[1][1], content[2][1]]
+        if courseId != -1 and (courseId in list_course):
             context_str = " \n ".join([content[i][0] if i < len(content) else "" for i in range(3)])
-
-            from langchain_core.runnables import RunnableMap
-
             chain = (
                 self.prompt|
-                self.model|
+                #self.model_openai|
+                self.groq|
                 StrOutputParser()
             )
+            yield "&start&\n"
             for chunk in chain.stream({"question": user_message, "context": context_str}):
                 yield chunk  # Yield each chunk as it's generated
         else:
+            import statistics
+            mode = statistics.mode(list_course)
+            course_name = ReminderService.get_coursename(mode)
             chain = (
                 self.prompt_remind_to_couse|
-                self.model1_5|
+                #self.model1_5|
+                self.groq|
                 StrOutputParser()
             )
-            course_name = ReminderService.get_coursename(int(content['course']))
             context = {
-                "course_id": int(content['course']),
+                "course_id": mode,
                 "course_name": course_name
             }
+            yield "&start&\n"
             for chunk in chain.stream({"input": user_message, "context": context}):
+                yield chunk
 
-                yield chunk 
-             
 def main():
     chat = RagBot()
     
@@ -334,3 +342,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+

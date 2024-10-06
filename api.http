@@ -1,28 +1,27 @@
 #health check
-GET http://localhost:5001/api/v1/
+GET http://localhost:5001/api/v2/
 
 
-### update all document
+### update all document --- BE CAREFUL
 GET http://localhost:5001/api/v1/document/all
 
 
-### update all document into postgres
-GET http://localhost:5001/api/v1/documentpostgre/all
+### update all document into postgres --- BE CAREFUL
+GET http://localhost:5001/api/v2/documentpostgre/all
 
-
-# get chat history
 ###
-GET http://localhost:8000/api/v1/chat?chatid=2
+# get chat history
+GET http://localhost:5001/api/v2/chat?chatid=1
 Content-Type: application/json
-Authorization: Bearer c53719b17b93ba017e6864ff3adb3e28
+Authorization: Bearer 75921f4e01b6caad0dc2d0f966b876da
 
 ###
 # send message
-POST http://localhost:5001/api/v1/chat
+POST http://localhost:5001/api/v2/chat
 Content-Type: application/json
 
 {
-    "content": "make a poetry about rust",
+    "content": "make a poetry about cloud",
     "chatId": 2,
     "role": 1,
     "courseId": 11
@@ -45,6 +44,18 @@ DELETE http://localhost:8000/api/v1/chat/2
 
 
 ###
-GET http://localhost:8000/api/v1/get_user_info
+GET http://localhost:5001/api/v2/get_user_info
 Content-Type: application/json
-Authorization: Bearer c53719b17b93ba017e6864ff3adb3e28
+Authorization: Bearer 75921f4e01b6caad0dc2d0f966b876da
+
+
+
+### SET UP TIME REMINDER
+GET http://localhost:5001/api/v2/settime
+Content-Type: application/json
+
+{
+    "userId": 2,
+    "status": 0,
+    "time": "7:45"
+}

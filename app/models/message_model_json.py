@@ -12,7 +12,7 @@ class TypeRoleChoices(Enum):
 class MessageBase(SQLModel):
     content: str 
     chatId: int
-    role: int 
+    role: TypeRoleChoices
 
 class MessageCreate(MessageBase):
     courseId: int

@@ -295,7 +295,6 @@ class ReminderService(object):
     def get_coursename(courseid):
         try:
             with ReminderService.engine.connect() as connection:
-
                 query = text("SELECT fullname FROM mdl_course where id = :id")
                 result = connection.execute(
                         query.bindparams(

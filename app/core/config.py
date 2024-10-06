@@ -39,6 +39,7 @@ def get_url_vector():
     return f'postgresql://{user}:{password}@{server}:{port}/{db}'
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
+    API_V2_STR: str = "/api/v2"
     #SECRET_KEY: str = os.getenv("SECRET_KEY")
     PROJECT_NAME: str = os.getenv("PROJECT_NAME")
     DATABASE_URL: str = get_url()

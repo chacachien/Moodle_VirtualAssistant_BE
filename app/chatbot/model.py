@@ -1,7 +1,9 @@
 from asyncio import get_event_loop
 from chunk import Chunk
 import collections
-from app.chatbot.prompt import PROMPT_CHOOSE_TOOLS, PROMPT_CHOOSE_TOOLS_V1, PROMPT_REWRITE_QUESTION
+
+from sympy import fu
+from app.chatbot.prompt import PROMPT_CHOOSE_TOOLS, PROMPT_CHOOSE_TOOLS_V1, PROMPT_REWRITE_QUESTION, PROMPT_CHOOSE_TOOLS_V2
 from app.chatbot.tools import Tool
 from app.chatbot.root import RootBot
 from app.chatbot.querybot.main import QueryBot
@@ -16,15 +18,13 @@ import json
 from langchain.schema import HumanMessage, AIMessage
 
 class ChatBot(RootBot):
-
     def __init__(self):
         super().__init__()
         self.__chat_history_buffer = collections.deque([], maxlen=10)
-        self.prompt = PROMPT_CHOOSE_TOOLS
         self.queryBot = QueryBot()
         self.talkBot = TalkBot()
         self.ragBot = RagBot()
-    
+
     def get_history(self):
         # if not relevant_message: return None
         # non_dup_mes = []
@@ -46,8 +46,7 @@ class ChatBot(RootBot):
 
     def chat_with_tool(self, user_message):
 
-        history = self.__chat_history_buffer
-        user_message = self.improve_message(history, user_message)
+        user_message = self.improve_message(user_message)
         
         print('NEW USER MESSAGE: ',user_message)
         
@@ -65,31 +64,41 @@ class ChatBot(RootBot):
         res = chain.invoke({"rendered_tools":rendered_tools, "input": user_message })
         return res , user_message
     
+    def chose_tool(self, user_message):
+        chain = PROMPT_CHOOSE_TOOLS_V2 | self.groq | StrOutputParser()
+        res = chain.invoke({"input": user_message})
+        return res
 
-    def improve_message(self, history, user_message):
+    def improve_message(self, user_message):
         prompt = PROMPT_REWRITE_QUESTION
-        chain = prompt | self.model1_5 | StrOutputParser()
-        res = chain.invoke({"history": history, "input": user_message })
+        chain = prompt | self.groq | StrOutputParser()
+        res = chain.invoke({"history": self.__chat_history_buffer, "input": user_message })
+        print(f"MESSAGE AFTER IMPROVE: {res}")
         return res
 
 
     async def get_response(self, user_message, chatId, courseId, role):
-        # chain = self.talkBot.prompt | self.talkBot.model | StrOutputParser()
-        # for chunk in chain.stream({"context":[], "input":user_message}):
-        #     print("CHUNKKKKKKKKKK: ",   chunk)
-        #     yield chunk
+
+        full_bot_response = []
+        user_message = self.improve_message(user_message)
+        if role == 0:
+            role = self.chat_with_tool(user_message)
+
 
         if role == 1:
             async for chunk in self.ragBot.rag(user_message, courseId):
+                full_bot_response.append(chunk)
                 yield chunk
         # if role ==0:
         #     tool, new_user_message  = self.chat_with_tool(user_message)
-            
 
-        # elif role == 1:
-        #     async for chunk in self.ragBot.rag(user_message, courseId):
-        #         yield chunk
 
+
+
+        elif role == 10:
+            async for chunk in self.queryBot.query(user_message, courseId):
+                full_bot_response.append(chunk)
+                yield chunk
 
         # elif role ==2:
         #     pass
@@ -119,13 +128,13 @@ class ChatBot(RootBot):
         #     print('TOOL QUERY')
         #     res = self.queryBot.query(new_user_message, chatId)
 
-        # memory_data = {"user": user_message, "ai": res}
-        # data_string = json.dumps(memory_data)
-        # self.__chat_history_buffer.append(data_string)
+        bot_message = ''.join(full_bot_response)
+        self.__chat_history_buffer.append({"user": user_message, "ai": bot_message})
+        print("HISTORY: ", self.__chat_history_buffer)
         # e = time.time()
         # print("TIME: ", e-s)
         #return res
-    
+
 
     def test_chatbot_with_tools(self):
         while True:
