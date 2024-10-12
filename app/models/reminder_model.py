@@ -20,6 +20,15 @@ class ReminderBase(SQLModel):
 class ReminderCreate(ReminderBase):
     pass
 
+class RemiderContent:
+    name:str
+    title:str
+    user:str
+    course:int
+    type_action:str
+    time_action: datetime = Field(default=None)
+    time_reminder: datetime = Field(default=None)
+
 class ReminderRead(SQLModel):
     chatId: int
 

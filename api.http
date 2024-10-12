@@ -11,7 +11,7 @@ GET http://localhost:5001/api/v2/documentpostgre/all
 
 ###
 # get chat history
-GET http://localhost:5001/api/v2/chat?chatid=1
+GET http://localhost:5001/api/v2/chat?chatid=2
 Content-Type: application/json
 Authorization: Bearer 75921f4e01b6caad0dc2d0f966b876da
 
@@ -39,7 +39,7 @@ Content-Type: application/json
 }
 ### 
 # delete chat
-DELETE http://localhost:8000/api/v1/chat/2
+DELETE http://localhost:5001/api/v2/chat?chatid=2
  
 
 

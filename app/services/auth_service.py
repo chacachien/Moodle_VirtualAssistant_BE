@@ -18,7 +18,8 @@ def auth_wrapper_lamda(chatId):
 
 def auth_wrapper(auth: HTTPAuthorizationCredentials = Security(HTTPBearer())):
     try:
-        #print("AUTH: ", auth) 
+        print("AUTH: ", auth)
+        # loop and wait until get response.
         moodle_url = f"{os.getenv("BASE_URL")}/moodle4113"
         #print(f"{moodle_url}")
         # API endpoint to get user info (adjust the endpoint as needed)
@@ -27,7 +28,7 @@ def auth_wrapper(auth: HTTPAuthorizationCredentials = Security(HTTPBearer())):
         moodle_url = api_endpoint + "?wstoken=" + str(auth.credentials) + "&moodlewsrestformat=json"
         functionname = "core_user_get_users_by_field"   
         serverurl = moodle_url + '&wsfunction=' + functionname
-        username=1
+        username=2
         params = {"field" : "id"}
         values = {}
         values["values[0]"] = username
@@ -40,6 +41,6 @@ def auth_wrapper(auth: HTTPAuthorizationCredentials = Security(HTTPBearer())):
             id = data[0]["id"]
             print("USER ID: ", id)
             return id
-    except:
-        pass
+    except Exception as e:
+        print(e)
     return 0

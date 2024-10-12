@@ -271,3 +271,54 @@ class ChatServiceV2(object):
         finally:
             # Close the database connection
             await ChatServiceV2.close_db_connection(connection)
+
+    @staticmethod
+    async def delete_message(chat_id: int):
+        connection = await ChatServiceV2.get_db_connection()
+        try:
+            # SQL query to update the bot's message
+            sql = """
+                       DELETE message_bot
+                       WHERE chat_id = $1
+                   """
+
+            # Execute the query with the new bot message
+            updated_content = await connection.execute(sql, chat_id)
+
+            # Return the updated content as a result
+            return {"updated_content": updated_content}
+        except Exception as e:
+            print(f"Error updating bot message: {e}")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
+        finally:
+            await connection.close()
+
+
+        # try:
+        #     async with session.begin():
+        #         # Fetch messages to be deleted
+        #         query = select(Message).where(Message.chatId == chatId)
+        #         result = await session.execute(query)
+        #         message_history = result.scalars().all()
+        #
+        #         if not message_history:
+        #             return []
+        #
+        #         # Add messages to MessageDeleted table
+        #         for message in message_history:
+        #             message_deleted = MessageDeleted(
+        #                 content=message.content,
+        #                 chatId=message.chatId,
+        #                 role=TypeRoleChoices.USER
+        #             )
+        #             session.add(message_deleted)
+        #
+        #         # Delete messages from Message table
+        #         query = delete(Message).where(Message.chatId == chatId)
+        #         await session.execute(query)
+        #         await session.commit()
+        #     return "Messages deleted successfully"
+        # except Exception as e:
+        #     print(e)
+        #     raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
+        #
