@@ -59,3 +59,20 @@ Content-Type: application/json
     "status": 0,
     "time": "7:45"
 }
+
+
+###
+POST http://localhost:5001/api/v2/reminder
+Content-Type: application/json
+
+{
+    "name": "quiz",
+    "title": "câu hỏi ôn tập",
+    "user_id": 1,
+    "user": "Phat",
+    "course_id": 2,
+    "course": "Nôm",
+    "type_action": "was created",
+    "time_action": "2024-10-14 00:57:02 +07",
+    "time_reminder": "2024-10-14 00:57:02 +07"
+}
