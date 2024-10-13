@@ -23,7 +23,7 @@ class ReminderService(object):
                 query = insert(Reminder).values(
                     type=reminder.type,
                     content=reminder.content,
-                    chatId=reminder.chatId,
+                    chat_id=reminder.chat_id,
                     time_remind=reminder.time_remind
                 )
                 connection.execute(
