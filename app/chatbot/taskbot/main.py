@@ -8,7 +8,7 @@ from app.services.schedule import ReminderService
 from app.services.label_service import LabelService
 import json
 from datetime import datetime, time
-from app.chatbot.ragBot.data import LoadData
+from app.chatbot.ragBot.pgData import LoadData
 
 class TaskHandle():
     def __init__(self):
@@ -28,7 +28,7 @@ class TaskHandle():
             return True
         return False
 
-
+    # move done
     def check_quiz(self, u_c):
         print("CHECK QUIZ: ", u_c)
         for row in u_c:
@@ -67,7 +67,8 @@ class TaskHandle():
                         time_close = datetime.fromtimestamp(time_close)
                         time_remind = time_close - timedelta(days = 1)
                         content = self.reminder.create_content_reminder('quiz',title, userid, courseid, 'will close', time_close, time_remind)
-    
+
+    # move done
     def check_assign(self, u_c):
         print("CHECK ASSING: ", u_c)
 
@@ -103,7 +104,7 @@ class TaskHandle():
                         time_close = datetime.fromtimestamp(time_close)
                         time_remind = time_close - timedelta(days = 1)
                         content = self.reminder.create_content_reminder('assignment',title, userid, courseid, 'due date', time_close, time_remind)
-    
+    # move done
     def check_chapter(self, u_c):
         print("CHECK CHAPTER: ", u_c)
         for row in u_c:
@@ -227,8 +228,6 @@ class TaskHandle():
 
                 
 def main():
-    time_action = datetime.now()
-    time_remind = datetime.now() + timedelta(seconds=10) 
     taskBot = TaskHandle()
     taskBot.check_label_change()
 

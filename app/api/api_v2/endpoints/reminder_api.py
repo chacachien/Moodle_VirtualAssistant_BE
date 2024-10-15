@@ -18,9 +18,7 @@ pusher_client = pusher.Pusher(
 )
 
 router = APIRouter()
-
 reminderBot = Reminder()
-
 
 @router.post("/reminder")
 async def get_reminder(reminder: RemiderContent):

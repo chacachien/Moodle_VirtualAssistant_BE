@@ -2,7 +2,6 @@ from asyncio import get_event_loop
 from chunk import Chunk
 import collections
 
-from sympy import fu
 from app.chatbot.prompt import PROMPT_CHOOSE_TOOLS, PROMPT_CHOOSE_TOOLS_V1, PROMPT_REWRITE_QUESTION, PROMPT_CHOOSE_TOOLS_V2
 from app.chatbot.tools import Tool
 from app.chatbot.root import RootBot

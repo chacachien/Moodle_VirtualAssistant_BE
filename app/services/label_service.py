@@ -37,9 +37,34 @@ class LabelService(object):
                 return label_list
         except Exception as e:
             print(e)
-
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
-    
+
+    @staticmethod
+    def get_one_label(label_id):
+        try:
+            with LabelService.engine.connect() as connection:
+                query = text('SELECT * FROM mdl_label where id=:id')
+                result = connection.execute(query, {id: label_id})
+                row = result.fetchone()
+                # convert result to json and return
+                if row:
+
+                    print(row)
+                    label = {
+                        'id': row[0],
+                        'course': row[1],
+                        'name': row[2],  # Assuming the name field is the first column in the query result
+                        'intro': row[3],
+                        'timemodified': row[5]}
+
+
+                    return label
+                return None
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
+
+
 def main():
 
     lis_Label = LabelService.get_all_label()

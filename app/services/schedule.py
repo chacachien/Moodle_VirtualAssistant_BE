@@ -1,5 +1,5 @@
 from app.models.reminder_model import *
-from app.models.message_model import Message, MessageCreate, TypeRoleChoices
+from app.models.message_model import MessageCreate, TypeRoleChoices
 from sqlmodel import select, delete, insert
 from fastapi import HTTPException
 from starlette import status

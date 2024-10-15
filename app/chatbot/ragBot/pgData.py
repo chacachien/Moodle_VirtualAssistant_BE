@@ -3,12 +3,6 @@ import math
 import token
 
 from langchain_text_splitters import CharacterTextSplitter, RecursiveCharacterTextSplitter
-from langchain_community.document_loaders import TextLoader
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_community.document_loaders import GoogleDriveLoader
-from numpy import mat
-
-from sympy import Q
 from app.core.config import get_url_notsync, get_url_vector
 from sqlalchemy import create_engine, MetaData, Table, text
 from app.services.label_service import LabelService
@@ -23,6 +17,7 @@ import psycopg2
 import pgvector
 from psycopg2.extras import execute_values
 from pgvector.psycopg2 import register_vector
+from langchain_openai import OpenAIEmbeddings
 
 import numpy as np
 
@@ -52,7 +47,8 @@ class LoadData:
         ###
         self.vietnamese_model = 'dangvantuan/vietnamese-embedding'
         ## use tokenize vietnamese-embedding from pyvi.vitokenizer
-        self.embeddings = HuggingFaceEmbeddings(model_name=self.vietnamese_model)
+        #self.embeddings = HuggingFaceEmbeddings(model_name=self.vietnamese_model)
+        self.embeddings = OpenAIEmbeddings(model="text-embedding-3-large", dimensions=768)
 
         #self.embeddings = HuggingFaceEmbeddings(model_name=self.vietnamese_model)
 
@@ -124,7 +120,8 @@ class LoadData:
                 f'doc{clean_data["id"]}_chunk{j}',  # URL (or document identifier for chunk)
                 intro_chunk,  # Content
                 len(intro_chunk.split()),  # Tokens (word count in the chunk)
-                np.array(self.get_embedding(intro_chunk))  # data type: vector
+                np.array(self.get_embedding(intro_chunk)),  # data type: vector
+                clean_data['id']
             )
             for j, intro_chunk in enumerate(clean_data['intro'])
         ]
@@ -133,13 +130,15 @@ class LoadData:
 
         register_vector(self.conn)
         cur = self.conn.cursor()
-        execute_values(cur, """INSERT INTO embeddings_v2 (courseid, title, url, content, tokens, embedding) VALUES %s ON CONFLICT (url) 
+        execute_values(cur, """INSERT INTO embeddings_v2 (courseid, title, url, content, tokens, embedding, labelid) VALUES %s ON CONFLICT (url) 
                                 DO UPDATE SET 
                                 courseid = excluded.courseId,
                                 title = excluded.title,
                                 content = excluded.content,
                                 tokens = excluded.tokens,
-                                embedding = excluded.embedding""", data_list)
+                                embedding = excluded.embedding,
+                                labelid = excluded.labelid
+                                """, data_list)
 
         self.conn.commit()
 
@@ -167,6 +166,7 @@ class LoadData:
             f'CREATE INDEX ON embeddings_v2 USING ivfflat (embedding vector_cosine_ops) WITH (lists = {num_lists});')
 
         self.conn.commit()
+
 
 
 def main():

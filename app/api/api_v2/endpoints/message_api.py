@@ -42,23 +42,24 @@ async def send_message(
                     session: AsyncSession = Depends(get_session),
                     #user=Depends(auth_wrapper)
                     ):
-    # if user == 0:
-    #     raise HTTPException(status_code=401, detail="Invalid token")
-    response_generator, full_bot_response, message_id = await ChatServiceV2.send_message(message)
-    async def streaming_response():
-        async for chunk in response_generator:
-            yield chunk
+    try:
+        # if user == 0:
+        #     raise HTTPException(status_code=401, detail="Invalid token")
+        response_generator, full_bot_response, message_id = await ChatServiceV2.send_message(message)
+        async def streaming_response():
+            async for chunk in response_generator:
+                yield chunk
 
-        # Once the response is finished, save the full response to the database
-        bot_message_content = ''.join(full_bot_response)
-        if bot_message_content:
-            await ChatServiceV2.update_bot_message(message_id,message.chatId, bot_message_content)
-            # Save the bot's message to the database
-
-
-    # Return the streamed response to the client
-    return StreamingResponse(streaming_response(), media_type='text/plain')
-
+            # Once the response is finished, save the full response to the database
+            bot_message_content = ''.join(full_bot_response)
+            if bot_message_content:
+                await ChatServiceV2.update_bot_message(message_id,message.chatId, bot_message_content)
+                # Save the bot's message to the database
+        # Return the streamed response to the client
+        return StreamingResponse(streaming_response(), media_type='text/plain')
+    except Exception as e:
+        logger.error(e)
+        return "Something went wrong"
 
 @router.delete("/chat")
 async def delete_message(
