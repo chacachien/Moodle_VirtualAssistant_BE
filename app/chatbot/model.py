@@ -16,6 +16,7 @@ from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from operator import itemgetter
 import json
 from langchain.schema import HumanMessage, AIMessage
+import re
 
 class ChatBot(RootBot):
     def __init__(self):
@@ -67,7 +68,13 @@ class ChatBot(RootBot):
     def chose_tool(self, user_message):
         chain = PROMPT_CHOOSE_TOOLS_V2 | self.groq | StrOutputParser()
         res = chain.invoke({"input": user_message})
-        return res
+
+        match = re.search(r'\d+', res)
+
+        if match:
+            return int(match.group())
+        else:
+            return 1
 
     def improve_message(self, user_message):
         prompt = PROMPT_REWRITE_QUESTION
@@ -82,7 +89,7 @@ class ChatBot(RootBot):
         full_bot_response = []
         user_message = self.improve_message(user_message)
         if role == 0:
-            role = self.chat_with_tool(user_message)
+            role = self.chose_tool(user_message)
 
 
         if role == 1:
@@ -94,11 +101,15 @@ class ChatBot(RootBot):
         #     tool, new_user_message  = self.chat_with_tool(user_message)
 
 
-        elif role == 10:
+        elif role == 2:
             async for chunk in self.queryBot.query(user_message, chatId):
                 full_bot_response.append(chunk)
                 yield chunk
+        elif role == 3:
+            async for chunk in self.talkBot.talk(user_message, courseId):
+                full_bot_response.append(chunk)
 
+                yield chunk
         # elif role ==2:
         #     pass
         # elif role == 3:

@@ -31,7 +31,6 @@ class RootBot:
                     timeout=None,
                     max_retries=2,
                     )
-        
 
 def main():
     import time

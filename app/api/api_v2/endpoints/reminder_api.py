@@ -7,6 +7,8 @@ from app.models.reminder_model import RemiderContent
 
 import pusher
 
+from app.services.chat_service import ChatServiceV2
+
 pusher_client = pusher.Pusher(
     app_id='1879635',
     key='9de03240cc8a5c22c658',
@@ -27,16 +29,11 @@ async def get_reminder(reminder: RemiderContent):
     #     raise HTTPException(status_code=401, detail="Invalid token")
     # Create the message: Phat
     message = reminderBot.create_content_reminder(reminder)
-
     # end create message
-
-    # Template data
-    user_id = 1
-    content = "A quiz has been added for u."
-
-    # Send to user: DUY
-    # Set push event to user here
+    user_id = reminder.user_id
     pusher_client.trigger('moodle-remind', f"{user_id}", {'message': f"{message}"})
 
-    # End sen to user
+    reminderBot.create_reminder_database(reminder.name, reminder.user_id, reminder.time_reminder, message);
+    await ChatServiceV2.insert_message("",message, 4, user_id)
+
     return message

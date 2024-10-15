@@ -217,10 +217,8 @@ class ChatServiceV2(object):
 
     @staticmethod
     async def send_message(message: MessageCreate):
-
         try:
             full_bot_response = []
-
             async def response_generator():
                 try:
                     flag = False
@@ -261,8 +259,6 @@ class ChatServiceV2(object):
             connection = await ChatServiceV2.get_db_connection()
             if connection is None: return None, None, None
             message_id = await connection.fetchval(sql,message.chatId, content_json)
-
-
             return response_generator(), full_bot_response, message_id
 
         except Exception as e:
@@ -273,13 +269,43 @@ class ChatServiceV2(object):
             await ChatServiceV2.close_db_connection(connection)
 
     @staticmethod
+    async def insert_message(user_message, bot_message, bot_role, chat_id):
+
+        content = {
+            "user": {
+                "message": user_message,
+                "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # Current timestamp
+            },
+            "bot": {
+                "message": bot_message,
+                "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],  # Current timestamp
+                "role": bot_role
+            }
+        }
+        content_json = json.dumps(content)
+
+        print(content)
+        sql = """
+            INSERT INTO message_bot (chat_id, content)
+            VALUES ($1, $2)
+            RETURNING id;
+            """
+        connection = await ChatServiceV2.get_db_connection()
+        if connection is None: return None
+
+        message_id = await connection.fetchval(sql,chat_id, content_json)
+
+        return message_id
+
+
+    @staticmethod
     async def delete_message(chat_id: int):
         connection = await ChatServiceV2.get_db_connection()
         try:
             # SQL query to update the bot's message
             sql = """
-                       DELETE message_bot
-                       WHERE chat_id = $1
+                       DELETE FROM message_bot
+                       WHERE chat_id = $1;
                    """
 
             # Execute the query with the new bot message
@@ -292,8 +318,6 @@ class ChatServiceV2(object):
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
         finally:
             await connection.close()
-
-
         # try:
         #     async with session.begin():
         #         # Fetch messages to be deleted

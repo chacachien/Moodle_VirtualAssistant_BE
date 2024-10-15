@@ -24,6 +24,7 @@ class QueryBot(RootBot):
 
 
     async def query(self, question: str, id: int):
+        yield "Tìm kiếm thông tin\n"
         structure_chain = (
             self.structure_prompt
             | self.model
@@ -43,7 +44,6 @@ class QueryBot(RootBot):
             print("----------")
             sql_code = ''
             err = ''
-
             for i in range(3):
                 try:
                     if err !='':
@@ -89,6 +89,7 @@ class QueryBot(RootBot):
                     err = e
                     continue
             print("query_result: ",query_result)
+            yield "Nội dung sẳn sàng\n"
         print("------------------------------------------------------------------------------------------")
 
         answer_prompt = PROMPT_SQL_ANSWER
@@ -99,6 +100,7 @@ class QueryBot(RootBot):
         )
         #final_result = chain.invoke({'id': id, "question": question, "result": query_result})
         full_bot_message = []
+        yield "&start&"
         for chunk in chain.stream({'id': id, "question": question, "result": query_result}):
             yield chunk
 

@@ -9,7 +9,7 @@ class ReminderBot(RootBot):
         self.prompt_daily = PROMPT_REMINDER_DAILY
 
     def reminder(self, message):
-        chain = self.prompt | self.model | StrOutputParser()
+        chain = self.prompt | self.groq | StrOutputParser()
         response = chain.invoke({ "input": message})
         return response
 

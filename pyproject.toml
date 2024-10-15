@@ -49,6 +49,7 @@ langchain-huggingface = "^0.0.3"
 pyvi = "0.1.1"
 fastapi-utils = "^0.7.0"
 pgvector = "0.3.4"
+pusher = "^3.3.2"
 
 [build-system]
 requires = ["poetry-core"]

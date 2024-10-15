@@ -3,7 +3,7 @@
 # # Install Python and build tools
 # RUN apk update && apk add python3~3.12 g++ build-base
 
-FROM python:3.12.6-slim-bullseye@sha256:7915f3eaac1cb92b7472700412ab78f1dd73f97ba344ae9064e181a44ca2a9b3
+FROM python:3.12.6-slim-bullseye@sha256:6fe70237cff8ad7c0a91b992cb7cb454187dfd2e3f08ce2d023907d76db8c287
 #RUN apk update && apk add --no-cache g++ build-base
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \

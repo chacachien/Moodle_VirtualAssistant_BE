@@ -10,10 +10,13 @@ class TalkBot(RootBot):
        # self.prompt_history = PROMPT_NORMAL_TALK_HISTORY
 
 
-    def talk(self, message, history):
+    async def talk(self, message, history):
         chain = self.prompt | self.model | StrOutputParser()
-        response = chain.invoke({"context":history, "input":message})
-        return response
+        # response = chain.invoke({"context":history, "input":message})
+        # return response
+
+        for chunk in chain.stream({"context":history, "input":message}):
+            yield chunk
 
 
 # import human message and ai message 

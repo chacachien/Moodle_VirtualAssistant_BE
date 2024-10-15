@@ -1,0 +1,26 @@
+services:
+  moodle:
+    image: chacachiene/moodle_va_be:eleventh
+    ports:
+      - "5001:80"
+    environment:
+      PROJECT_NAME: "VIRTUAL ASSISTANT"
+      DATABASE_URL: "mysql+mysqlconnector://moodleuser:password123@localhost/moodle"
+      BASE_URL : "http://localhost:8080"
+      POSTGRES_SERVER: moodle.cd2wy4iagdv9.ap-southeast-1.rds.amazonaws.com
+      POSTGRES_DB : moodle
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1307x2Npk
+      POSTGRES_PORT: 5432
+      POSTGRES_DB_VECTOR : moodle_vector
+
+      HUGGINGFACE_API_KEY : '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'
+      PINECONE_API_KEY : '3e9197b0-4ce5-4702-b779-e955674bdbb0'
+      GOOGLE_API_KEY: 'AIzaSyAqUcIWqH_CO2S-ayPm7YgW4Jk5ffCww2E'
+
+      GROQ_API_KEY : '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'
+      OPENAI_API_KEY : 'sk-'
+      LANGCHAIN_TRACING_V2: true
+      LANGCHAIN_ENDPOINT: "https://api.smith.langchain.com"
+      LANGCHAIN_API_KEY: "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"
+      LANGCHAIN_PROJECT: "va"
