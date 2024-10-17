@@ -1,4 +1,4 @@
-from urllib import response
+
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from langchain_groq import ChatGroq
@@ -19,7 +19,7 @@ class RootBot:
         #   huggingfacehub_api_token=os.getenv('HUGGINGFACE_API_KEY')
         # )
         self.model = ChatGoogleGenerativeAI(model="gemini-1.0-pro-latest")
-        self.model_openai = ChatOpenAI(model="gpt-3.5-turbo", temperature=0,  api_key=os.getenv("OPENAI_API_KEY"), max_tokens=1000)
+        self.model_openai = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0,  api_key=os.getenv("OPENAI_API_KEY"), max_tokens=1000)
         self.groq = ChatGroq(
                     #model="mixtral-8x7b-32768",
                     #model = "llama3-groq-8b-8192-tool-use-preview",

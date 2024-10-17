@@ -6,7 +6,7 @@ services:
     environment:
       PROJECT_NAME: "VIRTUAL ASSISTANT"
       DATABASE_URL: "mysql+mysqlconnector://moodleuser:password123@localhost/moodle"
-      BASE_URL : "http://localhost:8080"
+      BASE_URL : "http://ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com"
       POSTGRES_SERVER: moodle.cd2wy4iagdv9.ap-southeast-1.rds.amazonaws.com
       POSTGRES_DB : moodle
       POSTGRES_USER: postgres

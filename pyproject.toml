@@ -14,18 +14,10 @@ alembic = "1.13.1"
 sqlmodel = "0.0.16"
 sqlalchemy = "2.0.29"
 databases = "0.9.0"
-mysql-connector-python = "8.3.0"
 python-dotenv = "1.0.1"
 
-
-
 pytz = "2024.1"
-transformers = "4.44.2"
-
-pinecone-client = "^5.0.0"
-sentence-transformers = "2.6.1"
 starlette = "^0.37.2"
-
 pydantic-settings = "^2.2.1"
 asyncpg = "^0.29.0"
 greenlet = "^3.0.3"
@@ -33,8 +25,6 @@ greenlet = "^3.0.3"
 psycopg2-binary = "^2.9.9"
 bs4 = "^0.0.2"
 fastapi-sqlalchemy = "^0.2.1"
-aiomysql = "^0.2.0"
-schedule = "^1.2.1"
 passlib = "^1.7.4"
 
 langchain = "0.2.14"
@@ -42,10 +32,9 @@ langchain-community = "0.2.12"
 langchain-core = "0.2.34"
 langchain-groq = "0.1.9"
 
-langchain-google-genai = "^1.0.3"
-langchain-openai = "^0.1.3"
-langchain-pinecone = "^0.1.3"
-langchain-huggingface = "^0.0.3"
+langchain-google-genai = "1.0.3"
+langchain-openai = "0.1.3"
+langchain-huggingface = "0.0.3"
 pyvi = "0.1.1"
 fastapi-utils = "^0.7.0"
 pgvector = "0.3.4"
@@ -54,3 +43,10 @@ pusher = "^3.3.2"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+
+#pinecone-client = "^5.0.0"
+#sentence-transformers = "2.6.1"
+#aiomysql = "^0.2.0"
+#chedule = "^1.2.1"
+#mysql-connector-python = "8.3.0"

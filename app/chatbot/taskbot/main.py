@@ -1,5 +1,4 @@
-from sympy import re
-from app.chatbot.root import RootBot
+
 from app.core.config import get_url_notsync
 from sqlalchemy import create_engine, MetaData, Table, text
 from datetime import datetime, timedelta
@@ -199,7 +198,6 @@ class TaskHandle():
         self.check_quiz(u_c)
         self.check_assign(u_c)
         self.check_chapter(u_c)
-
 
     def check_user_active(self):
         result = ReminderService.get_user_active(self.TIME_INTERVAL)

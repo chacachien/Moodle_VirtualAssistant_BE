@@ -1,7 +1,4 @@
 from fastapi import Query, APIRouter
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql.annotation import Annotated
-
 from app.chatbot.taskbot.reminder import Reminder
 from app.models.reminder_model import RemiderContent
 
@@ -30,7 +27,7 @@ async def get_reminder(reminder: RemiderContent):
     # end create message
     user_id = reminder.user_id
     pusher_client.trigger('moodle-remind', f"{user_id}", {'message': f"{message}"})
-
+    print("Message sent:", message)
     reminderBot.create_reminder_database(reminder.name, reminder.user_id, reminder.time_reminder, message);
     await ChatServiceV2.insert_message("",message, 4, user_id)
 

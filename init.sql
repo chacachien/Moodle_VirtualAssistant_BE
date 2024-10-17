@@ -111,3 +111,6 @@ CREATE TABLE embeddings_v2 (
             )
 ALTER TABLE embeddings_v2
 ADD CONSTRAINT unique_url UNIQUE (url);
+
+
+

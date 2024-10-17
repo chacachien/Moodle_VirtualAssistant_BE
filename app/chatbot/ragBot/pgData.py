@@ -1,18 +1,13 @@
-from hmac import new
-import math
-import token
 
-from langchain_text_splitters import CharacterTextSplitter, RecursiveCharacterTextSplitter
-from app.core.config import get_url_notsync, get_url_vector
+import math
+
+from langchain_text_splitters import  RecursiveCharacterTextSplitter
+from app.core.config import  get_url_vector
 from sqlalchemy import create_engine, MetaData, Table, text
 from app.services.label_service import LabelService
 from bs4 import BeautifulSoup
 from pyvi.ViTokenizer import tokenize, spacy_tokenize
-import pinecone
-import sys
-import os
 import dotenv
-import ast
 import psycopg2
 import pgvector
 from psycopg2.extras import execute_values
@@ -166,7 +161,6 @@ class LoadData:
             f'CREATE INDEX ON embeddings_v2 USING ivfflat (embedding vector_cosine_ops) WITH (lists = {num_lists});')
 
         self.conn.commit()
-
 
 
 def main():

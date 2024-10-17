@@ -137,6 +137,7 @@ from app.chatbot.model import ChatBot
 
 class ChatServiceV2(object):
     chatbot = ChatBot()
+    list_text = ["Tìm kiếm thông tin\n", "Phân tích tài liệu\n", "Nội dung sẳn sàng\n", "&start&", 'Bạn chịu khó đợi một tí nhé!', 'Thông tin đang được xử lý rồi!']
 
     def __init__(self):
         pass
@@ -171,10 +172,9 @@ class ChatServiceV2(object):
     @staticmethod
     async def get_chat_history(chatId: int):
         connection = await ChatServiceV2.get_db_connection()
-
         try:
             # Execute the SQL query to fetch the chat history
-            query = "SELECT * FROM message_bot WHERE chat_id = $1"
+            query = "SELECT * FROM message_bot WHERE chat_id = $1 Order By id"
             records = await connection.fetch(query, chatId)
 
             # Convert the fetched records into a list of dictionaries
@@ -182,8 +182,6 @@ class ChatServiceV2(object):
 
             if not message_history:
                 return []
-            
-            print("MESSAGE LIST: ", message_history)
             return message_history
         except Exception as e:
             print(f"Error fetching chat history: {e}")
@@ -221,15 +219,12 @@ class ChatServiceV2(object):
             full_bot_response = []
             async def response_generator():
                 try:
-                    flag = False
                     i = 0
                     async for chunk in ChatServiceV2.chatbot.get_response(
                         message.content, message.chatId, message.courseId, message.role
                     ):
                         # Append each chunk to full_bot_response so that we can save it later
-                        if i>3:
-                            full_bot_response.append(chunk)
-                        i+=1
+                        full_bot_response.append(chunk) if chunk not in ChatServiceV2.list_text else None
                         yield chunk
                 except Exception as e:
                     raise HTTPException(
@@ -249,8 +244,6 @@ class ChatServiceV2(object):
                 }
             }
             content_json = json.dumps(content)
-
-            print(content)
             sql = """
                 INSERT INTO message_bot (chat_id, content)
                 VALUES ($1, $2)
@@ -284,7 +277,6 @@ class ChatServiceV2(object):
         }
         content_json = json.dumps(content)
 
-        print(content)
         sql = """
             INSERT INTO message_bot (chat_id, content)
             VALUES ($1, $2)

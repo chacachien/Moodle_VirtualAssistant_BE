@@ -1,4 +1,4 @@
-from ast import Str
+
 import os
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
@@ -37,6 +37,7 @@ def get_url_vector():
     # use port 
     #return f"mysql+mysqlconnector://{user}:{password}@{server}:{port}/{db}"
     return f'postgresql://{user}:{password}@{server}:{port}/{db}'
+
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     API_V2_STR: str = "/api/v2"

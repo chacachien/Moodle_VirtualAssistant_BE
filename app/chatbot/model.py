@@ -1,5 +1,4 @@
-from asyncio import get_event_loop
-from chunk import Chunk
+
 import collections
 
 from app.chatbot.prompt import PROMPT_CHOOSE_TOOLS, PROMPT_CHOOSE_TOOLS_V1, PROMPT_REWRITE_QUESTION, PROMPT_CHOOSE_TOOLS_V2
@@ -24,6 +23,7 @@ class ChatBot(RootBot):
         self.queryBot = QueryBot()
         self.talkBot = TalkBot()
         self.ragBot = RagBot()
+        self.list_text = ["Tìm kiếm thông tin\n", "Phân tích tài liệu\n", "Nội dung sẳn sàng\n", "&start&\n", 'Bạn chịu khó đợi một tí nhé!', 'Thông tin đang được xử lý rồi!']
 
     def get_history(self):
         # if not relevant_message: return None
@@ -76,8 +76,7 @@ class ChatBot(RootBot):
             return 1
 
     def improve_message(self, user_message):
-        prompt = PROMPT_REWRITE_QUESTION
-        chain = prompt | self.groq | StrOutputParser()
+        chain = PROMPT_REWRITE_QUESTION | self.groq | StrOutputParser()
         res = chain.invoke({"history": self.__chat_history_buffer, "input": user_message })
         print(f"MESSAGE AFTER IMPROVE: {res}")
         return res
@@ -90,11 +89,9 @@ class ChatBot(RootBot):
         if role == 0:
             role = self.chose_tool(user_message)
 
-
         if role == 1:
             async for chunk in self.ragBot.rag(user_message, courseId):
-                full_bot_response.append(chunk)
-                print("CHUNK: ", chunk)
+                full_bot_response.append(chunk) if chunk not in self.list_text else None
                 yield chunk
         # if role ==0:
         #     tool, new_user_message  = self.chat_with_tool(user_message)
@@ -102,12 +99,11 @@ class ChatBot(RootBot):
 
         elif role == 2:
             async for chunk in self.queryBot.query(user_message, chatId):
-                full_bot_response.append(chunk)
+                full_bot_response.append(chunk) if chunk not in self.list_text else None
                 yield chunk
         elif role == 3:
             async for chunk in self.talkBot.talk(user_message, courseId):
-                full_bot_response.append(chunk)
-
+                full_bot_response.append(chunk) if chunk not in self.list_text else None
                 yield chunk
         # elif role ==2:
         #     pass

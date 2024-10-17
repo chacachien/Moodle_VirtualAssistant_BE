@@ -1,19 +1,12 @@
-from calendar import c
-from re import search
-from time import sleep
+
 
 import groq
-from passlib.utils.handlers import parse_int
-
 from app.chatbot.root import RootBot
 from app.chatbot.prompt import PROMPT_RAG, PROMPT_RAG_IMPROVE, PROMPT_REMIND_TO_COURSE
 from langchain.schema.output_parser import StrOutputParser
-from langchain.schema.runnable import RunnablePassthrough
-from app.chatbot.ragBot.data import LoadData
+
 from app.chatbot.ragBot.pgData import LoadData as LoadDataPg
-from app.services.context_service import SystemService
 from app.services.schedule import ReminderService
-import asyncio
 
 import numpy as np
 import pgvector.psycopg2
@@ -180,7 +173,6 @@ class RagBot(RootBot):
         #         'course': courseId,
         #     }
         # }
-        yield "Phân tích tài liệu\n"
 
         # print("KWARGS: ", search_kwargs)
         # context_with_course = self.data.docsearch.as_retriever(
@@ -213,7 +205,7 @@ class RagBot(RootBot):
 
         # res = chain.invoke(user_message)
         #print(f"{len(content)} must in LIST COURSE: {type(content[0][1])}, {content[1][1]}, {content[2][1]}")
-        yield "Nội dung sẳn sàng\n"
+
         list_course = [content[0][1], content[1][1], content[2][1]]
         if courseId != -1 and (courseId in list_course):
             context_str = " \n ".join([content[i][0] if i < len(content) else "" for i in range(3)])
@@ -224,6 +216,7 @@ class RagBot(RootBot):
                 self.model|
                 StrOutputParser()
             )
+            yield "Nội dung sẳn sàng\n"
             yield "&start&\n"
             for chunk in chain.stream({"question": user_message, "context": context_str}):
                 yield chunk  # Yield each chunk as it's generated
@@ -241,6 +234,7 @@ class RagBot(RootBot):
                 "course_id": mode,
                 "course_name": course_name
             }
+            yield "Nội dung sẳn sàng\n"
             yield "&start&\n"
             for chunk in chain.stream({"input": user_message, "context": context}):
                 yield chunk
@@ -307,7 +301,6 @@ def main():
 
     chat_history = []
 
-    question = "Việt phục là gì?"
     store = {}
 
     from langchain_core.chat_history import BaseChatMessageHistory

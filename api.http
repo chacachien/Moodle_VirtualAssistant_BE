@@ -1,5 +1,5 @@
 #health check
-GET http://localhost:5001/api/v2/
+GET https://ec2-47-129-187-231.ap-southeast-1.compute.amazonaws.com:5001/api/v2/
 
 
 ### update all document --- BE CAREFUL
@@ -11,10 +11,20 @@ GET http://localhost:5001/api/v2/documentpostgre/all
 
 ###
 # get chat history
-GET http://localhost:5001/api/v2/chat?chatid=2
+GET http://ec2-13-212-109-15.ap-southeast-1.compute.amazonaws.com:5001/api/v2/
 Content-Type: application/json
 Authorization: Bearer 75921f4e01b6caad0dc2d0f966b876da
 
+
+###
+GET http://ec2-13-212-109-15.ap-southeast-1.compute.amazonaws.com:5001/api/v2/chat?chatid=2
+Content-Type: application/json
+Authorization: Bearer 75921f4e01b6caad0dc2d0f966b876da
+
+###
+GET http://localhost:5001/api/v2/chat?chatid=3
+Content-Type: application/json
+Authorization: Bearer 75921f4e01b6caad0dc2d0f966b876da
 ###
 # send message
 POST http://localhost:5001/api/v2/chat
@@ -28,13 +38,13 @@ Content-Type: application/json
 }
 ###
 # send message
-POST http://localhost:5001/api/v1/chat
+POST http://ec2-13-212-109-15.ap-southeast-1.compute.amazonaws.com:5001/api/v2/chat
 Content-Type: application/json
 
 {
-    "content": "Hi",
+    "content": "Tôi đang có những khóa học nào",
     "chatId": 2,
-    "role": 1,
+    "role": 3,
     "courseId": 11
 }
 ### 
@@ -68,7 +78,7 @@ Content-Type: application/json
 {
     "name": "quiz",
     "title": "câu hỏi ôn tập",
-    "user_id": 1,
+    "user_id": 3,
     "user": "Phat",
     "course_id": 2,
     "course": "Nôm",
@@ -76,3 +86,5 @@ Content-Type: application/json
     "time_action": "2024-10-14 00:57:02 +07",
     "time_reminder": "2024-10-14 00:57:02 +07"
 }
+
+

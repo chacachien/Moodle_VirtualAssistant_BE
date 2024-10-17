@@ -1,9 +1,8 @@
 from app.core.config import get_url_notsync
-from sqlalchemy import create_engine,  MetaData, Table, text
+from sqlalchemy import create_engine
 from app.models.reminder_model import ReminderCreate, RemiderContent
 from app.services.schedule import ReminderService 
-from app.models.reminder_model import ReminderCreate
-from app.db.db import get_session
+
 from datetime import datetime, timedelta
 from app.chatbot.taskbot.bot import ReminderBot
 from app.models.message_model import MessageCreate, TypeRoleChoices
