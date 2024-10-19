@@ -16,6 +16,7 @@ import json
 from langchain.schema import HumanMessage, AIMessage
 import re
 
+
 class ChatBot(RootBot):
     def __init__(self):
         super().__init__()
@@ -91,7 +92,6 @@ class ChatBot(RootBot):
 
         if role == 1:
             async for chunk in self.ragBot.rag(user_message, courseId):
-                full_bot_response.append(chunk) if chunk not in self.list_text else None
                 yield chunk
         # if role ==0:
         #     tool, new_user_message  = self.chat_with_tool(user_message)
@@ -99,11 +99,9 @@ class ChatBot(RootBot):
 
         elif role == 2:
             async for chunk in self.queryBot.query(user_message, chatId):
-                full_bot_response.append(chunk) if chunk not in self.list_text else None
                 yield chunk
         elif role == 3:
             async for chunk in self.talkBot.talk(user_message, courseId):
-                full_bot_response.append(chunk) if chunk not in self.list_text else None
                 yield chunk
         # elif role ==2:
         #     pass

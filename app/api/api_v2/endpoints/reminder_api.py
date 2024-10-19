@@ -11,7 +11,7 @@ pusher_client = pusher.Pusher(
     key='9de03240cc8a5c22c658',
     secret='b82363250a9736265d17',
     cluster='ap1',
-    ssl=True
+    ssl=True,
 )
 
 router = APIRouter()

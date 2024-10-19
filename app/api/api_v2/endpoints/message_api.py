@@ -1,3 +1,4 @@
+import re
 from http.client import HTTPException
 
 from fastapi import APIRouter, Depends, Query
@@ -53,6 +54,13 @@ async def send_message(
             bot_message_content = ''.join(full_bot_response)
             print("BOT_MESSAGE_CONTENT: ", bot_message_content)
             if bot_message_content:
+                match = re.search(r"&start&\n(.*)", bot_message_content, re.DOTALL)
+
+                if match:
+                    bot_message_content = match.group(1)
+                    print(bot_message_content.strip())  # Optional: Use strip() to remove leading/trailing spaces or newlines
+                else:
+                    print("No match found.")
                 await ChatServiceV2.update_bot_message(message_id,message.chatId, bot_message_content)
                 # Save the bot's message to the database
         # Return the streamed response to the client

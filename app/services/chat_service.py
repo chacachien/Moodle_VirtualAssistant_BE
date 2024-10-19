@@ -137,7 +137,7 @@ from app.chatbot.model import ChatBot
 
 class ChatServiceV2(object):
     chatbot = ChatBot()
-    list_text = ["Tìm kiếm thông tin\n", "Phân tích tài liệu\n", "Nội dung sẳn sàng\n", "&start&", 'Bạn chịu khó đợi một tí nhé!', 'Thông tin đang được xử lý rồi!']
+    list_text = ["Tìm kiếm thông tin\n", "Phân tích tài liệu\n", "Nội dung sẳn sàng\n", "&start&\n", 'Bạn chịu khó đợi một tí nhé!', 'Thông tin đang được xử lý rồi!']
 
     def __init__(self):
         pass
@@ -224,7 +224,7 @@ class ChatServiceV2(object):
                         message.content, message.chatId, message.courseId, message.role
                     ):
                         # Append each chunk to full_bot_response so that we can save it later
-                        full_bot_response.append(chunk) if chunk not in ChatServiceV2.list_text else None
+                        full_bot_response.append(chunk) #if chunk not in ChatServiceV2.list_text else None
                         yield chunk
                 except Exception as e:
                     raise HTTPException(

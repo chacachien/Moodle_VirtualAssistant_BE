@@ -133,8 +133,8 @@ class RagBot(RootBot):
         # Get the top 3 most similar documents using the KNN <=> operator
         cur.execute("SELECT content, courseid FROM embeddings_v2 ORDER BY embedding <=> %s LIMIT 3", (embedding_array,))
         top3_docs = cur.fetchall()
+        print("TOP 3: ", top3_docs)
         return top3_docs
-
 
 
     async def rag(self, user_message, courseId):
@@ -205,6 +205,7 @@ class RagBot(RootBot):
 
         # res = chain.invoke(user_message)
         #print(f"{len(content)} must in LIST COURSE: {type(content[0][1])}, {content[1][1]}, {content[2][1]}")
+        yield "Nội dung sẳn sàng\n"
 
         list_course = [content[0][1], content[1][1], content[2][1]]
         if courseId != -1 and (courseId in list_course):
@@ -216,13 +217,14 @@ class RagBot(RootBot):
                 self.model|
                 StrOutputParser()
             )
-            yield "Nội dung sẳn sàng\n"
+
             yield "&start&\n"
             for chunk in chain.stream({"question": user_message, "context": context_str}):
                 yield chunk  # Yield each chunk as it's generated
         else:
             import statistics
             mode = statistics.mode(list_course)
+            print("MODE: ", mode)
             course_name = ReminderService.get_coursename(mode)
             chain = (
                 self.prompt_remind_to_couse|
@@ -234,7 +236,7 @@ class RagBot(RootBot):
                 "course_id": mode,
                 "course_name": course_name
             }
-            yield "Nội dung sẳn sàng\n"
+
             yield "&start&\n"
             for chunk in chain.stream({"input": user_message, "context": context}):
                 yield chunk
