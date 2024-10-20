@@ -18,7 +18,7 @@ class Reminder:
         from datetime import datetime
 
         # Convert string to datetime
-        time_reminder = datetime.strptime(time_reminder_str[:-4], "%Y-%m-%d %H:%M:%S")
+        time_reminder = datetime.strptime(time_reminder_str, "%Y-%m-%d %H:%M:%S")
 
         reminder_create = ReminderCreate(
                 type= name,
@@ -50,18 +50,14 @@ class Reminder:
         self.create_reminder_database(reminder.name, reminder.user_id, reminder.time_reminder, reminder_ai)
         return reminder_ai
 
-    def daily_reminder(self, user, list_content, time_reminder):
-        username = ReminderService.get_username(user)
-        full_content = f"User: {username}\n" + list_content
+    def daily_reminder(self, reminder: RemiderContent):
+        full_content = f"User: {reminder.user}\n" + reminder.title
+        print("full_content: ", full_content)
         reminder_ai = self.bot_reminder.reminder_daily(full_content)
-        messages = reminder_ai
-        #messages = reminder_ai.split("\n\n")
-
-        print("remind list", messages)
+        print("remind list", reminder_ai)
         # for m in messages:
-        self.create_reminder_database('daily', user, time_reminder, messages)
-
-
+        self.create_reminder_database('daily', reminder.user_id, reminder.time_reminder, reminder_ai)
+        return reminder_ai
     def remind_user(self, userid):
         result = ReminderService.get_message_reminder(userid)
         rows = result.fetchall()

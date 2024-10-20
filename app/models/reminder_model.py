@@ -20,6 +20,11 @@ class ReminderBase(SQLModel):
 class ReminderCreate(ReminderBase):
     pass
 
+class Settime(SQLModel):
+    status: int
+    time: str
+    user_id: int
+
 class RemiderContent(SQLModel):
     name:str
     title:str

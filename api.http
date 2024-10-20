@@ -61,14 +61,16 @@ Authorization: Bearer 75921f4e01b6caad0dc2d0f966b876da
 
 
 ### SET UP TIME REMINDER
-GET http://localhost:5001/api/v2/settime
+POST http://localhost:5001/api/v2/settime
 Content-Type: application/json
 
 {
-    "userId": 2,
-    "status": 0,
-    "time": "7:45"
+    "user_id": 2,
+    "status": 1,
+    "time": "22:54"
 }
+
+
 
 
 ###
@@ -83,8 +85,8 @@ Content-Type: application/json
     "course_id": 2,
     "course": "Nôm",
     "type_action": "was created",
-    "time_action": "2024-10-14 00:57:02 +07",
-    "time_reminder": "2024-10-14 00:57:02 +07"
+    "time_action": "2024-10-14 00:57:02",
+    "time_reminder": "2024-10-14 00:57:02"
 }
 
 

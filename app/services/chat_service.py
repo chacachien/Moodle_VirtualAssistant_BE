@@ -147,7 +147,6 @@ class ChatServiceV2(object):
     async def get_db_connection():
         try:
             # Adjust the database connection settings accordingly
-
             connection = await asyncpg.connect(
                 user=os.getenv("POSTGRES_USER"),
                 password=os.getenv("POSTGRES_PASSWORD"),
