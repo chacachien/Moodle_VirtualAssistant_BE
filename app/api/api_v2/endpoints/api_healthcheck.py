@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-
+import os
 router = APIRouter()
 
 
@@ -37,21 +37,22 @@ from app.core.config import settings
 
 def auth_wrapper(auth: HTTPAuthorizationCredentials = Security(HTTPBearer())):
     try:
-        print("AUTH: ", auth) 
-        moodle_url = "http://localhost/moodle"
-
+        #print("AUTH: ", auth) 
+        moodle_url = f"{os.getenv("BASE_URL")}/moodle4113"
+        #print(f"{moodle_url}")
         # API endpoint to get user info (adjust the endpoint as needed)
         api_endpoint = f"{moodle_url}/webservice/rest/server.php"
 
         moodle_url = api_endpoint + "?wstoken=" + str(auth.credentials) + "&moodlewsrestformat=json"
         functionname = "core_user_get_users_by_field"   
         serverurl = moodle_url + '&wsfunction=' + functionname
-        username='hs1'
-        params = {"field" : "username"}
+        username=1
+        params = {"field" : "id"}
         values = {}
         values["values[0]"] = username
         res = requests.post(serverurl, params=params, data=values)
-        print('status: ', res.status_code)
+        #print(res.content.decode('utf-8'))
+
         if res.status_code == 200:
             return "success"
     except:

@@ -13,6 +13,3 @@ class TimestampModel(SQLModel):
         default_factory=get_default_datetime,
         nullable=True,
     )
-
-
-

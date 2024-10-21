@@ -8,10 +8,11 @@ class TypeRoleChoices(Enum):
     BOT = 0
     USER = 1
 
+
 class MessageBase(SQLModel):
     content: str 
     chatId: int
-    role: TypeRoleChoices
+    role: int 
 
 class MessageCreate(MessageBase):
     courseId: int
@@ -19,17 +20,17 @@ class MessageCreate(MessageBase):
 class MessageRead(SQLModel):
     chatId: int
 
-class Message(MessageBase, TimestampModel, table=True):
-    __tablename__ = "messages_chatbot"
-    id: Optional[int] = Field(default=None, primary_key=True)
-    #user: Optional[User] = Relationship(back_populates="messages", link_model=User)
-    def __repr__(self):
-        return f"Message {self.id} - {self.content} - {self.chatId} - {self.role}"
-    
-class MessageDeleted(MessageBase, TimestampModel, table=True):
-    __tablename__ = "messages_chatbot_deleted"
-    id: Optional[int] = Field(default=None, primary_key=True)
-    #user: Optional[User] = Relationship(back_populates="messages", link_model=User)
-    def __repr__(self):
-        return f"Message is deleted: {self.id} - {self.content} - {self.chatId} - {self.role}"
-
+# class Message(MessageBase, TimestampModel, table=True):
+#     __tablename__ = "messages_chatbot"
+#     id: Optional[int] = Field(default=None, primary_key=True)
+#     #user: Optional[User] = Relationship(back_populates="messages", link_model=User)
+#     def __repr__(self):
+#         return f"Message {self.id} - {self.content} - {self.chatId} - {self.role}"
+#
+# class MessageDeleted(MessageBase, TimestampModel, table=True):
+#     __tablename__ = "messages_chatbot_deleted"
+#     id: Optional[int] = Field(default=None, primary_key=True)
+#     #user: Optional[User] = Relationship(back_populates="messages", link_model=User)
+#     def __repr__(self):
+#         return f"Message is deleted: {self.id} - {self.content} - {self.chatId} - {self.role}"
+#

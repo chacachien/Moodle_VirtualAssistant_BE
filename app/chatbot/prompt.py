@@ -1,6 +1,6 @@
+import os
 
-from cmd import PROMPT
-from langchain import PromptTemplate
+from langchain_core.prompts import PromptTemplate, MessagesPlaceholder  # type: ignore
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 PROMPT_CHOOSE_TOOLS_TEMPLATE = """You are an assistant that has access to the following set of tools. Here are the names and descriptions for each tool:
@@ -18,7 +18,35 @@ PROMPT_CHOOSE_TOOLS_TEMPLATE = """You are an assistant that has access to the fo
 
 PROMPT_CHOOSE_TOOLS = PromptTemplate.from_template(PROMPT_CHOOSE_TOOLS_TEMPLATE)
 
+PROMPT_CHOOSE_TOOLS_V2 = PromptTemplate.from_template("""
+            ##Expert persona: You are an assistant that has access to the following set of tools. Here are the names and descriptions for each tool:
+               Tool 1 => Used for retrieving information based on search results or external knowledge.
+               Tool 2 =>  Used for querying specific data like course details or user participation.
+               Tool 3 =>  Used for casual conversation or general queries.
+            ##GOAL: Given the user input, return the name of the tool to use. The input of the tool is {input}.
+            ##Instructions:
+                1. Review the user input.
+                2. Determine the most appropriate tool based on the nature of the query.
+                3. Return the number corresponding of the tool to use.
+                4. If unsure, return a text remind the user: choose which is the person you want to talk to - professor or assistant or friend.
+            ## Constraints:
+                + Return your response as a number corresponding to the tool. (1, 2, or 3) 
+                + Just use those tool that given, not try to access anything else. If you don't know what is the right tool.
+                + If the result is the number, just return only one character of the number.
+                
+            ##INPUT: {input}
+            Remember Return your response as a JSON blob with 'name' and 'arguments' 
+            EXAMPLE: 
+                    + "input": "Chào cậu" --> 3
+                    + "input": "Giải thích sự tăng trưởng của Việt Nam" --> 1
+                    + "input": "tôi đang tham gia những khóa học nào" --> 2
+            RESPONSE: 
+"""                                                 
+)
+
+
 PROMPT_CHOOSE_TOOLS_V1 = ChatPromptTemplate.from_messages(
+
     [
         ("system", PROMPT_CHOOSE_TOOLS_TEMPLATE),
         MessagesPlaceholder("history"),
@@ -27,7 +55,7 @@ PROMPT_CHOOSE_TOOLS_V1 = ChatPromptTemplate.from_messages(
 )
 
 PROMPT_NORMAL_TALK = PromptTemplate.from_template("""
-            You are my funny virtual assistant.
+            You are my funny virtual assistant. You serve for a Learning management system. Your name is Moodle Bot.
             Context: {context}
             User: {input}
             Answer:
@@ -50,7 +78,7 @@ PROMPT_RAG = PromptTemplate.from_template("""
             """
         )
 PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
-            ## Expert persona: You function as an AI assistant within a course system, specializing in providing guidance and assistance to users regarding course content.
+            ## Expert persona: You function as an AI assistant within a course system, specializing in providing guidance and assistance to users regarding course content. You serve for a Learning management system. Your name is Moodle Bot.
             ## User: {question}
             ## Context: {context}
             ## Goal: Offer clear and helpful responses to users' inquiries related to the course content.
@@ -58,7 +86,7 @@ PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
                 1. Use the provided course content to craft accurate responses.
                 2. If uncertain, politely inform the user that you don't have the answer.
                 3. When confident, provide concise and insightful assistance, not just itemize.
-
+            
             ## Constraints:
                 + Only use the content of Context to answer user.
                 + Ensure responses remain pertinent to the course material.
@@ -68,7 +96,9 @@ PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
                 + Respond in a language consistent with that used by the user.
             ## YOU ANSWER: 
     """)
-
+base_url = os.getenv("BASE_URL")
+course_link = base_url+"/course/view.php?id=[courseid]"
+example_markdown = f"Khóa học lịch sử việt phục!]({base_url}/course/view.php?id=4)"
 PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
         ## Expert persona: You function as an AI assistant within a course system, your task is to send a message to remind the user to go to the course page.
         ## User: {input}
@@ -77,8 +107,10 @@ PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
         ## Instructions:
             1. Use the information of the course in the system to remind the user to go to the course page that is relevant to the user's question.
             2. If the course information is not relevant to the user's question, just say the system does not have any course that is relevant to the user's question and do nothing further. 
-            3. Otherwise, if the user message and course information match, remind the user to visit the course page to get more information. Link to course page: 
-                http://localhost/moodle/course/view.php?id=[courseid]
+            3. Otherwise, if the user message and course information match, remind the user to visit the course page to get more information. Link to course page: """
+               +course_link+"""
+            4. Response the link as a markdown button. example:"""
+                +example_markdown+"""
         ## Constraints:
             + Ensure the reminder is polite and encouraging.
             + Provide a friendly and helpful message to the user.
@@ -143,6 +175,12 @@ PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
 
 
 
+
+
+
+
+
+
 # PROMPT_SQL_QUERY = PromptTemplate.from_template(
 #             """You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run.
 #             And you also a virtual assistant for user {id}.
@@ -159,18 +197,20 @@ PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
 #         )
 PROMPT_SQL_QUERY = PromptTemplate.from_template(
             """
-            ## Expert persona: You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run. 
+            ## Expert persona: You are a PostgrSQL expert. Given an input question, create a syntactically correct PostgreSQL query to run. 
+                               You serve a learning system that includes data tables related to users, courses, quizzes, assignments, and labels. 
             ## Question: {question}
             ## User ID: {id}
-            ## Database Structure: {database_structure}
-            ## Goal: Generate a correct and efficient MySQL query based on the input question.
+            ## Here is the relevant table info: {database_structure} 
+            ## Goal: Generate a correct POSTGRESQL query based on the input question. 
             ## Instructions:
-                1. Construct a SELECT query to retrieve data relevant to the question.
-                2. Use the LIMIT clause to return at most 5 results, unless otherwise specified by the user.
-                4. Use only the column names present in the provided tables.
-                5. Ensure queries do not modify the database; use SELECT commands only.
+                1. Construct a SELECT query to retrieve data relevant to the question. 
+                2. Be sure not to query for columns that do not exist in the tables. 
+                3. If necessary, use subqueries or common table expressions (CTEs) to break down the problem into smaller, more manageable parts.") 
+                4. Consider using aliases for tables and columns to improve readability of the query, especially in case of complex joins or subqueries.
+                5. Ensure queries do not modify the database. Use SELECT commands only.
                 6. Utilize the CURRENT_DATE function for queries involving "today."
-                7. Use "SELECT FROM_UNIXTIME(MAX(DATE))" for datetime columns stored as bigint in MySQL.
+                7. Use "SELECT FROM_UNIXTIME(MAX(DATE))" for datetime columns stored as bigint in POSTGRESQL.
             ## Constraints:
                 + Do not query columns that do not exist.
                 + Be precise about which column belongs to which table.
@@ -178,27 +218,27 @@ PROMPT_SQL_QUERY = PromptTemplate.from_template(
                 + Return the SQL code only.
                 + Do not call user by their id.
             ## Example:
-                - Question: "Tôi đang tham gia khoa học nào?"
-                - Output:   SELECT c.id AS course_id, c.fullname AS course_name, ue.timestart AS enrolment_start, ue.timeend AS enrolment_end
+                - Question: "Tôi đang tham gia khóa học nào?"
+                - Output:   "SELECT c.id AS course_id, c.fullname AS course_name, ue.timestart AS enrolment_start, ue.timeend AS enrolment_end
                             FROM mdl_user u
                             JOIN mdl_user_enrolments ue ON u.id = ue.userid
                             JOIN mdl_enrol e ON ue.enrolid = e.id
                             JOIN mdl_course c ON e.courseid = c.id
-                            WHERE u.id = :user_id
+                            WHERE u.id = {id}
                             ORDER BY ue.timestart DESC
-                            LIMIT 5;
+                            LIMIT 5;"
                 - Question: "Tôi đang có những bài quiz nào?",
-                - Output:   SELECT q.id AS quiz_id, q.name AS quiz_name, c.id AS course_id, c.fullname AS course_name
+                - Output:   "SELECT q.id AS quiz_id, q.name AS quiz_name, c.id AS course_id, c.fullname AS course_name
                             FROM mdl_user u
                             JOIN mdl_user_enrolments ue ON u.id = ue.userid
                             JOIN mdl_enrol e ON ue.enrolid = e.id
                             JOIN mdl_course c ON e.courseid = c.id
                             JOIN mdl_quiz q ON q.course = c.id
-                            WHERE u.id = :user_id
+                            WHERE u.id = {id}
                             ORDER BY c.fullname, q.name
-                            LIMIT 5;
+                            LIMIT 5;"
                 - Question: "tôi đang có những assignment nào?", 
-                - Output: 'SELECT
+                - Output: "SELECT
                                 a.id AS assignment_id,
                                 a.name AS assignment_name,
                                 a.duedate AS assignment_duedate,
@@ -211,14 +251,85 @@ PROMPT_SQL_QUERY = PromptTemplate.from_template(
                                 JOIN mdl_assign a ON c.id = a.course
                                 LEFT JOIN mdl_assign_submission s ON a.id = s.assignment AND u.id = s.userid
                             WHERE
-                                u.id = :user_id
+                                u.id = {id}
                             ORDER BY
-                            a.duedate;'
+                            a.duedate;"
             ## Output:
                 // Your SQL query here
             """
         )
 
+
+PROMPT_SQL_QUERY_GPT = ChatPromptTemplate.from_messages(
+            [
+                ("system", """
+            ## Expert persona: You are a PostgrSQL expert. Given an input question, create a syntactically correct PostgreSQL query to run. 
+                               You serve a learning system that includes data tables related to users, courses, quizzes, assignments, and labels. 
+            
+            ## User ID: {id} -> just user for query, result must be use name of user.
+            ## Here is the relevant table info: {database_structure} 
+            ## Goal: Generate a correct POSTGRESQL query based on the input question. 
+            ## Instructions:
+                1. Construct a SELECT query to retrieve data relevant to the question. 
+                2. Be sure not to query for columns that do not exist in the tables 
+                3. If necessary, use subqueries or common table expressions (CTEs) to break down the problem into smaller, more manageable parts.") 
+                4. Consider using aliases for tables and columns to improve readability of the query, especially in case of complex joins or subqueries.
+                5. Ensure queries do not modify the database. Use SELECT commands only.
+                6. Utilize the CURRENT_DATE function for queries involving "today."
+                7. Use "SELECT FROM_UNIXTIME(MAX(DATE))" for datetime columns stored as bigint in POSTGRESQL.
+                
+            ## Constraints:
+                + Do not query columns that do not exist.
+                + Be precise about which column belongs to which table.
+                + Ensure the query is syntactically correct.
+                + Return the SQL code only.
+                + Do not call user by their id.
+                + Do not query confidentiality information, example: password
+                + Must Use "SELECT FROM_UNIXTIME(MAX(DATE))" for datetime columns because it is stored as bigint in POSTGRESQL.
+
+            ## Example:
+                - Question: "Tôi đang tham gia khóa học nào?"
+                - Output:   "SELECT c.id AS course_id, c.fullname AS course_name, ue.timestart AS enrolment_start, ue.timeend AS enrolment_end
+                            FROM mdl_user u
+                            JOIN mdl_user_enrolments ue ON u.id = ue.userid
+                            JOIN mdl_enrol e ON ue.enrolid = e.id
+                            JOIN mdl_course c ON e.courseid = c.id
+                            WHERE u.id = {id}
+                            ORDER BY ue.timestart DESC
+                            LIMIT 5;"
+                - Question: "Tôi đang có những bài quiz nào?",
+                - Output:   "SELECT q.id AS quiz_id, q.name AS quiz_name, c.id AS course_id, c.fullname AS course_name
+                            FROM mdl_user u
+                            JOIN mdl_user_enrolments ue ON u.id = ue.userid
+                            JOIN mdl_enrol e ON ue.enrolid = e.id
+                            JOIN mdl_course c ON e.courseid = c.id
+                            JOIN mdl_quiz q ON q.course = c.id
+                            WHERE u.id = {id}
+                            ORDER BY c.fullname, q.name
+                            LIMIT 5;"
+                - Question: "tôi đang có những assignment nào?", 
+                - Output: "SELECT
+                                a.id AS assignment_id,
+                                a.name AS assignment_name,
+                                a.duedate AS assignment_duedate,
+                                s.status AS submission_status
+                            FROM
+                                mdl_user u
+                                JOIN mdl_user_enrolments ue ON u.id = ue.userid
+                                JOIN mdl_enrol e ON ue.enrolid = e.id
+                                JOIN mdl_course c ON e.courseid = c.id
+                                JOIN mdl_assign a ON c.id = a.course
+                                LEFT JOIN mdl_assign_submission s ON a.id = s.assignment AND u.id = s.userid
+                            WHERE
+                                 u.id = {id}
+                            ORDER BY
+                            a.duedate;"
+            ## Output:
+                // Your SQL query here
+            """),
+                MessagesPlaceholder(variable_name="question"),
+            ("human", "{question}")]
+        )
 # PROMPT_FIX_BUG = PromptTemplate.from_template(
 #             """You are a MySQL expert. Given the SQL code and the error. Help me fix it.
 #             Use the following format:
@@ -280,6 +391,9 @@ PROMPT_SQL_ANSWER = PromptTemplate.from_template(
             ## Constraints:
                 + Do not fabricate data if the result is None or an empty list.
                 + Ensure the answer is based solely on the SQL query result.
+                + Prompt users to furnish additional context if required.
+                + Maintain professionalism and clarity in all interactions.
+                + Respond in a language consistent with that used by the user.
             ## Output:
                 # Your answer here
 
@@ -338,24 +452,33 @@ PROMPT_CHAT = ChatPromptTemplate.from_messages(
 #             """
 
 PROMPT_REWRITE_TEMPLATE = """
-            ## Expert persona: ""Given a chat history and the latest user question \
-                                which might reference context in the chat history,  
-            ## Chat history: {history}
-            ## Latest User question: {input}
-            ## Goal: formulate a standalone question which can be understood without the chat history.
-            ## Instructions:
-                1. Review the conversation history and the user's latest input.
-                2. Do NOT answer the question, just reformulate it if needed and otherwise return it as is.
-                3. If the user's question is already clear, simply return the same question.
-            ## Example:
-                + Input: Lớp nào có nhiều học sinh hơn.
-                + Output: Giữa Lớp 3 với lớp 4 thì lớp nào có nhiều học sinh hơn.
-            ## Contraints:
-                + Do not add or answer the question, only rephrase for clarity.
-                + Ensure the rephrased question is clear and comprehensive.
-            ## Output:
-                // Your rephrased question here
-            """
+## Expert persona: ""
+Given a chat history and the latest user question \
+which might reference context in the chat history, 
+Your task is: Play the role of a user and rewrite the question for clarity. 
+## Chat history: {history}
+## User question: {input}
+## Goal: Reformulate a standalone question that can be understood without the chat history.
+## Instructions:
+    1. Understand the conversation context and rephrase the user's question accurately without altering its intent.
+    2. **Keep the original subject and perspective** intact (e.g., if the user uses "tôi", keep "tôi").
+    3. Do NOT answer the question; just rephrase it for clarity if necessary.
+    4. If the question is already clear, return it as is.
+    5. Maintain the same language and tone as the user's original input.
+## Example 1:
+    + Input: Lớp nào có nhiều học sinh hơn.
+    + Output: Giữa Lớp 3 với lớp 4 thì lớp nào có nhiều học sinh hơn.
+## Example 2:
+    + Input: Tôi đang tham gia khóa học nào?
+    + Output: Tôi đang tham gia những khóa học nào?
+## Constraints:
+    + Do not change the subject or perspective.
+    + Ensure the rephrased question is clear and maintains its intent.
+    + Make sure the response matches the user's original language.
+## Output:
+// Your rephrased question here
+"""
+
 
 PROMPT_REWRITE_QUESTION = PromptTemplate.from_template(PROMPT_REWRITE_TEMPLATE)
 
