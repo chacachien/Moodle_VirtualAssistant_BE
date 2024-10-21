@@ -1,6 +1,4 @@
-
 import collections
-
 from app.chatbot.prompt import PROMPT_CHOOSE_TOOLS, PROMPT_CHOOSE_TOOLS_V1, PROMPT_REWRITE_QUESTION, PROMPT_CHOOSE_TOOLS_V2
 from app.chatbot.tools import Tool
 from app.chatbot.root import RootBot
@@ -16,7 +14,6 @@ import json
 from langchain.schema import HumanMessage, AIMessage
 import re
 
-
 class ChatBot(RootBot):
     def __init__(self):
         super().__init__()
@@ -27,17 +24,7 @@ class ChatBot(RootBot):
         self.list_text = ["Tìm kiếm thông tin\n", "Phân tích tài liệu\n", "Nội dung sẳn sàng\n", "&start&\n", 'Bạn chịu khó đợi một tí nhé!', 'Thông tin đang được xử lý rồi!']
 
     def get_history(self):
-        # if not relevant_message: return None
-        # non_dup_mes = []
-        # for m in relevant_message:
-        #     if m not in self.__chat_history_buffer:
-        #         non_dup_mes.append(m)
         messages = []
-        # messages.append(self.system_prompt)
-        # for message in non_dup_mes:
-        #     message_doc = json.loads(message)
-        #     messages.append(HumanMessage(content=message_doc["user"]))
-        #     messages.append(AIMessage(content=message_doc["ai"]))
 
         for message in self.__chat_history_buffer:
             message_doc = json.loads(message) if isinstance(message, str) else message
@@ -93,51 +80,14 @@ class ChatBot(RootBot):
         if role == 1:
             async for chunk in self.ragBot.rag(user_message, courseId):
                 yield chunk
-        # if role ==0:
-        #     tool, new_user_message  = self.chat_with_tool(user_message)
-
-
         elif role == 2:
             async for chunk in self.queryBot.query(user_message, chatId):
                 yield chunk
         elif role == 3:
             async for chunk in self.talkBot.talk(user_message, courseId):
                 yield chunk
-        # elif role ==2:
-        #     pass
-        # elif role == 3:
-        #     pass
-        # else:
-        #     pass
-        # import time
-        # s = time.time()
-        # tool, new_user_message  = self.chat_with_tool(user_message)
-        # res = None
-
-        # if tool == 'talk':
-        #     print('TOOL TALK')
-        #     #res = self.talkBot.talk(user_message, self.__chat_history_buffer)
-        #     #res = self.talkBot.talk_stream(user_message, self.__chat_history_buffer)
-
-        #     chain = self.talkBot.prompt | self.talkBot.model | StrOutputParser()
-        #     async for chunk in chain.stream({"context":history, "input":user_message}):
-        #         yield(chunk)
-            
-        # if tool == 'rag':
-        #     print('TOOL RAG')
-        #     res = self.ragBot.rag(user_message, courseId)
-
-        # if tool == 'query':
-        #     print('TOOL QUERY')
-        #     res = self.queryBot.query(new_user_message, chatId)
-
         bot_message = ''.join(full_bot_response)
         self.__chat_history_buffer.append({"user": user_message, "ai": bot_message})
-        print("HISTORY: ", self.__chat_history_buffer)
-        # e = time.time()
-        # print("TIME: ", e-s)
-        #return res
-
 
     def test_chatbot_with_tools(self):
         while True:
@@ -150,22 +100,5 @@ class ChatBot(RootBot):
             print("*"*100)
             print('/n')
 
-if __name__ == "__main__":
-    bot = ChatBot()
-    # loop = get_event_loop()
-    # loop.run_until_complete(bot.test_chatbot_with_tools())
-    import time
-    s = time.time()
-    history = [
-        {"user": "hi", 'ai': 'hello, how can i assist you today'},
-        {"user": "what is course of me", 'ai': 'you have 2 courses: image processing course and mobile app course'}
-    ]
-    user_message = "Khóa học nào nhiều bài tập hơn"
-    res = bot.improve_message(history, user_message)
 
-    ans = bot.get_response(user_message, 1, 1)
-    print(res)
-    print(ans)
-    e = time.time()
-    print("TIME: ", e-s)
 

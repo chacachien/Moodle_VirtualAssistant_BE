@@ -1,4 +1,3 @@
-
 from app.core.config import get_url_notsync
 from sqlalchemy import create_engine, MetaData, Table, text
 from datetime import datetime, timedelta
@@ -137,76 +136,9 @@ class TaskHandle():
                         time_modified = datetime.fromtimestamp(time_modified)
                         content = self.reminder.create_content_reminder('chapter', title, userid, courseid, 'was modified', time_modified, time_remind)                       
     
-    def daily_check(self):
-        print("CHECK DAILY: ")
-        result = ReminderService.get_user_daily_check()
-        user_list = result.fetchall()
-        print("LIST USER: ", user_list)
-        if user_list:
-            for user in user_list:
-                result = ReminderService.get_completion(user[0])
-                rows = result.fetchall()
-                print("Component: ", rows)
-                # Initialize a dictionary to store the structured data
-                structured_data = {}
-
-                # Iterate through each row in the rows list
-                for row in rows:
-                    course_name = row[0]
-                    course_id = row[1]
-                    component_name = row[2]
-                    completed = row[3]
-                    total = row[4]
-                    completion_percentage = float(row[5])
-                    
-                    # Check if the course name exists in the structured data dictionary
-                    if course_name not in structured_data:
-                        structured_data[course_name] = {
-                            "course_id": course_id,
-                            "components": {}
-                        }
-                    if component_name == 'label':
-                        component_name = "chapter"
-                    # Check if the component name exists in the course's components dictionary
-                    if component_name not in structured_data[course_name]["components"]:
-                        structured_data[course_name]["components"][component_name] = {
-                            "completed": 0,
-                            "total": 0,
-                            "completion_percentage": 0.0
-                        }
-
-                    # Update the completion status, total count, and completion percentage for the component
-                    structured_data[course_name]["components"][component_name]["completed"] += completed
-                    structured_data[course_name]["components"][component_name]["total"] += total
-                    structured_data[course_name]["components"][component_name]["completion_percentage"] = completion_percentage
-
-                # Convert the structured data dictionary to JSON format
-                json_data = json.dumps(structured_data, indent=4)
-
-                print("JSON DATA: ",json_data)
-                current_date = datetime.now().date()
-
-                # Set the reminder time to 7:00 of the current day
-                time_reminder = datetime.combine(current_date, time(hour=7, minute=1))
-                print("TIME REMINDER: ", time_reminder)
-                self.reminder.daily_reminder(user[0], json_data, time_reminder)
 
 
-    def check(self):
-        result = ReminderService.get_user_course()
-        u_c = result.fetchall()
-        self.check_quiz(u_c)
-        self.check_assign(u_c)
-        self.check_chapter(u_c)
 
-    def check_user_active(self):
-        result = ReminderService.get_user_active(self.TIME_INTERVAL)
-        rows = result.fetchall()
-        print("Use active: ", rows)
-        if rows:
-            for row in rows:
-                print("remind user: ", row[0])
-                self.reminder.remind_user(row[0])
 
     def check_label_change(self):
         labels = LabelService.get_all_label()

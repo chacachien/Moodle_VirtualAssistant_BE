@@ -1,9 +1,7 @@
-
-from sqlmodel import select, delete, insert
 from fastapi import HTTPException
 from starlette import status
 from app.core.config import get_url_notsync
-from sqlalchemy import create_engine, MetaData, Table, text
+from sqlalchemy import create_engine, text
 
 
 DATABASE_URL = get_url_notsync()
@@ -38,7 +36,6 @@ class SystemService(object):
                 return json_string
         except Exception as e:
             print(e)
-
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
     
 

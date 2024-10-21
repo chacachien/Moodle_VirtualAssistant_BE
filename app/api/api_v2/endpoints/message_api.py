@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 from typing import Annotated
 import logging
 from app.models.message_model import *
-from app.services.auth_service import auth_wrapper, auth_wrapper_lamda
+from app.services.auth_service import auth_wrapper
 from fastapi.responses import StreamingResponse
 
 from app.services.chat_service import ChatServiceV2
@@ -20,12 +20,8 @@ router = APIRouter()
 @router.get("/chat")
 async def get_history(
                     chatid: Annotated[int | None, Query()]=None,
-                    #chat_service: ChatService = Depends(),
-                    session:AsyncSession=Depends(get_session),
                     user = Depends(auth_wrapper)
                     ):
-    #user =auth_wrapper(3)  # Passing chatId to the auth wrapper
-
     if user == 0:
         return "Require token to access bot!"
 
@@ -37,8 +33,6 @@ async def get_history(
 @router.post("/chat")
 async def send_message(
                     message: MessageCreate,
-                    #chat_service: ChatService = Depends(),
-                    session: AsyncSession = Depends(get_session),
                     user=Depends(auth_wrapper)
                     ):
     try:
@@ -71,8 +65,6 @@ async def send_message(
 @router.delete("/chat")
 async def delete_message(
                     chatid: Annotated[int | None, Query()]=None,
-                    #chat_service: ChatService = Depends(),
-                    #session: AsyncSession = Depends(get_session),
                     user=Depends(auth_wrapper)
                     ):
     if user == 0:

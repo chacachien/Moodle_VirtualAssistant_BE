@@ -20,10 +20,6 @@ reminderBot = Reminder()
 
 @router.post("/reminder")
 async def get_reminder(reminder: RemiderContent):
-    # user =auth_wrapper(3)  # Passing chatId to the auth wrapper
-    # if user == 0:
-    #     raise HTTPException(status_code=401, detail="Invalid token")
-    # Create the message: Phat
     message = ""
     if reminder.name == "daily":
         message = reminderBot.daily_reminder(reminder)

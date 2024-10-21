@@ -22,34 +22,17 @@ dotenv.load_dotenv()
 class LoadData:
     def __init__(self):
         self.docs = None
-        #self.index_name = "ragbot"
-        #self.folder_id = '10ZN2ztM_WC00CyktKSZENS2LULbdJkNP'
         DATABASE_URL = get_url_vector()
         self.engine = create_engine(DATABASE_URL)
         self.conn = psycopg2.connect(DATABASE_URL)
-
-        ###
-        # from langchain_community.embeddings import HuggingFaceEmbeddings
-
-        # model_name = "sentence-transformers/all-mpnet-base-v2"
-        # model_kwargs = {'device': 'cpu'}
-        # encode_kwargs = {'normalize_embeddings': False}
-        # hf = HuggingFaceEmbeddings(
-        #     model_name=model_name,
-        #     model_kwargs=model_kwargs,
-        #     encode_kwargs=encode_kwargs
-        # )
-        ###
         self.vietnamese_model = 'dangvantuan/vietnamese-embedding'
-        ## use tokenize vietnamese-embedding from pyvi.vitokenizer
-        #self.embeddings = HuggingFaceEmbeddings(model_name=self.vietnamese_model)
         self.embeddings = OpenAIEmbeddings(model="text-embedding-3-large", dimensions=768)
 
-        #self.embeddings = HuggingFaceEmbeddings(model_name=self.vietnamese_model)
-
-    def load_data(self):
-        res = LabelService.get_all_label()
-
+    def load_data(self, id):
+        if id == -1:
+            res = LabelService.get_all_label()
+        else:
+            res = [LabelService.get_one_label(id)]
         for row in res:
             content_soup = BeautifulSoup(row['intro'], 'html.parser')
             content_text = content_soup.get_text()
@@ -100,14 +83,10 @@ class LoadData:
         return data
 
     def update_data(self, data):
-        # print('data: ', data)
         clean_data = self.clean_data(data)
         print("clean: ", clean_data)
-        # print('CLEAN DATA: ', clean_data)
         clean_data['intro'] = self.split_data(clean_data['intro'])
-        #pc = PC(index= self.pc.Index(name=self.index_name), embedding=self.embeddings, text_key='text')
 
-        #id_list = [f'doc{clean_data['id']}_chunk'+str(j) for j in range(len(clean_data['intro']))]
         data_list = [
             (
                 clean_data['course'],
@@ -139,11 +118,32 @@ class LoadData:
 
     def upload_all_label(self):
         print("start load data")
-        res = self.load_data()
+        res = self.load_data(-1)
         print("start update data")
         [self.update_data(row) for row in res]
         self.create_index_for_db()
 
+    def upload_one_label(self, id):
+        print("start load data")
+        # delete  the old one
+        try:
+            # Create a new cursor
+            with self.conn.cursor() as cur:
+                # Use parameterized query to prevent SQL injection
+                cur.execute("DELETE FROM embeddings_v2 WHERE labelid = %s", (id,))
+
+                # Commit the transaction
+                self.conn.commit()
+        except psycopg2.Error as e:
+            # Handle any database error
+            print(f"Error: {e}")
+            self.conn.rollback()
+        # insert the new one
+        res = self.load_data(id)
+        print("start update data")
+        [self.update_data(row) for row in res]
+        self.create_index_for_db()
+        # recheck
     def create_index_for_db(self):
         cur = self.conn.cursor()
         cur.execute("SELECT COUNT(*) as cnt FROM embeddings_v2;")
@@ -159,7 +159,6 @@ class LoadData:
         #use the cosine distance measure, which is what we'll later use for querying
         cur.execute(
             f'CREATE INDEX ON embeddings_v2 USING ivfflat (embedding vector_cosine_ops) WITH (lists = {num_lists});')
-
         self.conn.commit()
 
 

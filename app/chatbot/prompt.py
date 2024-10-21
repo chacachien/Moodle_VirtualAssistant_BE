@@ -486,7 +486,8 @@ PROMPT_REWRITE_QUESTION = PromptTemplate.from_template(PROMPT_REWRITE_TEMPLATE)
 
 
 PROMPT_REMINDER = PromptTemplate.from_template("""
-        Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language based on the following information:
+        Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language. Use passive voice to convey the reminder (e.g., "Khóa học đã được sửa," "Quiz đã được thêm vào").
+        Example: 
         Information: {input}
         Reminder: 
         """)
