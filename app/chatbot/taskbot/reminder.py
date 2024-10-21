@@ -1,15 +1,13 @@
 from app.core.config import get_url_notsync
-from sqlalchemy import create_engine
+
 from app.models.reminder_model import ReminderCreate, RemiderContent
 from app.services.schedule import ReminderService
-from datetime import datetime, timedelta
+
 from app.chatbot.taskbot.bot import ReminderBot
 from app.models.message_model import MessageCreate, TypeRoleChoices
 
 class Reminder:
     def __init__(self):
-        DATABASE_URL = get_url_notsync()
-        self.engine = create_engine(DATABASE_URL)
         self.bot_reminder = ReminderBot()
     
     def create_reminder_database(self, name, user, time_reminder_str, content):

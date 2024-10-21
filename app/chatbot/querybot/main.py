@@ -1,10 +1,12 @@
+from sqlalchemy import text, create_engine
+from app.chatbot.querybot import table_info
 from app.chatbot.root import RootBot
 from app.chatbot.prompt import PROMPT_SQL_ANSWER, PROMPT_STRUCTURE_TABLE, PROMPT_SQL_QUERY, PROMPT_FIX_BUG, PROMPT_CHAT, \
     PROMPT_SQL_QUERY_GPT
 from langchain_core.output_parsers import StrOutputParser
-from app.core.config import get_url_notsync
+from app.core.config import get_url_notsync, get_url
 from app.core.config import BASE_DIR
-from langchain.sql_database import SQLDatabase
+
 import re
 
 class QueryBot(RootBot):
@@ -14,8 +16,7 @@ class QueryBot(RootBot):
         self.sql_answer_prompt = PROMPT_SQL_ANSWER
         self.sql_query_prompt = PROMPT_SQL_QUERY
         self.fix_bug_prompt = PROMPT_FIX_BUG
-        DATABASE_URL = get_url_notsync()
-        self.db =  SQLDatabase.from_uri(DATABASE_URL)
+        self.db = create_engine(get_url_notsync())
         self.table_info = ''
 
     def get_table_info(self):
@@ -31,12 +32,13 @@ class QueryBot(RootBot):
             | self.model
             | StrOutputParser()
         )
-        self.table_info = self.get_table_info() if self.table_info== '' else self.table_info
+        #self.table_info = self.get_table_info() if self.table_info== '' else self.table_info
+        self.table_info = table_info
         threshold = 4
         flag = False
         query_result = ''
         r = 0
-        list_remind = ['Bạn chịu khó đợi một tí nhé!', 'Thông tin đang được xử lý rồi!']
+        list_remind = ['Bạn chịu khó đợi một tí nhé!\n', 'Thông tin đang được xử lý rồi!\n']
         yield "Tìm kiếm thông tin\n"
         for j in range(threshold):
             if flag: break
@@ -47,15 +49,21 @@ class QueryBot(RootBot):
                 if err !='':
                     chain = (
                         PROMPT_SQL_QUERY_GPT
-                        | self.model_openai
+                        | self.model_openai4
                         | StrOutputParser()
                     )
                     execute_query = chain.invoke({"id": id,"question": [question], "database_structure": database_structure })
                     try:
                         execute_query = re.findall(pattern, execute_query,re.DOTALL)[0]
-                        sql_code = execute_query
-                    # try the sql query
-                        query_result  = self.db.run(execute_query)
+                        print("SQL: ", execute_query)
+                        # try the sql query
+                        query_result = None
+                        with self.db.connect() as connection:
+                            # Execute the SQL query to fetch all users
+                            query = text(execute_query)
+                            result = connection.execute(query)
+                            query_result = result.fetchall()
+                            print("QUERY RESULT: ", query_result)
                         flag = True
                         break
                     except Exception as e:
@@ -76,33 +84,26 @@ class QueryBot(RootBot):
                     pattern = r"SELECT.*?;"
                     try:
                         execute_query = re.findall(pattern, execute_query,re.DOTALL)[0]
-                        query_result  = self.db.run(execute_query)
+                        print("FIX BUG SQL: ", execute_query)
+                        query_result = None
+                        with self.db.connect() as connection:
+                            # Execute the SQL query to fetch all users
+                            query = text(execute_query)
+                            result = connection.execute(query)
+                            query_result = result.fetchall()
+                            print("QUERY RESULT: ", query_result)
                         flag = True
                         break
                     except Exception as e:
                         err = e
-        yield "Nội dung sẳn sàng\n"
-        answer_prompt = PROMPT_SQL_ANSWER
         chain = (
-            answer_prompt
-            | self.model1_5
+            PROMPT_SQL_ANSWER
+            #| self.model1_5
+            | self.model_openai
             | StrOutputParser()
         )
         #final_result = chain.invoke({'id': id, "question": question, "result": query_result})
         full_bot_message = []
-        yield "&start&"
+        yield "&start&\n"
         for chunk in chain.stream({'id': id, "question": question, "result": query_result}):
             yield chunk
-
-    def test(self):
-        while True:
-            id = 2
-            query = input("user: ")
-            if query == "exit":
-                break
-
-            response = self.query(query, id)
-            print("ai: ", response)
-            print('/n')
-            print("*"*100)
-            print('/n')

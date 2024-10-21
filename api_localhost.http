@@ -1,5 +1,5 @@
 @host = http://localhost:5001/api/v2
-@token = 75921f4e01b6caad0dc2d0f966b876d
+@token = 75921f4e01b6caad0dc2d0f966b876da
 #health check
 GET {{host}}
 

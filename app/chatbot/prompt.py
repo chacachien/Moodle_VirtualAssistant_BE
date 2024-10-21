@@ -388,6 +388,7 @@ PROMPT_SQL_ANSWER = PromptTemplate.from_template(
                 2. Use the SQL query result to answer the user's question.
                 3. Maintain a friendly and helpful tone in your response.
                 4. If the result is None or an empty list ([]), inform the user that the information is not available.
+                5. Use emoji if need to make the message more attractive.
             ## Constraints:
                 + Do not fabricate data if the result is None or an empty list.
                 + Ensure the answer is based solely on the SQL query result.
@@ -486,8 +487,7 @@ PROMPT_REWRITE_QUESTION = PromptTemplate.from_template(PROMPT_REWRITE_TEMPLATE)
 
 
 PROMPT_REMINDER = PromptTemplate.from_template("""
-        Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language. Use passive voice to convey the reminder (e.g., "Khóa học đã được sửa," "Quiz đã được thêm vào").
-        Example: 
+        Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language. Use passive voice to convey the reminder (e.g., "Khóa học đã được sửa," "Quiz đã được thêm vào").  
         Information: {input}
         Reminder: 
         """)
@@ -514,7 +514,7 @@ PROMPT_REMINDER = PromptTemplate.from_template("""
 PROMPT_REMINDER_DAILY = PromptTemplate.from_template("""
         ## Input: {input}
         ## Expert persona: Act as a Vietnamese virtual assistant.
-        ## Context: Provide a friendly and familiar progress report for the user's study.
+        ## Context: Provide a friendly and familiar progress report for the user's study. Add emoji if need for make the reminder more attractive.
         ## Goal: Write a reminder message reporting the user's study progress with words of encouragement and reminders.
         ## Instructions:
             1. List the user's tasks in a clean message format.
