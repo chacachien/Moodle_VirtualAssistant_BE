@@ -488,6 +488,8 @@ PROMPT_REWRITE_QUESTION = PromptTemplate.from_template(PROMPT_REWRITE_TEMPLATE)
 
 PROMPT_REMINDER = PromptTemplate.from_template("""
         Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language. Use passive voice to convey the reminder (e.g., "Khóa học đã được sửa," "Quiz đã được thêm vào").  
+        Use emoji if need to make the message more attractive.
+
         Information: {input}
         Reminder: 
         """)
@@ -520,6 +522,7 @@ PROMPT_REMINDER_DAILY = PromptTemplate.from_template("""
             1. List the user's tasks in a clean message format.
             2. Use friendly and familiar language.
             3. Include words of encouragement and reminders at the end of the message.
+            4. Use emoji if need to make the message more attractive.
         ## Example format:
             ```
             Khoá học A:
