@@ -4,13 +4,22 @@ from fastapi import FastAPI
 from fastapi_sqlalchemy import DBSessionMiddleware
 from starlette.middleware.cors import CORSMiddleware
 from app.core.config import settings
-# from app.api.api_v1.api import router
-from app.api.api_v0.api import router
+
+from app.api.api_v2.api import router
 
 from app.helpers.exception_handler import CustomException, http_exception_handler
 
 import logging
 from app.chatbot.taskbot.main import TaskHandle
+
+
+#from fastapi_utils.timing import add_timing_middleware, record_timing
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+logger.addHandler(handler)
+
 
 
 logging.config.fileConfig(settings.LOGGING_CONFIG_FILE, disable_existing_loggers=False)
@@ -25,6 +34,14 @@ def get_application() -> FastAPI:
         '''
     )
 
+
+    # origins = [
+    #     "http://localhost:3000",
+    #     "http://localhost:8000",
+    #     "http://localhost:5000",
+    #     # Add any other origins you want to allow
+    # ]
+
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -33,56 +50,60 @@ def get_application() -> FastAPI:
         allow_headers=["*"],
     )
     #app.add_middleware(DBSessionMiddleware, db_url=settings.DATABASE_URL)
-    app.include_router(router, prefix=settings.API_V1_STR)
+
+    app.include_router(router, prefix=settings.API_V2_STR)
     app.add_exception_handler(CustomException, http_exception_handler)
+    #add_timing_middleware(app, record=logger.info, prefix="app")
+
     return app
 
 app = get_application()
-if __name__ == "__main__":
-    import asyncio
-    import time
-    import schedule
-    from datetime import datetime
-    from threading import Thread
 
-    taskBot = TaskHandle()
-    async def scheduled_job():
-        print('start checking')
-        taskBot.run()
+# if __name__ == "__main__":
+#     import asyncio
+#     import time
+#     import schedule
+#     from datetime import datetime
+#     from threading import Thread
 
-    async def daily_job():
-        print("DAILY START")
-        taskBot.daily_check()
+#     taskBot = TaskHandle()
+#     async def scheduled_job():
+#         print('start checking')
+#         taskBot.run()
 
-    def schedule_checker():
-        while True:
-            schedule.run_pending()
-            time.sleep(1)
+#     async def daily_job():
+#         print("DAILY START")
+#         taskBot.daily_check()
+
+#     def schedule_checker():
+#         while True:
+#             schedule.run_pending()
+#             time.sleep(1)
 
 
-    def run_async_function_sync( func):
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(func())
+#     def run_async_function_sync( func):
+#         loop = asyncio.new_event_loop()
+#         asyncio.set_event_loop(loop)
+#         loop.run_until_complete(func())
     
 
-    #schedule.every(41).minutes.do(lambda: run_async_function_sync(scheduled_job))
-    import pytz
-    from datetime import datetime
-    timezone = 'Asia/Ho_Chi_Minh'  
-    scheduled_time = '16:55'
+#     #schedule.every(41).minutes.do(lambda: run_async_function_sync(scheduled_job))
+#     import pytz
+#     from datetime import datetime
+#     timezone = 'Asia/Ho_Chi_Minh'  
+#     scheduled_time = '16:55'
 
-    # schedule.every().day.at(scheduled_time, timezone).do(
-    #     lambda: run_async_function_sync(daily_job))
+#     # schedule.every().day.at(scheduled_time, timezone).do(
+#     #     lambda: run_async_function_sync(daily_job))
 
-    # schedule.every(1).minutes.do(
-    #     lambda: run_async_function_sync(scheduled_job)
-    # )
+#     # schedule.every(1).minutes.do(
+#     #     lambda: run_async_function_sync(scheduled_job)
+#     # )
 
-    # Thread(target=schedule_checker).start()
+#     # Thread(target=schedule_checker).start()
 
-    #uvicorn.run(app,host="0.0.0.0",  port=8000, log_level="info")
-    uvicorn.run("app.main:app", reload=True, reload_dirs='app', host="0.0.0.0", port=8000, log_level="info")
+#     #uvicorn.run(app,host="0.0.0.0",  port=8000, log_level="info")
+#     uvicorn.run("app.main:app", reload=True, reload_dirs='app', host="0.0.0.0", port=8000, log_level="info")
 
-    # while True:
-    #     schedule.run_pending()
+#     # while True:
+#     #     schedule.run_pending()

@@ -13,12 +13,28 @@ from datetime import datetime
 class ReminderBase(SQLModel):
     type: str
     content: str
-    chatId: int
+    chat_id: int
     time_remind: datetime = Field(default=None)
     is_remind: bool = Field(default=False)
     
 class ReminderCreate(ReminderBase):
     pass
+
+class Settime(SQLModel):
+    status: int
+    time: str
+    user_id: int
+
+class RemiderContent(SQLModel):
+    name:str
+    title:str
+    user_id: int
+    user: str
+    course_id:int
+    course: str
+    type_action:str
+    time_action: str
+    time_reminder: str
 
 class ReminderRead(SQLModel):
     chatId: int

@@ -1,9 +1,8 @@
 from app.core.config import get_url_notsync
-from sqlalchemy import create_engine,  MetaData, Table, text
-from app.models.reminder_model import ReminderCreate
+from sqlalchemy import create_engine
+from app.models.reminder_model import ReminderCreate, RemiderContent
 from app.services.schedule import ReminderService 
-from app.models.reminder_model import ReminderCreate
-from app.db.db import get_session
+
 from datetime import datetime, timedelta
 from app.chatbot.taskbot.bot import ReminderBot
 from app.models.message_model import MessageCreate, TypeRoleChoices
@@ -15,28 +14,32 @@ class Reminder:
         self.engine = create_engine(DATABASE_URL)
         self.bot_reminder = ReminderBot()
     
-    def create_reminder_database(self, name, user, time_reminder, content):
+    def create_reminder_database(self, name, user, time_reminder_str, content):
+        from datetime import datetime
+
+        # Convert string to datetime
+        time_reminder = datetime.strptime(time_reminder_str, "%Y-%m-%d %H:%M:%S")
+
         reminder_create = ReminderCreate(
                 type= name,
                 content = content,
-                chatId = user,
-                time_remind = time_reminder
+                chat_id = user,
+                time_remind = time_reminder,
         )
 
         result = ReminderService.store_reminder(reminder_create)
 
-    
-    def create_content_reminder(self, name, title, user, course, type_action, time_action, time_reminder):
+    def create_content_reminder(self, reminder: RemiderContent):
         # get user name, get course name
-        username = ReminderService.get_username(user)
-        coursename = ReminderService.get_coursename(course)
+        # username = ReminderService.get_username(user)
+        # coursename = ReminderService.get_coursename(course)
         reminder_content =f'''
-            User: {username}
-            Type: {name}
-            Title: {title}
-            Action: {type_action}
-            Course: {coursename}
-            At: {str(time_action)}
+            User: {reminder.user}
+            Type: {reminder.name}
+            Title: {reminder.title}
+            Action: {reminder.type_action}
+            Course: {reminder.course}
+            At: {str(reminder.time_action)}
         '''
         #reminder_content = "User " + username + " have "+ name+ " " +type_action + " in course "+coursename +" at "+str(time_action)  # Converting time_action to string
         print("reminder content: ", reminder_content)
@@ -44,21 +47,17 @@ class Reminder:
         reminder_ai = self.bot_reminder.reminder(reminder_content)
         print("reminder ai: ", reminder_ai)
 
-        self.create_reminder_database(name, user, time_reminder, reminder_ai)
-        return reminder_content
+        self.create_reminder_database(reminder.name, reminder.user_id, reminder.time_reminder, reminder_ai)
+        return reminder_ai
 
-    def daily_reminder(self, user, list_content, time_reminder):
-        username = ReminderService.get_username(user)
-        full_content = f"User: {username}\n" + list_content
+    def daily_reminder(self, reminder: RemiderContent):
+        full_content = f"User: {reminder.user}\n" + reminder.title
+        print("full_content: ", full_content)
         reminder_ai = self.bot_reminder.reminder_daily(full_content)
-        messages = reminder_ai
-        #messages = reminder_ai.split("\n\n")
-
-        print("remind list", messages)
+        print("remind list", reminder_ai)
         # for m in messages:
-        self.create_reminder_database('daily', user, time_reminder, messages)
-
-
+        self.create_reminder_database('daily', reminder.user_id, reminder.time_reminder, reminder_ai)
+        return reminder_ai
     def remind_user(self, userid):
         result = ReminderService.get_message_reminder(userid)
         rows = result.fetchall()
