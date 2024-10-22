@@ -42,3 +42,8 @@ async def set_time(time: Settime):
         result = await ReminderServiceV2.set_status_reminder_user(time)
     return result
 
+
+@router.get("/settime")
+async def set_time():
+    result = await ReminderServiceV2.get_time()
+    return result

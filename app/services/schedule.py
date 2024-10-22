@@ -107,13 +107,13 @@ class ReminderServiceV2(object):
                 result = await connection.execute(query, 'time_reminder', time.time)
                 return result
             else:
-                query = text("""
+                query = """
                     DELETE FROM service_setting 
                     WHERE name = 'time_reminder'
-                """)
+                """
 
                 result = await connection.execute(query)
-
+                print(result)
                 return result
             return "Settime success"
         except Exception as e:
@@ -149,3 +149,18 @@ class ReminderServiceV2(object):
         except Exception as e:
             print(f"Error closing the database connection: {e}")
 
+    @staticmethod
+    async def get_time():
+        connection = await ReminderServiceV2.get_db_connection()
+        try:
+
+            query = """
+                SELECT value FROM service_setting WHERE name = 'time_reminder'
+            """
+            result = await connection.fetch(query)
+            return result
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
+        finally:
+            await ReminderServiceV2.close_db_connection(connection)
