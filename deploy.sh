@@ -21,5 +21,5 @@ if ! nohup uvicorn app.main:app --host 0.0.0.0 --port 5001 & then
   exit 1
 fi
 
-echo "Uvicorn started successfully"
+echo "Uvicorn started"
 
