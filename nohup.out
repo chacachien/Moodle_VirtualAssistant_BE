@@ -71,3 +71,37 @@ AUTH:  scheme='Bearer' credentials='75921f4e01b6caad0dc2d0f966b876da'
 200
 USER ID:  2
 INFO:     14.169.215.163:58254 - "POST /api/v2/chat HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [320401]
+INFO:     Stopping reloader process [320399]
+INFO:     Will watch for changes in these directories: ['/home/ec2-user/befastapi/Moodle_VirtualAssistant_BE']
+INFO:     Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+INFO:     Started reloader process [321199] using StatReload
+postgresql+psycopg2://postgres:1307x2Npk@moodle.cd2wy4iagdv9.ap-southeast-1.rds.amazonaws.com:5432/moodle
+INFO:     Started server process [321201]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [321201]
+INFO:     Stopping reloader process [321199]
+INFO:     Will watch for changes in these directories: ['/home/ec2-user/befastapi/Moodle_VirtualAssistant_BE']
+INFO:     Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+INFO:     Started reloader process [321443] using StatReload
+postgresql+psycopg2://postgres:1307x2Npk@moodle.cd2wy4iagdv9.ap-southeast-1.rds.amazonaws.com:5432/moodle
+INFO:     Started server process [321445]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [321445]
+INFO:     Stopping reloader process [321443]
+postgresql+psycopg2://postgres:1307x2Npk@moodle.cd2wy4iagdv9.ap-southeast-1.rds.amazonaws.com:5432/moodle
+INFO:     Started server process [323782]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
