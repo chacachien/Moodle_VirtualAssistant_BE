@@ -70,6 +70,9 @@ Content-Type: application/json
     "time": "22:54"
 }
 
+### GET UP TIME REMINDER
+GET {{host}}/settime
+Content-Type: application/json
 
 ###
 POST {{host}}/reminder
