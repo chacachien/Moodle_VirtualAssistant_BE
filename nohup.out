@@ -1,0 +1,73 @@
+INFO:     Will watch for changes in these directories: ['/home/ec2-user/befastapi/Moodle_VirtualAssistant_BE']
+INFO:     Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+INFO:     Started reloader process [320180] using StatReload
+postgresql+psycopg2://postgres:1307x2Npk@moodle.cd2wy4iagdv9.ap-southeast-1.rds.amazonaws.com:5432/moodle
+INFO:     Started server process [320182]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     14.169.215.163:56358 - "OPTIONS /api/v2/chat HTTP/1.1" 200 OK
+AUTH:  scheme='Bearer' credentials='75921f4e01b6caad0dc2d0f966b876da'
+[{"id":2,"username":"admin","firstname":"Admin","lastname":"User","fullname":"Admin User","email":"nguyentienphatbl123@gmail.com","department":"","firstaccess":1727288011,"lastaccess":1729539661,"auth":"manual","suspended":false,"confirmed":true,"lang":"en","theme":"","timezone":"Asia\/Ho_Chi_Minh","mailformat":1,"description":"","descriptionformat":1,"country":"VN","profileimageurlsmall":"http:\/\/ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com\/theme\/image.php\/boost\/core\/1729323866\/u\/f2","profileimageurl":"http:\/\/ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com\/theme\/image.php\/boost\/core\/1729323866\/u\/f1","preferences":[{"name":"core_message_migrate_data","value":"1"},{"name":"auth_manual_passwordupdatetime","value":"1727288090"},{"name":"email_bounce_count","value":"1"},{"name":"email_send_count","value":"1"},{"name":"core_user_welcome","value":"1727288626"},{"name":"tool_usertours_tour_completion_time_3","value":"1727288636"},{"name":"tool_usertours_tour_completion_time_4","value":"1727288653"},{"name":"tool_usertours_tour_completion_time_2","value":"1727288704"},{"name":"last_time_enrolments_synced","value":"1729608017"},{"name":"filepicker_recentrepository","value":"5"},{"name":"coursesectionspreferences_3","value":"{\"contentcollapsed\":{\"1\":8,\"2\":9,\"3\":10,\"4\":11,\"5\":12,\"6\":13,\"8\":16,\"9\":17}}"},{"name":"filepicker_recentlicense","value":"unknown"},{"name":"drawer-open-index","value":"0"},{"name":"drawer-open-block","value":"0"},{"name":"block_myoverview_user_view_preference","value":"list"},{"name":"block_myoverview_user_sort_preference","value":"title"},{"name":"ifirst","value":""},{"name":"ilast","value":""},{"name":"coursesectionspreferences_4","value":"{\"contentcollapsed\":{\"1\":21,\"2\":22,\"3\":23}}"},{"name":"login_failed_count_since_success","value":"0"},{"name":"coursesectionspreferences_2","value":"{\"contentcollapsed\":[]}"},{"name":"_lastloaded","value":1729608017}]}]
+200
+USER ID:  2
+INFO:     14.169.215.163:56359 - "POST /api/v2/chat HTTP/1.1" 200 OK
+MESSAGE AFTER IMPROVE: Tôi nên học khóa học lịch sử nào? 
+
+FIX BUG SQL:  SELECT c.fullname 
+FROM courses c
+WHERE c.category = 'Lịch sử';
+SQL:  SELECT c.id AS course_id, c.fullname AS course_name, c.summary AS course_summary
+FROM courses c
+WHERE c.category = 'Lịch sử' AND c.visible = 1
+ORDER BY c.startdate DESC;
+FIX BUG SQL:  SELECT c.name 
+FROM courses c
+JOIN course_history ch ON c.id = ch.course_id
+WHERE ch.user_id = 3;
+SQL:  SELECT c.id AS course_id, c.fullname AS course_name
+FROM users u
+JOIN course_history ch ON u.id = ch.user_id
+JOIN courses c ON ch.course_id = c.id
+WHERE u.id = 3 AND c.fullname ILIKE '%lịch sử%'
+ORDER BY ch.last_accessed DESC
+LIMIT 1;
+FIX BUG SQL:  SELECT * FROM courses WHERE history = 1;
+SQL:  SELECT c.id AS course_id, c.fullname AS course_name, c.startdate AS course_start_date
+FROM mdl_course c
+WHERE c.fullname ILIKE '%lịch sử%'
+ORDER BY c.startdate DESC
+LIMIT 5;
+QUERY RESULT:  [(4, 'Lịch sử và văn hóa của Việt Phục qua các thời kỳ', 1713632400), (3, 'Tìm Hiểu Lịch Sử 10 Triều Đại Phong Kiến Việt Nam', 1713546000)]
+BOT_MESSAGE_CONTENT:  Tìm kiếm thông tin
+Bạn chịu khó đợi một tí nhé!
+Thông tin đang được xử lý rồi!
+&start&
+Tôi đã tìm thấy hai khóa học lịch sử phù hợp với bạn:
+1. "Lịch sử và văn hóa của Việt Phục qua các thời kỳ"
+2. "Tìm Hiểu Lịch Sử 10 Triều Đại Phong Kiến Việt Nam"
+
+Bạn có thể xem xét nội dung của từng khóa học để quyết định khóa học nào phản ánh đúng nhất sự quan tâm của bạn. 📚🌍
+Tôi đã tìm thấy hai khóa học lịch sử phù hợp với bạn:
+1. "Lịch sử và văn hóa của Việt Phục qua các thời kỳ"
+2. "Tìm Hiểu Lịch Sử 10 Triều Đại Phong Kiến Việt Nam"
+
+Bạn có thể xem xét nội dung của từng khóa học để quyết định khóa học nào phản ánh đúng nhất sự quan tâm của bạn. 📚🌍
+INFO:     14.169.215.163:56976 - "OPTIONS /api/v2/chat HTTP/1.1" 200 OK
+AUTH:  scheme='Bearer' credentials='75921f4e01b6caad0dc2d0f966b876da'
+[{"id":2,"username":"admin","firstname":"Admin","lastname":"User","fullname":"Admin User","email":"nguyentienphatbl123@gmail.com","department":"","firstaccess":1727288011,"lastaccess":1729539661,"auth":"manual","suspended":false,"confirmed":true,"lang":"en","theme":"","timezone":"Asia\/Ho_Chi_Minh","mailformat":1,"description":"","descriptionformat":1,"country":"VN","profileimageurlsmall":"http:\/\/ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com\/theme\/image.php\/boost\/core\/1729323866\/u\/f2","profileimageurl":"http:\/\/ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com\/theme\/image.php\/boost\/core\/1729323866\/u\/f1","preferences":[{"name":"core_message_migrate_data","value":"1"},{"name":"auth_manual_passwordupdatetime","value":"1727288090"},{"name":"email_bounce_count","value":"1"},{"name":"email_send_count","value":"1"},{"name":"core_user_welcome","value":"1727288626"},{"name":"tool_usertours_tour_completion_time_3","value":"1727288636"},{"name":"tool_usertours_tour_completion_time_4","value":"1727288653"},{"name":"tool_usertours_tour_completion_time_2","value":"1727288704"},{"name":"filepicker_recentrepository","value":"5"},{"name":"last_time_enrolments_synced","value":"1729608017"},{"name":"coursesectionspreferences_3","value":"{\"contentcollapsed\":{\"1\":8,\"2\":9,\"3\":10,\"4\":11,\"5\":12,\"6\":13,\"8\":16,\"9\":17}}"},{"name":"filepicker_recentlicense","value":"unknown"},{"name":"drawer-open-index","value":"0"},{"name":"drawer-open-block","value":"0"},{"name":"block_myoverview_user_view_preference","value":"list"},{"name":"block_myoverview_user_sort_preference","value":"title"},{"name":"ifirst","value":""},{"name":"ilast","value":""},{"name":"coursesectionspreferences_4","value":"{\"contentcollapsed\":{\"1\":21,\"2\":22,\"3\":23}}"},{"name":"login_failed_count_since_success","value":"0"},{"name":"coursesectionspreferences_2","value":"{\"contentcollapsed\":[]}"},{"name":"_lastloaded","value":1729608163}]}]
+200
+USER ID:  2
+INFO:     14.169.215.163:56977 - "POST /api/v2/chat HTTP/1.1" 200 OK
+INFO:     Will watch for changes in these directories: ['/home/ec2-user/befastapi/Moodle_VirtualAssistant_BE']
+INFO:     Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+INFO:     Started reloader process [320399] using StatReload
+postgresql+psycopg2://postgres:1307x2Npk@moodle.cd2wy4iagdv9.ap-southeast-1.rds.amazonaws.com:5432/moodle
+INFO:     Started server process [320401]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     14.169.215.163:58252 - "OPTIONS /api/v2/chat HTTP/1.1" 200 OK
+AUTH:  scheme='Bearer' credentials='75921f4e01b6caad0dc2d0f966b876da'
+[{"id":2,"username":"admin","firstname":"Admin","lastname":"User","fullname":"Admin User","email":"nguyentienphatbl123@gmail.com","department":"","firstaccess":1727288011,"lastaccess":1729539661,"auth":"manual","suspended":false,"confirmed":true,"lang":"en","theme":"","timezone":"Asia\/Ho_Chi_Minh","mailformat":1,"description":"","descriptionformat":1,"country":"VN","profileimageurlsmall":"http:\/\/ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com\/theme\/image.php\/boost\/core\/1729323866\/u\/f2","profileimageurl":"http:\/\/ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com\/theme\/image.php\/boost\/core\/1729323866\/u\/f1","preferences":[{"name":"core_message_migrate_data","value":"1"},{"name":"auth_manual_passwordupdatetime","value":"1727288090"},{"name":"email_bounce_count","value":"1"},{"name":"email_send_count","value":"1"},{"name":"core_user_welcome","value":"1727288626"},{"name":"tool_usertours_tour_completion_time_3","value":"1727288636"},{"name":"tool_usertours_tour_completion_time_4","value":"1727288653"},{"name":"tool_usertours_tour_completion_time_2","value":"1727288704"},{"name":"filepicker_recentrepository","value":"5"},{"name":"last_time_enrolments_synced","value":"1729608017"},{"name":"coursesectionspreferences_3","value":"{\"contentcollapsed\":{\"1\":8,\"2\":9,\"3\":10,\"4\":11,\"5\":12,\"6\":13,\"8\":16,\"9\":17}}"},{"name":"filepicker_recentlicense","value":"unknown"},{"name":"drawer-open-index","value":"0"},{"name":"drawer-open-block","value":"0"},{"name":"block_myoverview_user_view_preference","value":"list"},{"name":"block_myoverview_user_sort_preference","value":"title"},{"name":"ifirst","value":""},{"name":"ilast","value":""},{"name":"coursesectionspreferences_4","value":"{\"contentcollapsed\":{\"1\":21,\"2\":22,\"3\":23}}"},{"name":"login_failed_count_since_success","value":"0"},{"name":"coursesectionspreferences_2","value":"{\"contentcollapsed\":[]}"},{"name":"_lastloaded","value":1729608467}]}]
+200
+USER ID:  2
+INFO:     14.169.215.163:58254 - "POST /api/v2/chat HTTP/1.1" 200 OK
