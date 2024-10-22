@@ -16,7 +16,7 @@ fi
 sleep 2
 
 # Start Uvicorn in the background on port 5001
-if ! nohup uvicorn app.main:app --host 0.0.0.0 --port 5001 &; then
+if ! nohup uvicorn app.main:app --host 0.0.0.0 --port 5001 & then
   echo "Failed to start Uvicorn"
   exit 1
 fi
