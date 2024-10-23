@@ -43,7 +43,7 @@ class Reminder:
         reminder_ai = self.bot_reminder.reminder(reminder_content)
         print("reminder ai: ", reminder_ai)
 
-        self.create_reminder_database(reminder.name, reminder.userId, reminder.time_reminder, reminder_ai)
+        self.create_reminder_database(reminder.name, reminder.user_id, reminder.time_reminder, reminder_ai)
         return reminder_ai
 
     def daily_reminder(self, reminder: RemiderContent):
