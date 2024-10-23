@@ -36,14 +36,14 @@ async def get_reminder(reminder: RemiderContent):
 
 @router.post("/settime")
 async def set_time(time: Settime):
-    if time.user_id == 2:
+    if time.userId == 2:
         result = await ReminderServiceV2.set_time(time)
     else:
         result = await ReminderServiceV2.set_status_reminder_user(time)
     return result
 
 
-@router.get("/settime")
+@router.get("/gettime")
 async def set_time():
     result = await ReminderServiceV2.get_time()
     return result

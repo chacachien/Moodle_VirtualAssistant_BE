@@ -133,7 +133,7 @@ class ReminderServiceV2(object):
                         ON CONFLICT (user_id)
                         DO UPDATE SET reminder = EXCLUDED.reminder;
                     """
-            result = await connection.execute(query, time.user_id, time.status==1)
+            result = await connection.execute(query, time.userId, time.status==1)
             return result
         except Exception as e:
             print(e)

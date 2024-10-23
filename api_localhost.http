@@ -71,7 +71,7 @@ Content-Type: application/json
 }
 
 ### GET UP TIME REMINDER
-GET {{host}}/settime
+GET {{host}}/gettime
 Content-Type: application/json
 
 ###

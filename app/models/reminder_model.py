@@ -23,7 +23,7 @@ class ReminderCreate(ReminderBase):
 class Settime(SQLModel):
     status: int
     time: str
-    user_id: int
+    userId: int
 
 class RemiderContent(SQLModel):
     name:str
