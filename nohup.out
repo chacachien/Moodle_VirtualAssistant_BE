@@ -105,3 +105,47 @@ INFO:     Started server process [323782]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+postgresql+psycopg2://postgres:1307x2Npk@moodle.cd2wy4iagdv9.ap-southeast-1.rds.amazonaws.com:5432/moodle
+INFO:     Started server process [341814]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [341814]
+postgresql+psycopg2://postgres:1307x2Npk@moodle.cd2wy4iagdv9.ap-southeast-1.rds.amazonaws.com:5432/moodle
+INFO:     Started server process [341967]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
+INFO:     210.245.32.84:44145 - "OPTIONS /api/v2/gettime HTTP/1.1" 200 OK
+INFO:     210.245.32.84:44145 - "GET /api/v2/gettime HTTP/1.1" 404 Not Found
+INFO:     210.245.32.84:55480 - "OPTIONS /api/v2/gettime HTTP/1.1" 200 OK
+INFO:     210.245.32.84:55480 - "GET /api/v2/gettime HTTP/1.1" 404 Not Found
+INFO:     210.245.32.84:55490 - "OPTIONS /api/v2/chat?chatid=3 HTTP/1.1" 200 OK
+INFO:     210.245.32.84:55490 - "GET /api/v2/chat?chatid=3 HTTP/1.1" 403 Forbidden
+INFO:     210.245.32.84:55520 - "OPTIONS /api/v2/chat?chatid=3 HTTP/1.1" 200 OK
+AUTH:  scheme='Bearer' credentials='75921f4e01b6caad0dc2d0f966b876da'
+[{"id":2,"username":"admin","firstname":"Admin","lastname":"User","fullname":"Admin User","email":"nguyentienphatbl123@gmail.com","department":"","firstaccess":1727288011,"lastaccess":1729622610,"auth":"manual","suspended":false,"confirmed":true,"lang":"en","theme":"","timezone":"Asia\/Ho_Chi_Minh","mailformat":1,"description":"","descriptionformat":1,"country":"VN","profileimageurlsmall":"http:\/\/ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com\/theme\/image.php\/boost\/core\/1729323866\/u\/f2","profileimageurl":"http:\/\/ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com\/theme\/image.php\/boost\/core\/1729323866\/u\/f1","preferences":[{"name":"core_message_migrate_data","value":"1"},{"name":"auth_manual_passwordupdatetime","value":"1727288090"},{"name":"email_bounce_count","value":"1"},{"name":"email_send_count","value":"1"},{"name":"core_user_welcome","value":"1727288626"},{"name":"tool_usertours_tour_completion_time_3","value":"1727288636"},{"name":"tool_usertours_tour_completion_time_4","value":"1727288653"},{"name":"tool_usertours_tour_completion_time_2","value":"1727288704"},{"name":"filepicker_recentrepository","value":"5"},{"name":"coursesectionspreferences_3","value":"{\"contentcollapsed\":{\"1\":8,\"2\":9,\"3\":10,\"4\":11,\"5\":12,\"6\":13,\"8\":16,\"9\":17}}"},{"name":"filepicker_recentlicense","value":"unknown"},{"name":"drawer-open-index","value":"0"},{"name":"drawer-open-block","value":"0"},{"name":"block_myoverview_user_view_preference","value":"list"},{"name":"block_myoverview_user_sort_preference","value":"title"},{"name":"last_time_enrolments_synced","value":"1729648982"},{"name":"ifirst","value":""},{"name":"ilast","value":""},{"name":"coursesectionspreferences_4","value":"{\"contentcollapsed\":{\"1\":21,\"2\":22,\"3\":23}}"},{"name":"login_failed_count_since_success","value":"0"},{"name":"coursesectionspreferences_2","value":"{\"contentcollapsed\":[]}"},{"name":"_lastloaded","value":1729648982}]}]
+200
+USER ID:  2
+GET HISTORY OF  3
+INFO:     210.245.32.84:55520 - "GET /api/v2/chat?chatid=3 HTTP/1.1" 200 OK
+INFO:     210.245.32.84:55541 - "OPTIONS /api/v2/settime HTTP/1.1" 200 OK
+INFO:     210.245.32.84:55541 - "POST /api/v2/settime HTTP/1.1" 422 Unprocessable Entity
+INFO:     210.245.32.84:55542 - "OPTIONS /api/v2/gettime HTTP/1.1" 200 OK
+INFO:     210.245.32.84:55542 - "GET /api/v2/gettime HTTP/1.1" 404 Not Found
+INFO:     210.245.32.84:55542 - "OPTIONS /api/v2/chat?chatid=3 HTTP/1.1" 200 OK
+INFO:     210.245.32.84:55542 - "GET /api/v2/chat?chatid=3 HTTP/1.1" 403 Forbidden
+INFO:     210.245.32.84:55616 - "OPTIONS /api/v2/chat?chatid=3 HTTP/1.1" 200 OK
+AUTH:  scheme='Bearer' credentials='75921f4e01b6caad0dc2d0f966b876da'
+[{"id":2,"username":"admin","firstname":"Admin","lastname":"User","fullname":"Admin User","email":"nguyentienphatbl123@gmail.com","department":"","firstaccess":1727288011,"lastaccess":1729622610,"auth":"manual","suspended":false,"confirmed":true,"lang":"en","theme":"","timezone":"Asia\/Ho_Chi_Minh","mailformat":1,"description":"","descriptionformat":1,"country":"VN","profileimageurlsmall":"http:\/\/ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com\/theme\/image.php\/boost\/core\/1729323866\/u\/f2","profileimageurl":"http:\/\/ec2-54-254-161-50.ap-southeast-1.compute.amazonaws.com\/theme\/image.php\/boost\/core\/1729323866\/u\/f1","preferences":[{"name":"core_message_migrate_data","value":"1"},{"name":"auth_manual_passwordupdatetime","value":"1727288090"},{"name":"email_bounce_count","value":"1"},{"name":"email_send_count","value":"1"},{"name":"core_user_welcome","value":"1727288626"},{"name":"tool_usertours_tour_completion_time_3","value":"1727288636"},{"name":"tool_usertours_tour_completion_time_4","value":"1727288653"},{"name":"tool_usertours_tour_completion_time_2","value":"1727288704"},{"name":"filepicker_recentrepository","value":"5"},{"name":"coursesectionspreferences_3","value":"{\"contentcollapsed\":{\"1\":8,\"2\":9,\"3\":10,\"4\":11,\"5\":12,\"6\":13,\"8\":16,\"9\":17}}"},{"name":"filepicker_recentlicense","value":"unknown"},{"name":"drawer-open-index","value":"0"},{"name":"drawer-open-block","value":"0"},{"name":"block_myoverview_user_view_preference","value":"list"},{"name":"block_myoverview_user_sort_preference","value":"title"},{"name":"last_time_enrolments_synced","value":"1729648982"},{"name":"ifirst","value":""},{"name":"ilast","value":""},{"name":"coursesectionspreferences_4","value":"{\"contentcollapsed\":{\"1\":21,\"2\":22,\"3\":23}}"},{"name":"login_failed_count_since_success","value":"0"},{"name":"coursesectionspreferences_2","value":"{\"contentcollapsed\":[]}"},{"name":"_lastloaded","value":1729649103}]}]
+200
+USER ID:  2
+GET HISTORY OF  3
+INFO:     210.245.32.84:55616 - "GET /api/v2/chat?chatid=3 HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [341967]

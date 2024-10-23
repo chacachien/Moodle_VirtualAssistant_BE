@@ -16,7 +16,7 @@ fi
 sleep 2
 
 # Start Uvicorn in the background on port 5001
-if ! nohup uvicorn app.main:app --host 0.0.0.0 --port 5001 & then
+if ! pm2 start "uvicorn app.main:app --host 0.0.0.0 --port 5001" --name my-fastapi-app  & then
   echo "Failed to start Uvicorn"
   exit 1
 fi
