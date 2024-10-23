@@ -7,19 +7,17 @@ if ! git pull origin main; then
   exit 1
 fi
 source venv/bin/activate
-# Kill any existing Uvicorn process running on port 5001
-if ! pkill -f "uvicorn.*--port 5001"; then
-  echo "No existing Uvicorn process found to kill"
+
+# Check if the PM2 process is already running
+pm2 describe my-fastapi-app > /dev/null
+RUNNING=$?
+
+if [ "$RUNNING" -ne 0 ]; then
+  # Process not found, start it
+  pm2 start "uvicorn app.main:app --host 0.0.0.0 --port 5001" --name my-fastapi-app
+else
+  # Process found, restart it
+  pm2 restart my-fastapi-app
 fi
 
-# Wait for a moment to ensure the process is terminated
-sleep 2
-
-# Start Uvicorn in the background on port 5001
-if ! pm2 start "uvicorn app.main:app --host 0.0.0.0 --port 5001" --name my-fastapi-app  & then
-  echo "Failed to start Uvicorn"
-  exit 1
-fi
-
-echo "Uvicorn started"
-
+echo "Uvicorn application is now running under PM2"
