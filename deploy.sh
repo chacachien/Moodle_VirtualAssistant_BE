@@ -7,7 +7,8 @@ if ! git pull origin main; then
   exit 1
 fi
 source venv/bin/activate
-
+poetry lock --no-update 
+poetry install
 # Check if the PM2 process is already running
 pm2 describe my-fastapi-app > /dev/null
 RUNNING=$?
