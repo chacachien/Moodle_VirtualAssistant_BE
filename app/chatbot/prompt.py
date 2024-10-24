@@ -201,7 +201,6 @@ PROMPT_SQL_QUERY = PromptTemplate.from_template(
                                You serve a learning system that includes data tables related to users, courses, quizzes, assignments, and labels. 
             ## Question: {question}
             ## User ID: {id}
-            ## Here is the relevant table info: {database_structure} 
             ## Goal: Generate a correct POSTGRESQL query based on the input question. 
             ## Instructions:
                 1. Construct a SELECT query to retrieve data relevant to the question. 
@@ -210,23 +209,17 @@ PROMPT_SQL_QUERY = PromptTemplate.from_template(
                 4. Consider using aliases for tables and columns to improve readability of the query, especially in case of complex joins or subqueries.
                 5. Ensure queries do not modify the database. Use SELECT commands only.
                 6. Utilize the CURRENT_DATE function for queries involving "today."
-                7. Use "SELECT FROM_UNIXTIME(MAX(DATE))" for datetime columns stored as bigint in POSTGRESQL.
+                7. Use "SELECT to_timestamp(MAX(DATE))" for datetime columns stored as bigint in POSTGRESQL.
             ## Constraints:
                 + Do not query columns that do not exist.
                 + Be precise about which column belongs to which table.
                 + Ensure the query is syntactically correct.
                 + Return the SQL code only.
                 + Do not call user by their id.
+                + Remember convert time to format user can read.
             ## Example:
                 - Question: "Tôi đang tham gia khóa học nào?"
-                - Output:   "SELECT c.id AS course_id, c.fullname AS course_name, ue.timestart AS enrolment_start, ue.timeend AS enrolment_end
-                            FROM mdl_user u
-                            JOIN mdl_user_enrolments ue ON u.id = ue.userid
-                            JOIN mdl_enrol e ON ue.enrolid = e.id
-                            JOIN mdl_course c ON e.courseid = c.id
-                            WHERE u.id = {id}
-                            ORDER BY ue.timestart DESC
-                            LIMIT 5;"
+                - Output:   "SELECT get_course_of_user({id})"
                 - Question: "Tôi đang có những bài quiz nào?",
                 - Output:   "SELECT q.id AS quiz_id, q.name AS quiz_name, c.id AS course_id, c.fullname AS course_name
                             FROM mdl_user u
@@ -258,7 +251,26 @@ PROMPT_SQL_QUERY = PromptTemplate.from_template(
                 // Your SQL query here
             """
         )
+user_course = """
+"SELECT c.id AS course_id, c.fullname AS course_name, ue.timestart AS enrolment_start, ue.timeend AS enrolment_end
+                            FROM mdl_user u
+                            JOIN mdl_user_enrolments ue ON u.id = ue.userid
+                            JOIN mdl_enrol e ON ue.enrolid = e.id
+                            JOIN mdl_course c ON e.courseid = c.id
+                            WHERE u.id = {id}
+                            ORDER BY ue.timestart DESC
+                            LIMIT 5;"
+                            
+                            
+            ## Here is the relevant table info: {database_structure}
+            ## Here are some sql functions. If the requirement can be done with it, just call the function.
+                + Get all courses of a user: select get_course_of_user({id})
+                + Get all quizzes of a user: select get_quiz_of_user({id})
+                + Get all assignment of a user: select get_assignment_of_course({id}) 
+                
+            1. Review all the functions, if one of them can be sastified the requirement, just call it.
 
+"""
 
 PROMPT_SQL_QUERY_GPT = ChatPromptTemplate.from_messages(
             [
@@ -276,7 +288,7 @@ PROMPT_SQL_QUERY_GPT = ChatPromptTemplate.from_messages(
                 4. Consider using aliases for tables and columns to improve readability of the query, especially in case of complex joins or subqueries.
                 5. Ensure queries do not modify the database. Use SELECT commands only.
                 6. Utilize the CURRENT_DATE function for queries involving "today."
-                7. Use "SELECT FROM_UNIXTIME(MAX(DATE))" for datetime columns stored as bigint in POSTGRESQL.
+                7. Use "SELECT to_timestamp(MAX(DATE))" for datetime columns stored as bigint in POSTGRESQL.
                 
             ## Constraints:
                 + Do not query columns that do not exist.
@@ -285,7 +297,7 @@ PROMPT_SQL_QUERY_GPT = ChatPromptTemplate.from_messages(
                 + Return the SQL code only.
                 + Do not call user by their id.
                 + Do not query confidentiality information, example: password
-                + Must Use "SELECT FROM_UNIXTIME(MAX(DATE))" for datetime columns because it is stored as bigint in POSTGRESQL.
+                + Must Use "SELECT to_timestamp(MAX(DATE))" for datetime columns because it is stored as bigint in POSTGRESQL.
 
             ## Example:
                 - Question: "Tôi đang tham gia khóa học nào?"

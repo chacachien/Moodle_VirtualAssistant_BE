@@ -113,4 +113,20 @@ ALTER TABLE embeddings_v2
 ADD CONSTRAINT unique_url UNIQUE (url);
 
 
+---
+create or replace function get_course_of_user(user_id int)
+  returns table (course_id int8, course_name text)
+as
+$body$
+  SELECT c.id AS course_id, c.fullname
+                            FROM mdl_user u
+                            JOIN mdl_user_enrolments ue ON u.id = ue.userid
+                            JOIN mdl_enrol e ON ue.enrolid = e.id
+                            JOIN mdl_course c ON e.courseid = c.id
+                            WHERE u.id = $1
+                            ORDER BY ue.timestart DESC
+                            LIMIT 5;
+$body$
+language sql;
 
+select get_course_of_user(3)

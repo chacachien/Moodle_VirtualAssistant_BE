@@ -35,12 +35,13 @@ async def send_message(
                     message: MessageCreate,
                     user=Depends(auth_wrapper)
                     ):
-    try:
-        if user == 0:
-            return "Require token to access bot!"
 
-        response_generator, full_bot_response, message_id = await ChatServiceV2.send_message(message)
-        async def streaming_response():
+    if user == 0:
+        return "Require token to access bot!"
+
+    response_generator, full_bot_response, message_id = await ChatServiceV2.send_message(message)
+    async def streaming_response():
+        try:
             async for chunk in response_generator:
                 yield chunk
 
@@ -52,15 +53,13 @@ async def send_message(
 
                 if match:
                     bot_message_content = match.group(1)
-                    print(bot_message_content.strip())  # Optional: Use strip() to remove leading/trailing spaces or newlines
                 else:
                     print("No match found.")
                 await ChatServiceV2.update_bot_message(message_id,message.chatId, bot_message_content)
-                # Save the bot's message to the database
-        # Return the streamed response to the client
-        return StreamingResponse(streaming_response(), media_type='text/plain')
-    except Exception as e:
-        return "Xin lỗi nhưng bạn có thể đặt lại câu hỏi được không ạ?"
+        except Exception as e:
+            print(e)
+            yield "Xin lỗi nhưng bạn có thể đặt lại câu hỏi được không ạ?"
+    return StreamingResponse(streaming_response(), media_type='text/plain')
 
 @router.delete("/chat")
 async def delete_message(

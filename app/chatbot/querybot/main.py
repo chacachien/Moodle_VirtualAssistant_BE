@@ -42,14 +42,16 @@ class QueryBot(RootBot):
         yield "Tìm kiếm thông tin\n"
         for j in range(threshold):
             if flag: break
-            database_structure = structure_chain.invoke({ "question": question, "database_structure": self.table_info})
+            #database_structure = structure_chain.invoke({ "question": question, "database_structure": self.table_info})
+            database_structure = self.table_info
             sql_code = ''
             err = ''
             for i in range(2):
-                if err !='':
+                if err =='':
                     chain = (
-                        PROMPT_SQL_QUERY_GPT
-                        | self.model_openai4
+                        PROMPT_SQL_QUERY
+                        #| self.model_openai4
+                        | self.claude3_5
                         | StrOutputParser()
                     )
                     execute_query = chain.invoke({"id": id,"question": [question], "database_structure": database_structure })

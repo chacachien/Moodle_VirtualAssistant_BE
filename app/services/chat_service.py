@@ -1,3 +1,4 @@
+from app.models.base_model import get_default_datetime
 from app.models.message_model import *
 import os
 from datetime import datetime
@@ -106,11 +107,11 @@ class ChatServiceV2(object):
             content = {
                 "user": {
                     "message": message.content,
-                    "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # Current timestamp
+                    "time": get_default_datetime().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # Current timestamp
                 },
                 "bot": {
                     "message": "",
-                    "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],  # Current timestamp
+                    "time": get_default_datetime().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],  # Current timestamp
                     "role": message.role
                 }
             }
@@ -138,11 +139,11 @@ class ChatServiceV2(object):
         content = {
             "user": {
                 "message": user_message,
-                "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # Current timestamp
+                "time": get_default_datetime().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]  # Current timestamp
             },
             "bot": {
                 "message": bot_message,
-                "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],  # Current timestamp
+                "time": get_default_datetime().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3],  # Current timestamp
                 "role": bot_role
             }
         }
