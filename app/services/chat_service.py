@@ -170,7 +170,7 @@ class ChatServiceV2(object):
                    """
             # Execute the query with the new bot message
             updated_content = await connection.execute(sql, chat_id)
-
+            ChatServiceV2.chatbot = ChatBot()
             # Return the updated content as a result
             return {"updated_content": updated_content}
         except Exception as e:

@@ -79,16 +79,25 @@ class ChatBot(RootBot):
 
         if role == 1:
             async for chunk in self.ragBot.rag(user_message, courseId):
+                full_bot_response.append(chunk)
                 yield chunk
         elif role == 2:
             async for chunk in self.queryBot.query(user_message, chatId):
+                full_bot_response.append(chunk)
+
                 yield chunk
         elif role == 3:
             async for chunk in self.talkBot.talk(user_message, courseId):
+                full_bot_response.append(chunk)
                 yield chunk
-        bot_message = ''.join(full_bot_response)
-        self.__chat_history_buffer.append({"user": user_message, "ai": bot_message})
 
+        bot_message = ''.join(full_bot_response)
+        if bot_message:
+            match = re.search(r"&start&\n(.*)", bot_message, re.DOTALL)
+            if match:
+                bot_message = match.group(1)
+        self.__chat_history_buffer.append({"user": user_message, "ai": bot_message})
+        print("HISTRY: ", self.__chat_history_buffer)
     def test_chatbot_with_tools(self):
         while True:
             query = input("user: ")
