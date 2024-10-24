@@ -61,7 +61,7 @@ class RagBot(RootBot):
                 self.prompt_remind_to_couse|
                 #self.model1_5|
                 #self.groq|
-                self.model_openai()|
+                self.model_openai|
                 StrOutputParser()
             )
             context = {
