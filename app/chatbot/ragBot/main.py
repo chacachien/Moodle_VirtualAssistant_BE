@@ -18,6 +18,7 @@ class RagBot(RootBot):
         self.prompt = PROMPT_RAG_IMPROVE
         self.prompt_remind_to_couse = PROMPT_REMIND_TO_COURSE
         self.data = LoadDataPg()
+        self.number_content = 4
 
 
 # Helper function: Get top 3 most similar documents from the database
@@ -27,7 +28,7 @@ class RagBot(RootBot):
         register_vector(self.data.conn)
         cur = self.data.conn.cursor()
         # Get the top 3 most similar documents using the KNN <=> operator
-        cur.execute("SELECT content, courseid FROM embeddings_v2 ORDER BY embedding <=> %s LIMIT 3", (embedding_array,))
+        cur.execute("SELECT content, courseid FROM embeddings_v2 ORDER BY embedding <=> %s LIMIT %s",(embedding_array, self.number_content))
         top3_docs = cur.fetchall()
         print("TOP 3: ", top3_docs)
         return top3_docs
@@ -38,7 +39,8 @@ class RagBot(RootBot):
         content = self.get_top3_similar_docs(self.data.get_embedding(user_message))
         # res = chain.invoke(user_message)
         #print(f"{len(content)} must in LIST COURSE: {type(content[0][1])}, {content[1][1]}, {content[2][1]}")
-        list_course = [content[0][1], content[1][1], content[2][1]]
+
+        list_course = [content[c][1] for c in range(0,len(content))]
         if courseId != -1 and (courseId in list_course):
             context_str = " \n ".join([content[i][0] if i < len(content) else "" for i in range(3)])
             chain = (
@@ -59,9 +61,9 @@ class RagBot(RootBot):
             course_name = ReminderService.get_coursename(mode)
             chain = (
                 self.prompt_remind_to_couse|
-                #self.model1_5|
+                self.model1_5|
                 #self.groq|
-                self.model_openai|
+                #self.model_openai|
                 StrOutputParser()
             )
             context = {
