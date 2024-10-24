@@ -123,15 +123,21 @@ mdl_quiz_attempts: this table mark the quiz's user attempted. The quiz of user i
 - quiz: link to mdl_quiz, base on id
 - user: link to mdl_user.id ("người dùng")
 - attempt:
-- state: base on boolean value from the comparision of the value to "finished"  ("trạng thái")
+- state: base on boolean value from the comparison of the value to "finished"  ("trạng thái")
 - sumgrades: express total points of an attempt
 ------
-mdl_assign_submission: this table mark the assignment that is submited of not. If status = submitted, it's done. ("nộp bài tập", "nộp bài tập lớn")
+mdl_assign_submission: this table mark the assignment that is submitted of not. If status = submitted, it's done. ("nộp bài tập", "nộp bài tập lớn")
 - id: unique code of each submission of a assignment of a user.
-- assignement: link to mdl_assign.id
+- assignment: link to mdl_assign.id
 - userid: link to mdl_user.id
-- status: base on boolean value from the comparision of the value to "submitted"
+- status: base on boolean value from the comparison of the value to "submitted"
 ------
+mdl_assignment_grades
+-id: unique code of each assignment.
+-assignment: link to mdl_assignment.id
+-userid: link to mdl_user.id
+-grade: grade of this assignment.
+-----
 mdl_course_modules: use to link from label to course
 - id: unique code of each label of a course and linked to mdl_label
 - course: link to mdl_course.id

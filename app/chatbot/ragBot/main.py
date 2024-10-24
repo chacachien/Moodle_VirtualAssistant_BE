@@ -59,8 +59,9 @@ class RagBot(RootBot):
             course_name = ReminderService.get_coursename(mode)
             chain = (
                 self.prompt_remind_to_couse|
-                self.model1_5|
+                #self.model1_5|
                 #self.groq|
+                self.model_openai()|
                 StrOutputParser()
             )
             context = {

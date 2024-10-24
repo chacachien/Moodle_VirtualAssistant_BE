@@ -1,6 +1,7 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_openai import ChatOpenAI
 from langchain_groq import ChatGroq
+from langchain_anthropic import ChatAnthropic
 from dotenv import load_dotenv
 import os
 
@@ -30,6 +31,8 @@ class RootBot:
                     timeout=None,
                     max_retries=2,
                     )
+        self.claude3_5 = ChatAnthropic(model='claude-3-5-sonnet-20241022', api_key=os.getenv("CLAUDE_API_KEY"))
+
 
 def main():
     import time

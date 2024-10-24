@@ -33,7 +33,6 @@ async def get_reminder(reminder: RemiderContent):
     await ChatServiceV2.insert_message("",message, 4, user_id)
     return message
 
-
 @router.post("/settime")
 async def set_time(time: Settime):
     if time.userId == 2:
