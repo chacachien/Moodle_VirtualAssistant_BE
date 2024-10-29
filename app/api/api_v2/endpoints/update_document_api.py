@@ -1,17 +1,9 @@
 from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException, Query, Path
-
-
 import logging
-
 from app.chatbot.ragBot.pgData import LoadData as LoadDataPostgre
-
-
 logger = logging.getLogger()
 router = APIRouter()
-
-
 
 @router.get("/documentpostgre/all")
 async def update_all_document(
@@ -39,11 +31,4 @@ async def update_one_document(
     data = LoadDataPostgre()
     data.upload_one_label(id)
     return "update into postgre success!"
-
-
-
-
-
-
-
 
