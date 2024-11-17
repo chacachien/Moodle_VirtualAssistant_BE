@@ -3,6 +3,9 @@
 #health check
 GET {{host}}
 
+###
+#GET TOKEN
+GET {{host}}/token?userId=3
 
 ### update all document --- BE CAREFUL
 GET {{host}}/document/all

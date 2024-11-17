@@ -1,11 +1,10 @@
 import collections
 from app.chatbot.prompt import PROMPT_CHOOSE_TOOLS, PROMPT_CHOOSE_TOOLS_V1, PROMPT_REWRITE_QUESTION, PROMPT_CHOOSE_TOOLS_V2
-from app.chatbot.tools import Tool
 from app.chatbot.root import RootBot
 from app.chatbot.querybot.main import QueryBot
 from app.chatbot.talkbot.main import TalkBot
 from app.chatbot.ragBot.main import RagBot
-from app.chatbot.schema import ToolSchema
+
 
 from langchain.tools.render import render_text_description
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
