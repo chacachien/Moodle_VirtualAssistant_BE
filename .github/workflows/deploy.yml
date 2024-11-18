@@ -30,7 +30,13 @@ jobs:
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set default.region $AWS_DEFAULT_REGION
-          
+        - name: Generate SSH key pair
+
+    - name: Generate SSH
+      run: |
+        mkdir -p $HOME/.ssh
+        ssh-keygen -t rsa -b 2048 -f $HOME/.ssh/id_rsa -N ""
+        cat $HOME/.ssh/id_rsa.pub
 
     - name: Setup ssh
       run: |
