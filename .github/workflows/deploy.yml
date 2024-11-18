@@ -32,9 +32,15 @@ jobs:
           aws configure set default.region $AWS_DEFAULT_REGION
           
 
+    - name: Setup ssh
+      run: |
+          aws ec2-instance-connect send-ssh-public-key \
+          --instance-id i-0a057bcf1bd8b8212 \
+          --ssh-public-key file://$HOME/.ssh/id_rsa.pub --instance-os-user root
+
     - name: Deploy to EC2
       run: |
-          aws ec2-instance-connect ssh -o StrictHostKeyChecking=no --instance-id ${{ secrets.INSTANCE_ID }}
+          aws ec2-instance-connect ssh --instance-id ${{ secrets.INSTANCE_ID }}
     - name: Run BE
       run: |
           bash befastapi/Moodle_VirtualAssistant_BE/deploy.sh
