@@ -35,4 +35,5 @@ jobs:
     - name: Deploy to EC2
       run: |
           aws ec2-instance-connect ssh --instance-id ${{ secrets.INSTANCE_ID }} 
-          bash befastapi/Moodle_VirtualAssistant_BE/deploy.sh
+    - name: Run BE
+      run: bash befastapi/Moodle_VirtualAssistant_BE/deploy.sh
