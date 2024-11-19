@@ -22,22 +22,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
-    - name: Generate SSH
-      run: |
-        mkdir -p $HOME/.ssh
-        ssh-keygen -t rsa -b 2048 -f $HOME/.ssh/id_rsa -N ""
-        cat $HOME/.ssh/id_rsa.pub
-
-    - name: Setup ssh
-      run: |
-          aws ec2-instance-connect send-ssh-public-key \
-          --instance-id i-0a057bcf1bd8b8212 \
-          --ssh-public-key file://$HOME/.ssh/id_rsa.pub --instance-os-user root
-
     - name: Deploy to EC2
       run: |
-          aws ec2-instance-connect ssh --instance-id i-0a057bcf1bd8b8212 --connection-type eice
-
-    - name: Run BE
-      run: |
-          bash befastapi/Moodle_VirtualAssistant_BE/deploy.sh
+          aws ssm send-command --instance-ids ${{ secrets.INSTANCE_ID }} --document-name "AWS-RunShellScript" --comment "Deploy application" --parameters  "{\"commands\":[\"sudo -u ec2-user bash /home/ec2-user/befastapi/Moodle_VirtualAssistant_BE/deploy.sh\"]}"
