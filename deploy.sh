@@ -1,5 +1,5 @@
 # Navigate to your project directory
-cd befastapi/Moodle_VirtualAssistant_BE || exit 1  # Exit if the directory change fails
+cd home/ec2-user/befastapi/Moodle_VirtualAssistant_BE || exit 1  # Exit if the directory change fails
 
 # Pull the latest code
 if ! git pull origin main; then
