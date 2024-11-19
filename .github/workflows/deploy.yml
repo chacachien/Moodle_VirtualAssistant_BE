@@ -36,7 +36,7 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-          aws ec2-instance-connect ssh --instance-id ${{ secrets.INSTANCE_ID }} --connection-type eice
+          aws ec2-instance-connect ssh --instance-id i-0a057bcf1bd8b8212 --connection-type eice
 
     - name: Run BE
       run: |
