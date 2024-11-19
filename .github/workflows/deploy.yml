@@ -45,7 +45,6 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-          aws ec2-instance-connect ssh --instance-id ${{ secrets.INSTANCE_ID }}
-    - name: Run BE
-      run: |
+          ssh -i $HOME/.ssh/id_rsa -o StrictHostKeyChecking=no ec2-user@${{ secrets.INSTANCE_IP }} << 'EOF'
           bash befastapi/Moodle_VirtualAssistant_BE/deploy.sh
+          EOF
