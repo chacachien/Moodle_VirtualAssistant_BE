@@ -13,3 +13,9 @@ class TimestampModel(SQLModel):
         default_factory=get_default_datetime,
         nullable=True,
     )
+
+
+# Example usage in FastAPI route
+class VerifyRequest(SQLModel):
+    password: str
+    stored_hash: str

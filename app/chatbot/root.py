@@ -9,15 +9,15 @@ class RootBot:
     def __init__(self):
         load_dotenv(override=True)
         #self.model = ChatGoogleGenerativeAI(model="gemini-1.0-pro", temperature=0.3)
-        self.model_gg_1 = ChatGoogleGenerativeAI(model="gemini-1.0-pro-latest")
-        self.model1_5 = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest")
+        #self.model_gg_1 = ChatGoogleGenerativeAI(model="gemini-1.0-pro-latest")
+        #self.model1_5 = ChatGoogleGenerativeAI(model="gemini-1.5-pro-latest")
         # repo_id = "mistralai/Mixtral-8x7B-Instruct-v0.1"
         # self.modelmi = HuggingFaceHub(
         #   repo_id=repo_id, 
         #   model_kwargs={"temperature": 0.2, "top_k": 50}, 
         #   huggingfacehub_api_token=os.getenv('HUGGINGFACE_API_KEY')
         # )
-        self.model = ChatGoogleGenerativeAI(model="gemini-1.0-pro-latest")
+        #self.model = ChatGoogleGenerativeAI(model="gemini-1.0-pro-latest")
         self.model_openai = ChatOpenAI(model="gpt-3.5-turbo-1106", temperature=0,  api_key=os.getenv("OPENAI_API_KEY"), max_tokens=1000)
         self.model_openai4 = ChatOpenAI(model="gpt-4o", temperature=0, api_key=os.getenv("OPENAI_API_KEY"), max_tokens=1000)
         self.groq = ChatGroq(

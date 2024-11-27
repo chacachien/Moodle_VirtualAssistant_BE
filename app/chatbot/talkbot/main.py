@@ -10,7 +10,7 @@ class TalkBot(RootBot):
 
 
     async def talk(self, message, history):
-        chain = self.prompt | self.model | StrOutputParser()
+        chain = self.prompt | self.groq | StrOutputParser()
         # response = chain.invoke({"context":history, "input":message})
         # return response
 

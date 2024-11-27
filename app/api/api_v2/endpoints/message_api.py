@@ -35,8 +35,7 @@ async def send_message(
                     message: MessageCreate,
                     user=Depends(auth_wrapper)
                     ):
-
-    if user == 0:
+    if user == 0 and message.role !=3:
         return "Require token to access bot!"
 
     response_generator, full_bot_response, message_id = await ChatServiceV2.send_message(message)
@@ -44,7 +43,6 @@ async def send_message(
         try:
             async for chunk in response_generator:
                 yield chunk
-
             # Once the response is finished, save the full response to the database
             bot_message_content = ''.join(full_bot_response)
             print("BOT_MESSAGE_CONTENT: ", bot_message_content)

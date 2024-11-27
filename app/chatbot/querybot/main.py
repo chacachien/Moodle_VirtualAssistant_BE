@@ -29,7 +29,8 @@ class QueryBot(RootBot):
         pattern = r"SELECT.*?;"
         structure_chain = (
             self.structure_prompt
-            | self.model
+            #| self.model
+            |self.groq
             | StrOutputParser()
         )
         #self.table_info = self.get_table_info() if self.table_info== '' else self.table_info

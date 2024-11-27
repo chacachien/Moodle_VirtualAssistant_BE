@@ -5,7 +5,6 @@ from app.chatbot.querybot.main import QueryBot
 from app.chatbot.talkbot.main import TalkBot
 from app.chatbot.ragBot.main import RagBot
 
-
 from langchain.tools.render import render_text_description
 from langchain_core.output_parsers import JsonOutputParser, StrOutputParser
 from operator import itemgetter
@@ -46,7 +45,7 @@ class ChatBot(RootBot):
             return itemgetter("arguments") | chosen_tool
         rendered_tools = render_text_description(tools)
         parser = JsonOutputParser(pydantic_object=ToolSchema)
-        chain = self.prompt | self.model | parser | tool_chain 
+        chain = self.prompt | self.groq | parser | tool_chain
 
         res = chain.invoke({"rendered_tools":rendered_tools, "input": user_message })
         return res , user_message
@@ -70,7 +69,6 @@ class ChatBot(RootBot):
 
 
     async def get_response(self, user_message, chatId, courseId, role):
-
         full_bot_response = []
         user_message = self.improve_message(user_message)
         if role == 0:
@@ -83,7 +81,6 @@ class ChatBot(RootBot):
         elif role == 2:
             async for chunk in self.queryBot.query(user_message, chatId):
                 full_bot_response.append(chunk)
-
                 yield chunk
         elif role == 3:
             async for chunk in self.talkBot.talk(user_message, courseId):

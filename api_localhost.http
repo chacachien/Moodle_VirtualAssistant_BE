@@ -33,7 +33,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "content": "make a poetry about cloud",
+    "content": "Kể một câu chuyện mắc cười về tôi đi",
     "chatId": 1,
     "role": 3,
     "courseId": 11
@@ -46,7 +46,7 @@ Authorization: Bearer {{token}}
 
 {
     "content": "Tôi đang có những khóa học nào",
-    "chatId": 2,
+    "chatId": 3,
     "role": 2,
     "courseId": 11
 }
@@ -92,5 +92,16 @@ Content-Type: application/json
     "time_action": "2024-10-14 00:57:02",
     "time_reminder": "2024-10-14 00:57:02"
 }
+
+
+####
+POST {{host}}/verify
+Content-Type: application/json
+
+{
+  "password": "Password123",
+  "stored_hash": "$2y$10$WRdGFEABkA7pgoNOtWFIDeAFgIQPwKWLFTJ9JqvpvJCnAaA3cq6bK"
+}
+
 
 

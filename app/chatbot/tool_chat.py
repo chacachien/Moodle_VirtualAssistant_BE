@@ -37,7 +37,7 @@ class SubChatBot(RootBot):
     def get_response(self, context, messages, id):
         if self.current_task == 'talk':
             prompt = PROMPT_NORMAL_TALK
-            chain = prompt| self.model
+            chain = prompt| self.groq
                 #StrOutputParser()
             res = chain.invoke({"context": context, "question": messages})
             print("TOOL TALK")
@@ -45,7 +45,7 @@ class SubChatBot(RootBot):
         
         elif self.current_task == 'help':
             prompt = PROMPT_RAG
-            chain = prompt| self.model
+            chain = prompt| self.groq
                 #StrOutputParser()
             res = chain.invoke({"context": context, "question": messages} )
             print("TOOL HELP")

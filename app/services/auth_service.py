@@ -14,7 +14,7 @@ def auth_wrapper(auth: HTTPAuthorizationCredentials = Security(HTTPBearer())):
         try:
         # loop and wait until get response.
             moodle_url = f"{os.getenv("BASE_URL")}"
-            #print(f"{moodle_url}")
+            print(f"{moodle_url}")
             # API endpoint to get user info (adjust the endpoint as needed)
             api_endpoint = f"{moodle_url}/webservice/rest/server.php"
             moodle_url = api_endpoint + "?wstoken=" + str(auth.credentials) + "&moodlewsrestformat=json"

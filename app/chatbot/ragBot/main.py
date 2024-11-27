@@ -46,8 +46,8 @@ class RagBot(RootBot):
             chain = (
                 self.prompt|
                 #self.model_openai|
-                #self.groq|
-                self.model|
+                self.groq|
+                #self.model|
                 StrOutputParser()
             )
 
@@ -61,8 +61,8 @@ class RagBot(RootBot):
             course_name = ReminderService.get_coursename(mode)
             chain = (
                 self.prompt_remind_to_couse|
-                self.model1_5|
-                #self.groq|
+                #self.model1_5|
+                self.groq|
                 #self.model_openai|
                 StrOutputParser()
             )
