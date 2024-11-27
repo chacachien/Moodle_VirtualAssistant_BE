@@ -16,36 +16,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
       
-    - name: Install AWS CLI
-      run: |
-          sudo apt-get update
-          sudo apt-get install -y awscli
-
-    - name: Configure AWS Credentials
-      env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      run: |
-          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-          aws configure set default.region $AWS_DEFAULT_REGION
-
-    - name: Generate SSH
-      run: |
-        mkdir -p $HOME/.ssh
-        ssh-keygen -t rsa -b 2048 -f $HOME/.ssh/id_rsa -N ""
-        cat $HOME/.ssh/id_rsa.pub
-
-    - name: Setup ssh
-      run: |
-          aws ec2-instance-connect send-ssh-public-key \
-          --instance-id i-0a057bcf1bd8b8212 \
-          --ssh-public-key file://$HOME/.ssh/id_rsa.pub --instance-os-user root
+    - uses: aws-actions/configure-aws-credentials@v4
+      with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
 
     - name: Deploy to EC2
       run: |
-          aws ec2-instance-connect ssh --instance-id ${{ secrets.INSTANCE_ID }}
-    - name: Run BE
-      run: |
-          bash befastapi/Moodle_VirtualAssistant_BE/deploy.sh
+          aws ssm send-command --instance-ids ${{ secrets.INSTANCE_ID }} --document-name "AWS-RunShellScript" --comment "Deploy application" --parameters  "{\"commands\":[\"sudo -u ec2-user bash /home/ec2-user/befastapi/Moodle_VirtualAssistant_BE/deploy.sh\"]}"
