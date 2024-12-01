@@ -22,38 +22,24 @@ async def get_history(
                     chatid: Annotated[int | None, Query()]=None,
                     user = Depends(auth_wrapper)
                     ):
-    if user == 0:
-        return "Require token to access bot!"
-
     print("GET HISTORY OF ", chatid)
     history = await ChatServiceV2.get_chat_history(chatid)
     return history
-
 
 @router.post("/chat")
 async def send_message(
                     message: MessageCreate,
                     user=Depends(auth_wrapper)
                     ):
-    if user == 0 and message.role !=3:
-        return "Require token to access bot!"
-
-    response_generator, full_bot_response, message_id = await ChatServiceV2.send_message(message)
+    print("VIP: ",user )
+    response_generator, full_bot_response, message_id = await ChatServiceV2.send_message(message, user)
     async def streaming_response():
         try:
             async for chunk in response_generator:
                 yield chunk
             # Once the response is finished, save the full response to the database
             bot_message_content = ''.join(full_bot_response)
-            print("BOT_MESSAGE_CONTENT: ", bot_message_content)
-            if bot_message_content:
-                match = re.search(r"&start&\n(.*)", bot_message_content, re.DOTALL)
-
-                if match:
-                    bot_message_content = match.group(1)
-                else:
-                    print("No match found.")
-                await ChatServiceV2.update_bot_message(message_id,message.chatId, bot_message_content)
+            await ChatServiceV2.update_bot_message(message_id,message.chatId, bot_message_content)
         except Exception as e:
             print(e)
             yield "Xin lỗi nhưng bạn có thể đặt lại câu hỏi được không ạ?"

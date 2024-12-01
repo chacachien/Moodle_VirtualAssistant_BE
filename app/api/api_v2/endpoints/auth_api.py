@@ -1,15 +1,15 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Security
 from typing import Annotated
 import logging
 from app.services.auth_service import auth_wrapper, AuthService
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
 from passlib.hash import bcrypt
 import hmac
 from app.models.base_model import VerifyRequest
 
 logger = logging.getLogger()
 router = APIRouter()
-
-
 def password_verify(password: str, hash: str) -> bool:
     try:
         # Use passlib's bcrypt implementation for verification
@@ -23,13 +23,25 @@ def password_verify(password: str, hash: str) -> bool:
 
 @router.post("/verify")
 async def verify_password(request: VerifyRequest):
-    is_valid = password_verify(request.password, request.stored_hash)
-    return {"verified": is_valid}
-@router.get("/token")
-async def get_history(
-                    userId: Annotated[int | None, Query()]=None,
-                    ):
+    # get stored_hash
+    store_hash = await AuthService.get_stored_hash(request.username);
+    if not store_hash: return None
+    print("P ",store_hash[0])
+    is_valid = password_verify(request.password, store_hash[0])
+    if not is_valid: return None
+    token = await AuthService.get_token(request.username)
+    return token
 
+@router.get("/token")
+async def get_token(
+                    userId: Annotated[int | None, Query()]=None,
+                    auth: HTTPAuthorizationCredentials = Security(HTTPBearer())
+                    ):
+    print("AUTH 2 : ", auth)
+    if not auth.credentials: return None
+    session = await AuthService.get_session(auth.credentials)
+    print("SESSION: ", session)
+    if session['userid'] != userId: return None
     print("GET TOKEN OF ", userId)
-    token = await AuthService.get_token(userId)
+    token = await AuthService.get_token_by_id(userId)
     return token

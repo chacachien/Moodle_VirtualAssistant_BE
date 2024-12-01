@@ -39,8 +39,6 @@ class QueryBot(RootBot):
         flag = False
         query_result = ''
         r = 0
-        list_remind = ['Bạn chịu khó đợi một tí nhé!\n', 'Thông tin đang được xử lý rồi!\n']
-        yield "Tìm kiếm thông tin\n"
         for j in range(threshold):
             if flag: break
             #database_structure = structure_chain.invoke({ "question": question, "database_structure": self.table_info})
@@ -71,7 +69,6 @@ class QueryBot(RootBot):
                         break
                     except Exception as e:
                         if r < 2:
-                            yield list_remind[r]
                             r = r + 1
                         err = e
                 else:
@@ -107,6 +104,6 @@ class QueryBot(RootBot):
         )
         #final_result = chain.invoke({'id': id, "question": question, "result": query_result})
         full_bot_message = []
-        yield "&start&\n"
+
         for chunk in chain.stream({'id': id, "question": question, "result": query_result}):
             yield chunk

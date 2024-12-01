@@ -13,6 +13,7 @@ class TalkBot(RootBot):
         chain = self.prompt | self.groq | StrOutputParser()
         # response = chain.invoke({"context":history, "input":message})
         # return response
-
+        print("Talk", chain)
         for chunk in chain.stream({"context":history, "input":message}):
+            print("CHUNK INSIDE: ", chunk)
             yield chunk

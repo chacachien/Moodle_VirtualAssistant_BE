@@ -19,7 +19,6 @@ class ChatBot(RootBot):
         self.queryBot = QueryBot()
         self.talkBot = TalkBot()
         self.ragBot = RagBot()
-        self.list_text = ["Tìm kiếm thông tin\n", "Phân tích tài liệu\n", "Nội dung sẳn sàng\n", "&start&\n", 'Bạn chịu khó đợi một tí nhé!', 'Thông tin đang được xử lý rồi!']
 
     def get_history(self):
         messages = []
@@ -68,12 +67,16 @@ class ChatBot(RootBot):
         return res
 
 
-    async def get_response(self, user_message, chatId, courseId, role):
+    async def get_response(self, user_message, chatId, courseId, role, user_role):
+        print("start at get response")
         full_bot_response = []
-        user_message = self.improve_message(user_message)
+        #user_message = self.improve_message(user_message)
         if role == 0:
             role = self.chose_tool(user_message)
-
+            if user_role == 0:
+                if role ==2:
+                    role = 3
+        print("ROLE BOT: ", role)
         if role == 1:
             async for chunk in self.ragBot.rag(user_message, courseId):
                 full_bot_response.append(chunk)
@@ -104,6 +107,3 @@ class ChatBot(RootBot):
             print('/n')
             print("*"*100)
             print('/n')
-
-
-

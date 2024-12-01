@@ -17,5 +17,5 @@ class TimestampModel(SQLModel):
 
 # Example usage in FastAPI route
 class VerifyRequest(SQLModel):
+    username: str
     password: str
-    stored_hash: str

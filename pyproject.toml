@@ -38,6 +38,7 @@ fastapi-utils = "^0.7.0"
 pgvector = "0.3.4"
 pusher = "^3.3.2"
 bcrypt = "^4.2.1"
+groq = "^0.13.0"
 
 
 [build-system]

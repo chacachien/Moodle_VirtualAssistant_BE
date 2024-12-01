@@ -1,5 +1,15 @@
 @host = http://localhost:5001/api/v2
-@token = 75921f4e01b6caad0dc2d0f966b876da
+#@token = 75921f4e01b6caad0dc2d0f966b876da
+@token = bvaask7jt8q31pgv7nj8ufhipt
+
+
+
+####
+GET {{host}}/token?userId=2
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+####
 #health check
 GET {{host}}
 
@@ -20,22 +30,27 @@ GET {{host}}/documentpostgre?id=21
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
+
+
+
+
+
 ###
 # get chat history
-GET {{host}}/chat?chatid=3
+GET {{host}}/chat?chatid=2
 Content-Type: application/json
-Authorization: Bearer fds
+Authorization: Bearer {{token}}
 
 ###
 # send message
 POST {{host}}/chat
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer aa
 
 {
-    "content": "Kể một câu chuyện mắc cười về tôi đi",
+    "content": "hi",
     "chatId": 1,
-    "role": 3,
+    "role": 0,
     "courseId": 11
 }
 ###
@@ -84,7 +99,7 @@ Content-Type: application/json
 {
     "name": "quiz",
     "title": "câu hỏi ôn tập",
-    "user_id": 3,
+    "user_id": 2,
     "user": "Phat",
     "course_id": 2,
     "course": "Nôm",
@@ -99,9 +114,12 @@ POST {{host}}/verify
 Content-Type: application/json
 
 {
-  "password": "Password123",
-  "stored_hash": "$2y$10$WRdGFEABkA7pgoNOtWFIDeAFgIQPwKWLFTJ9JqvpvJCnAaA3cq6bK"
+  "password": "1307x2Npk.",
+  "username": "phat"
 }
+
+
+
 
 
 
