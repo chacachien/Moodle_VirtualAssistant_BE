@@ -46,13 +46,13 @@ async def auth_wrapper(auth: HTTPAuthorizationCredentials = Security(HTTPBearer(
     if auth.credentials == None: return 0
     try:
     # loop and wait until get response.
-        exist = await AuthService.get_session(auth.credentials)
-        print("EXIST: ", exist)
-        if not exist: return 0
-        token = await AuthService.get_token_by_id(exist['userid'])
-        print("TOKEN: ", token)
-        if not token: return 0
-        return 1
+    #     exist = await AuthService.get_session(auth.credentials)
+    #     print("EXIST: ", exist)
+    #     if not exist: return 0
+        user = await AuthService.get_token_by_token(auth.credentials)
+        print("USER: ", user)
+        if not user: return 0
+        return user['userid']
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Something wrong!")
@@ -120,6 +120,28 @@ class AuthService(object):
             # Close the database connection
             await AuthService.close_db_connection(connection)
 
+    @staticmethod
+    async def get_token_by_token(token: str):
+        connection = await AuthService.get_db_connection()
+        try:
+            # Execute the SQL query to fetch the chat history
+            query = """
+                    SELECT userid
+                    FROM mdl_external_tokens 
+                    WHERE token = $1
+                      AND externalserviceid = 2 
+                      AND (validuntil = 0 OR extract(epoch from now()) < validuntil)
+                    ORDER BY timecreated DESC;
+                """
+            userid = await connection.fetchrow(query, token)
+            # Convert the fetched records into a list of dictionaries
+            return userid
+        except Exception as e:
+            print(f"Error fetching chat history: {e}")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
+        finally:
+            # Close the database connection
+            await AuthService.close_db_connection(connection)
 
     @staticmethod
     async def get_token_by_id(user_id: int):

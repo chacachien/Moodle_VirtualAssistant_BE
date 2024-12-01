@@ -1,6 +1,6 @@
 @host = http://localhost:5001/api/v2
-#@token = 75921f4e01b6caad0dc2d0f966b876da
-@token = bvaask7jt8q31pgv7nj8ufhipt
+@token = 832be2bcb454b8a051d0ee870ddf1027
+@session = bvaask7jt8q31pgv7nj8ufhipt
 
 
 
@@ -67,7 +67,7 @@ Authorization: Bearer {{token}}
 }
 ###
 # delete chat
-DELETE {{host}}chat?chatid=2
+DELETE {{host}}/chat?chatid=3
 Authorization: Bearer {{token}}
 
 

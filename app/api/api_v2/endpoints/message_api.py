@@ -2,6 +2,8 @@ import re
 from http.client import HTTPException
 
 from fastapi import APIRouter, Depends, Query
+from starlette import status
+
 from app.db.db import get_session
 from sqlalchemy.ext.asyncio.session import AsyncSession
 
@@ -31,7 +33,9 @@ async def send_message(
                     message: MessageCreate,
                     user=Depends(auth_wrapper)
                     ):
-    print("VIP: ",user )
+    print("VIP: ", user)
+    if user != message.chatId:
+        raise HTTPException(status.HTTP_409_CONFLICT)
     response_generator, full_bot_response, message_id = await ChatServiceV2.send_message(message, user)
     async def streaming_response():
         try:
@@ -50,10 +54,8 @@ async def delete_message(
                     chatid: Annotated[int | None, Query()]=None,
                     user=Depends(auth_wrapper)
                     ):
-    if user == 0:
-        raise HTTPException(status_code=401, detail="Invalid token")
-
-    print("DELETE MESSAGE FROM ", chatid)
+    if user != chatid:
+        raise HTTPException(status.HTTP_409_CONFLICT)
     result = await ChatServiceV2.delete_message(chatid)
     print('Answer: ', result)
     return result
