@@ -1,9 +1,12 @@
 from fastapi import Query, APIRouter
+from fastapi.params import Depends
+
 from app.chatbot.taskbot.reminder import Reminder
 from app.models.reminder_model import RemiderContent, Settime
 
 import pusher
 
+from app.services.auth_service import auth_wrapper
 from app.services.chat_service import ChatServiceV2
 from app.services.schedule import ReminderService, ReminderServiceV2
 
@@ -43,6 +46,11 @@ async def set_time(time: Settime):
 
 
 @router.get("/gettime")
-async def set_time():
-    result = await ReminderServiceV2.get_time()
-    return result
+async def set_time(user = Depends(auth_wrapper)):
+    if not user: return None
+    if user == 2:
+        result = await ReminderServiceV2.get_time()
+        return result
+    else:
+        result = await ReminderServiceV2.get_is_remind(user)
+        return {"value": result}

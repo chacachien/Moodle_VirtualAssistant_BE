@@ -41,6 +41,7 @@ async def get_token(
     if not auth.credentials: return None
     session = await AuthService.get_session(auth.credentials)
     print("SESSION: ", session)
+    if not session: return None
     if session['userid'] != userId: return None
     print("GET TOKEN OF ", userId)
     token = await AuthService.get_token_by_id(userId)

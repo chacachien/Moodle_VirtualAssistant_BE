@@ -153,14 +153,30 @@ class ReminderServiceV2(object):
     async def get_time():
         connection = await ReminderServiceV2.get_db_connection()
         try:
-
             query = """
                 SELECT value FROM service_setting WHERE name = 'time_reminder'
             """
-            result = await connection.fetch(query)
+            result = await connection.fetchrow(query)
             return result
         except Exception as e:
             print(e)
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
         finally:
             await ReminderServiceV2.close_db_connection(connection)
+
+    @staticmethod
+    async def get_is_remind(user_id: int):
+        connection = await ReminderServiceV2.get_db_connection()
+        try:
+            query = """
+                SELECT reminder FROM user_reminder WHERE user_id = $1
+            """
+            result = await connection.fetchrow(query, user_id)
+            if not result: return False
+            return result["reminder"]
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
+        finally:
+            await ReminderServiceV2.close_db_connection(connection)
+

@@ -1,4 +1,4 @@
-@host = http://ec2-13-229-237-54.ap-southeast-1.compute.amazonaws.com:5001/api/v2
+@host = https://54.251.40.120.nip.io:8443/api/v2
 @token = 75921f4e01b6caad0dc2d0f966b876da
 #health check
 GET {{host}}

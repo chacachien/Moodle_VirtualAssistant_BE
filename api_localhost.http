@@ -91,6 +91,7 @@ Content-Type: application/json
 ### GET UP TIME REMINDER
 GET {{host}}/gettime
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 ###
 POST {{host}}/reminder
