@@ -497,13 +497,63 @@ PROMPT_REWRITE_QUESTION = PromptTemplate.from_template(PROMPT_REWRITE_TEMPLATE)
 
 
 
-
 PROMPT_REMINDER = PromptTemplate.from_template("""
-        Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language. Use passive voice to convey the reminder (e.g., "Khóa học đã được sửa," "Quiz đã được thêm vào").  
+        Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language. 
+        Use passive voice to convey the reminder (e.g., "Khóa học đã được sửa," "Quiz đã được thêm vào").  
         Use emoji if need to make the message more attractive.
 
         Information: {input}
+        
         Reminder: 
+        """)
+
+
+quiz_link = base_url+"mod/quiz/view.php?id=[quiz_id]"
+quiz_markdown = f"[Quiz Nhập Môn]({base_url}/mod/quiz/view.php?id=19)"
+PROMPT_REMINDER_QUIZ = PromptTemplate.from_template("""
+        ## Expert persona: ""
+        Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language. 
+        ## Goal: Create a friendly reminder with a link to the content in Markdown format to reminder user do the quiz.
+        ## Information: {input}
+        ## quiz_id: {mod_id}
+        ## Instructions:
+            1. Understand the content 
+            2. Create a reminder format with complete information.
+            3. Include a link to the quiz in Markdown format as follows.
+            3. Otherwise, if the user message and course information match, remind the user to visit the course page to get more information. Link to quiz page: """
+               +quiz_link+"""
+            4. Response the link as a markdown button. example:"""
+                +quiz_markdown+"""
+        ## Constraints:
+            + Use passive voice to convey the reminder (e.g., "Quiz xxx đã được tạo").  
+            + Ensure the rephrased question is clear and maintains its intent.
+            + Make sure the response matches the user's original language.
+        ## Output:
+        // Your rephrased question here
+        """)
+
+assign_link = base_url+"mod/assign/view.php?id=[quiz_id]"
+assign_markdown = f"[Tổng kết khóa học]({base_url}/mod/assign/view.php?id=19)"
+PROMPT_REMINDER_ASSIGN= PromptTemplate.from_template("""
+## Expert persona: ""
+        Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly and familiar language. 
+        ## Goal: Create a friendly reminder with a link to the content in Markdown format to reminder user do the assignment.
+        ## Information: {input}
+        ## assignment_id: {mod_id}
+        ## Instructions:
+            1. Understand the content 
+            2. Create a reminder format with complete information.
+            3. Include a link to the quiz in Markdown format as follows.
+            3. Otherwise, if the user message and course information match, remind the user to visit the course page to get more information. Link to assignment page: """
+               +assign_link+"""
+            4. Response the link as a markdown button. example:"""
+                +assign_markdown+"""
+        ## Constraints:
+            + Use passive voice to convey the reminder (e.g., "Assignment xxx đã được tạo").  
+            + Ensure the rephrased question is clear and maintains its intent.
+            + Make sure the response matches the user's original language.
+        ## Output:
+        // Your rephrased question here
         """)
 
 # PROMPT_REMINDER_DAILY = PromptTemplate.from_template("""

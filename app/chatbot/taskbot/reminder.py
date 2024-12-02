@@ -40,7 +40,7 @@ class Reminder:
         #reminder_content = "User " + username + " have "+ name+ " " +type_action + " in course "+coursename +" at "+str(time_action)  # Converting time_action to string
         print("reminder content: ", reminder_content)
 
-        reminder_ai = self.bot_reminder.reminder(reminder_content)
+        reminder_ai = self.bot_reminder.reminder(reminder_content, reminder.name, reminder.mod_id)
         print("reminder ai: ", reminder_ai)
 
         self.create_reminder_database(reminder.name, reminder.user_id, reminder.time_reminder, reminder_ai)

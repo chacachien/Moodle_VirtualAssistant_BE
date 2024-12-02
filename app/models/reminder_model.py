@@ -27,6 +27,7 @@ class Settime(SQLModel):
 
 class RemiderContent(SQLModel):
     name:str
+    mod_id: int
     title:str
     user_id: int
     user: str

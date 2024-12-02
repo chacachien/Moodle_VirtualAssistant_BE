@@ -98,8 +98,9 @@ POST {{host}}/reminder
 Content-Type: application/json
 
 {
-    "name": "quiz",
-    "title": "câu hỏi ôn tập",
+    "name": "assign",
+    "mod_id": 4,
+    "title": "Tổng kết",
     "user_id": 2,
     "user": "Phat",
     "course_id": 2,
