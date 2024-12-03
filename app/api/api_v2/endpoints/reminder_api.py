@@ -27,7 +27,7 @@ async def get_reminder(reminder: RemiderContent):
     if reminder.name == "daily":
         message = reminderBot.daily_reminder(reminder)
     else:
-        message = reminderBot.create_content_reminder(reminder)
+        message = await reminderBot.create_content_reminder(reminder)
     # end create message
     user_id = reminder.user_id
     pusher_client.trigger('moodle-remind', f"{user_id}", {'message': f"{message}"})

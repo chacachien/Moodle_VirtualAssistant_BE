@@ -98,12 +98,12 @@ POST {{host}}/reminder
 Content-Type: application/json
 
 {
-    "name": "label",
-    "mod_id": 4,
-    "title": "Tổng kết",
+    "name": "quiz",
+    "mod_id": 1,
+    "title": "Tổng kết các triều đại từ sơ khai đến hậu hiện đại",
     "user_id": 2,
     "user": "Phat",
-    "course_id": 2,
+    "course_id": 3,
     "course": "Lịch sử Việt Phục",
     "type_action": "was created",
     "time_action": "2024-10-14 00:57:02",
