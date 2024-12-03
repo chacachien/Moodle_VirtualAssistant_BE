@@ -12,7 +12,6 @@ class ReminderBot(RootBot):
             prompt = PROMPT_REMINDER_QUIZ
         elif type =='assign':
             prompt = PROMPT_REMINDER_ASSIGN
-        print(prompt)
         chain = prompt| self.groq | StrOutputParser()
         response = chain.invoke({ "input": message, "mod_id": mod_id})
         return response

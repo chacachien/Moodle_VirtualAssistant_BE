@@ -98,13 +98,13 @@ POST {{host}}/reminder
 Content-Type: application/json
 
 {
-    "name": "assign",
+    "name": "label",
     "mod_id": 4,
     "title": "Tổng kết",
     "user_id": 2,
     "user": "Phat",
     "course_id": 2,
-    "course": "Nôm",
+    "course": "Lịch sử Việt Phục",
     "type_action": "was created",
     "time_action": "2024-10-14 00:57:02",
     "time_reminder": "2024-10-14 00:57:02"
