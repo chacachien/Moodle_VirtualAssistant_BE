@@ -1,4 +1,3 @@
-import re
 from http.client import HTTPException
 
 from fastapi import APIRouter, Depends, Query
@@ -12,7 +11,6 @@ import logging
 from app.models.message_model import *
 from app.services.auth_service import auth_wrapper
 from fastapi.responses import StreamingResponse
-
 from app.services.chat_service import ChatServiceV2
 
 logger = logging.getLogger()
@@ -59,5 +57,3 @@ async def delete_message(
     result = await ChatServiceV2.delete_message(chatid)
     print('Answer: ', result)
     return result
-
-

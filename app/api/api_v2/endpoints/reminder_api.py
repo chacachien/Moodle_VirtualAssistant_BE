@@ -27,13 +27,13 @@ async def get_reminder(reminder: RemiderContent):
     if reminder.name == "daily":
         message = reminderBot.daily_reminder(reminder)
     else:
-        message = reminderBot.create_content_reminder(reminder)
+        message = await reminderBot.create_content_reminder(reminder)
     # end create message
     user_id = reminder.user_id
+    await ChatServiceV2.insert_message("",message, 4, user_id)
+    reminderBot.create_reminder_database(reminder.name, reminder.user_id, reminder.time_reminder, message);
     pusher_client.trigger('moodle-remind', f"{user_id}", {'message': f"{message}"})
     print("Message sent:", message)
-    reminderBot.create_reminder_database(reminder.name, reminder.user_id, reminder.time_reminder, message);
-    await ChatServiceV2.insert_message("",message, 4, user_id)
     return message
 
 @router.post("/settime")

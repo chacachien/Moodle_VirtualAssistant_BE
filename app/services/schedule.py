@@ -180,3 +180,19 @@ class ReminderServiceV2(object):
         finally:
             await ReminderServiceV2.close_db_connection(connection)
 
+    @staticmethod
+    async def get_mod_id(course: int, module: int, instance: int):
+        connection = await ReminderServiceV2.get_db_connection()
+        try:
+            query = """
+                select id from mdl_course_modules where course = $1 and module = $2 and instance = $3            
+            """
+            result = await connection.fetchrow(query, course, module, instance)
+            if not result: return 0
+            print("RESULT: ", result)
+            return result["id"]
+        except Exception as e:
+            print(e)
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
+        finally:
+            await ReminderServiceV2.close_db_connection(connection)
