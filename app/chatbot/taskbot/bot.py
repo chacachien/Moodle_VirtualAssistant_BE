@@ -17,6 +17,6 @@ class ReminderBot(RootBot):
         return response
 
     def reminder_daily(self, message):
-        chain = PROMPT_REMINDER_DAILY | self.model | StrOutputParser()
+        chain = PROMPT_REMINDER_DAILY | self.model_openai | StrOutputParser()
         response = chain.invoke({"input": message})
         return response
