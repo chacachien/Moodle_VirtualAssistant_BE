@@ -46,7 +46,10 @@ async def set_time(time: Settime):
 
 
 @router.get("/gettime")
-async def set_time(user = Depends(auth_wrapper)):
+async def set_time(
+        #user = Depends(auth_wrapper)
+        ):
+    user =3
     if not user: return None
     if user == 2:
         result = await ReminderServiceV2.get_time()
