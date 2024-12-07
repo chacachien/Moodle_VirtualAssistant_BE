@@ -62,6 +62,7 @@ Content-Type: application/json
 {
     "name": "quiz",
     "title": "câu hỏi ôn tập",
+    "mod_id": 3,
     "user_id": 3,
     "user": "Phat",
     "course_id": 2,
