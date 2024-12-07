@@ -45,11 +45,11 @@ Authorization: Bearer {{token}}
 # send message
 POST {{host}}/chat
 Content-Type: application/json
-Authorization: Bearer aa
+Authorization: Bearer {{token}}
 
 {
     "content": "hi",
-    "chatId": 1,
+    "chatId": 3,
     "role": 0,
     "courseId": 11
 }
@@ -64,6 +64,21 @@ Authorization: Bearer {{token}}
     "chatId": 3,
     "role": 2,
     "courseId": 11
+}
+###
+
+
+###
+# send message
+POST {{host}}/chat
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "content": "Các tác phẩm chữ nôm nổi tiếng",
+    "chatId": 3,
+    "role": 1,
+    "courseId": 5
 }
 ###
 # delete chat

@@ -99,7 +99,8 @@ class QueryBot(RootBot):
         chain = (
             PROMPT_SQL_ANSWER
             #| self.model1_5
-            | self.model_openai4
+            #| self.model_openai4
+            | self.model_gemini_1_5
             | StrOutputParser()
         )
         #final_result = chain.invoke({'id': id, "question": question, "result": query_result})
