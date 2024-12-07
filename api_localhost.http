@@ -45,11 +45,11 @@ Authorization: Bearer 0
 # send message
 POST {{host}}/chat
 Content-Type: application/json
-Authorization: Bearer aa
+Authorization: Bearer {{token}}
 
 {
     "content": "hi",
-    "chatId": 1,
+    "chatId": 3,
     "role": 0,
     "courseId": 11
 }
@@ -64,6 +64,21 @@ Authorization: Bearer {{token}}
     "chatId": 3,
     "role": 2,
     "courseId": 11
+}
+###
+
+
+###
+# send message
+POST {{host}}/chat
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "content": "Các tác phẩm chữ nôm nổi tiếng",
+    "chatId": 3,
+    "role": 1,
+    "courseId": 5
 }
 ###
 # delete chat
@@ -98,13 +113,14 @@ POST {{host}}/reminder
 Content-Type: application/json
 
 {
-    "name": "quiz",
-    "title": "câu hỏi ôn tập",
+    "name": "assign",
+    "mod_id": 1,
+    "title": "Tổng kết các triều đại từ sơ khai đến hậu hiện đại",
     "user_id": 2,
     "user": "Phat",
-    "course_id": 2,
-    "course": "Nôm",
-    "type_action": "was created",
+    "course_id": 3,
+    "course": "Lịch sử Việt Phục",
+    "type_action": "was opened",
     "time_action": "2024-10-14 00:57:02",
     "time_reminder": "2024-10-14 00:57:02"
 }

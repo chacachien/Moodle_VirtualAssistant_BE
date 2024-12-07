@@ -9,11 +9,11 @@ class TalkBot(RootBot):
        # self.prompt_history = PROMPT_NORMAL_TALK_HISTORY
 
 
-    async def talk(self, message, history):
+    async def talk(self, message):
         chain = self.prompt | self.groq | StrOutputParser()
         # response = chain.invoke({"context":history, "input":message})
         # return response
         print("Talk", chain)
-        for chunk in chain.stream({"context":history, "input":message}):
+        for chunk in chain.stream({"input":message}):
             print("CHUNK INSIDE: ", chunk)
             yield chunk

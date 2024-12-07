@@ -70,7 +70,7 @@ class ChatBot(RootBot):
     async def get_response(self, user_message, chatId, courseId, role, user_role):
         print("start at get response")
         full_bot_response = []
-        #user_message = self.improve_message(user_message)
+        user_message = self.improve_message(user_message)
         if role == 0:
             role = self.chose_tool(user_message)
             if user_role == 0:
@@ -86,7 +86,7 @@ class ChatBot(RootBot):
                 full_bot_response.append(chunk)
                 yield chunk
         elif role == 3:
-            async for chunk in self.talkBot.talk(user_message, courseId):
+            async for chunk in self.talkBot.talk(user_message):
                 full_bot_response.append(chunk)
                 yield chunk
         elif role == 4:

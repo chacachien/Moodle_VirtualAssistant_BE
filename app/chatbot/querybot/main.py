@@ -27,12 +27,12 @@ class QueryBot(RootBot):
 
     async def query(self, question: str, id: int):
         pattern = r"SELECT.*?;"
-        structure_chain = (
-            self.structure_prompt
-            #| self.model
-            |self.groq
-            | StrOutputParser()
-        )
+        # structure_chain = (
+        #     self.structure_prompt
+        #     #| self.model
+        #     |self.groq
+        #     | StrOutputParser()
+        # )
         #self.table_info = self.get_table_info() if self.table_info== '' else self.table_info
         self.table_info = table_info
         threshold = 4
@@ -99,7 +99,8 @@ class QueryBot(RootBot):
         chain = (
             PROMPT_SQL_ANSWER
             #| self.model1_5
-            | self.model_openai
+            #| self.model_openai4
+            | self.model_gemini_1_5
             | StrOutputParser()
         )
         #final_result = chain.invoke({'id': id, "question": question, "result": query_result})

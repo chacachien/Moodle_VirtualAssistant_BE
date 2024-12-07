@@ -45,13 +45,11 @@ class RagBot(RootBot):
             context_str = " \n ".join([content[i][0] if i < len(content) else "" for i in range(3)])
             chain = (
                 self.prompt|
-                #self.model_openai|
-                self.groq|
+                self.model_gemini_1_5|
+                #self.groq|
                 #self.model|
                 StrOutputParser()
             )
-
-
             for chunk in chain.stream({"question": user_message, "context": context_str}):
                 yield chunk  # Yield each chunk as it's generated
         else:
@@ -62,14 +60,13 @@ class RagBot(RootBot):
             chain = (
                 self.prompt_remind_to_couse|
                 #self.model1_5|
-                self.groq|
-                #self.model_openai|
+                #self.groq|
+                self.model_gemini_1_5|
                 StrOutputParser()
             )
             context = {
                 "course_id": mode,
                 "course_name": course_name
             }
-
             for chunk in chain.stream({"input": user_message, "context": context}):
                 yield chunk
