@@ -22,7 +22,7 @@ router = APIRouter()
 @router.get("/chat")
 async def get_history(
                     chatid: Annotated[int | None, Query()]=None,
-                    user = Depends(auth_wrapper)
+                    #user = Depends(auth_wrapper)
                     ):
     print("GET HISTORY OF ", chatid)
     history = await ChatServiceV2.get_chat_history(chatid)
@@ -31,11 +31,12 @@ async def get_history(
 @router.post("/chat")
 async def send_message(
                     message: MessageCreate,
-                    user=Depends(auth_wrapper)
+                    #user=Depends(auth_wrapper)
                     ):
-    print("VIP: ", user)
-    if user != message.chatId:
-        raise HTTPException(status.HTTP_409_CONFLICT)
+    # print("VIP: ", user)
+    # if user != message.chatId:
+    #     raise HTTPException(status.HTTP_409_CONFLICT)
+    user = message.chatId
     response_generator, full_bot_response, message_id = await ChatServiceV2.send_message(message, user)
     async def streaming_response():
         try:
@@ -52,12 +53,14 @@ async def send_message(
 @router.delete("/chat")
 async def delete_message(
                     chatid: Annotated[int | None, Query()]=None,
-                    user=Depends(auth_wrapper)
+                    #user=Depends(auth_wrapper)
                     ):
-    if user != chatid:
-        raise HTTPException(status.HTTP_409_CONFLICT)
+    # if user != chatid:
+    #     raise HTTPException(status.HTTP_409_CONFLICT)
     result = await ChatServiceV2.delete_message(chatid)
     print('Answer: ', result)
     return result
+
+
 
 

@@ -39,7 +39,7 @@ Authorization: Bearer {{token}}
 # get chat history
 GET {{host}}/chat?chatid=2
 Content-Type: application/json
-Authorization: Bearer {{token}}
+Authorization: Bearer 0
 
 ###
 # send message
@@ -68,7 +68,7 @@ Authorization: Bearer {{token}}
 ###
 # delete chat
 DELETE {{host}}/chat?chatid=3
-Authorization: Bearer {{token}}
+Authorization: Bearer
 
 
 ###
@@ -83,7 +83,7 @@ POST {{host}}/settime
 Content-Type: application/json
 
 {
-    "user_id": 2,
+    "userId": 2,
     "status": 1,
     "time": "22:54"
 }

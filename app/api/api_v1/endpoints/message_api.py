@@ -77,10 +77,10 @@ async def delete_message(
                     chatid: int = Path(..., title="The ID of the chat"),
                     chat_service: ChatService = Depends(),
                     session: AsyncSession = Depends(get_session),
-                    user=Depends(auth_wrapper)
+                    #user=Depends(auth_wrapper)
                     ):
-    if user == 'fail':
-        raise HTTPException(status_code=401, detail="Invalid token")
+    # if user == 'fail':
+    #     raise HTTPException(status_code=401, detail="Invalid token")
 
     print("DELETE MESSAGE FROM ", chatid)
     result = await chat_service.delete_message(chatid, session)

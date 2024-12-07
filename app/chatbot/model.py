@@ -89,7 +89,10 @@ class ChatBot(RootBot):
             async for chunk in self.talkBot.talk(user_message, courseId):
                 full_bot_response.append(chunk)
                 yield chunk
-
+        elif role == 4:
+            async for chunk in self.adviceBot.run():
+                full_bot_response.append(chunk)
+                yield chunk
         bot_message = ''.join(full_bot_response)
         if bot_message:
             match = re.search(r"&start&\n(.*)", bot_message, re.DOTALL)
