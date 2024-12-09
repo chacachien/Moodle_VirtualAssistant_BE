@@ -35,11 +35,9 @@ class RagBot(RootBot):
 
 
     async def rag(self, user_message, courseId):
-
         content = self.get_top3_similar_docs(self.data.get_embedding(user_message))
         # res = chain.invoke(user_message)
         #print(f"{len(content)} must in LIST COURSE: {type(content[0][1])}, {content[1][1]}, {content[2][1]}")
-
         list_course = [content[c][1] for c in range(0,len(content))]
         if courseId != -1 and (courseId in list_course):
             context_str = " \n ".join([content[i][0] if i < len(content) else "" for i in range(3)])

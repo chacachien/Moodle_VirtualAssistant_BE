@@ -1,7 +1,6 @@
 from app.models.base_model import get_default_datetime
 from app.models.message_model import *
 import os
-from datetime import datetime
 import json
 import asyncpg
 from fastapi import HTTPException
@@ -60,7 +59,7 @@ class ChatServiceV2(object):
         finally:
             # Close the database connection
             await ChatServiceV2.close_db_connection(connection)
-
+            await connection.close()
     @staticmethod
     async def update_bot_message(message_id, chat_id: int, new_message: str):
         connection = await ChatServiceV2.get_db_connection()
@@ -129,6 +128,7 @@ class ChatServiceV2(object):
         finally:
             # Close the database connection
             await ChatServiceV2.close_db_connection(connection)
+            connection.close()
 
     @staticmethod
     async def insert_message(user_message, bot_message, bot_role, chat_id):
@@ -175,3 +175,4 @@ class ChatServiceV2(object):
             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Internal Server Error")
         finally:
             await connection.close()
+

@@ -31,10 +31,6 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 
-
-
-
-
 ###
 # get chat history
 GET {{host}}/chat?chatid=2
@@ -60,13 +56,11 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "content": "Tôi đang có những khóa học nào",
+    "content": "những chương tôi cần xem lại",
     "chatId": 3,
-    "role": 2,
+    "role": 4,
     "courseId": 11
 }
-###
-
 
 ###
 # send message

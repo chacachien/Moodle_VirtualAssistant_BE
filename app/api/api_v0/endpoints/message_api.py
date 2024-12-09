@@ -28,20 +28,20 @@ async def get_history(
     return history
 
 
-@router.post("/chat")
-async def send_message(
-                    message: MessageCreate,
-                    chat_service: ChatService = Depends(),
-                    session: AsyncSession = Depends(get_session),
-                    #user=Depends(auth_wrapper)
-                    ):
-    # if user == 'fail':
-    #     raise HTTPException(status_code=401, detail="Invalid token")
-
-    print("SEND MESSAGE TO ", message)
-    result = await chat_service.send_message(message, session)
-    print('Answer: ', result)
-    return {"message": result}
+# @router.post("/chat")
+# async def send_message(
+#                     message: MessageCreate,
+#                     chat_service: ChatService = Depends(),
+#                     session: AsyncSession = Depends(get_session),
+#                     #user=Depends(auth_wrapper)
+#                     ):
+#     # if user == 'fail':
+#     #     raise HTTPException(status_code=401, detail="Invalid token")
+#
+#     print("SEND MESSAGE TO ", message)
+#     result = await chat_service.send_message(message, session)
+#     print('Answer: ', result)
+#     return {"message": result}
 
 @router.delete("/chat/{chatid}")
 async def delete_message(
