@@ -13,7 +13,7 @@ GET {{host}}/documentpostgre/all
 
 ###
 # get chat history
-GET {{host}}/chat?chatid=3
+GET {{host}}/chat?chatid=4
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

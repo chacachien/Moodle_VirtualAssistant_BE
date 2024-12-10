@@ -1,4 +1,6 @@
 import collections
+
+from app.chatbot.adviceBot.main import AdviceBot
 from app.chatbot.prompt import PROMPT_CHOOSE_TOOLS, PROMPT_CHOOSE_TOOLS_V1, PROMPT_REWRITE_QUESTION, PROMPT_CHOOSE_TOOLS_V2
 from app.chatbot.root import RootBot
 from app.chatbot.querybot.main import QueryBot
@@ -19,7 +21,7 @@ class ChatBot(RootBot):
         self.queryBot = QueryBot()
         self.talkBot = TalkBot()
         self.ragBot = RagBot()
-
+        self.adviceBot = AdviceBot()
     def get_history(self):
         messages = []
 
@@ -89,14 +91,17 @@ class ChatBot(RootBot):
             async for chunk in self.talkBot.talk(user_message):
                 full_bot_response.append(chunk)
                 yield chunk
-
+        elif role == 4:
+            async for chunk in self.adviceBot.run(user_message, chatId):
+                full_bot_response.append(chunk)
+                yield chunk
         bot_message = ''.join(full_bot_response)
-        if bot_message:
-            match = re.search(r"&start&\n(.*)", bot_message, re.DOTALL)
-            if match:
-                bot_message = match.group(1)
+        # if bot_message:
+        #     match = re.search(r"&start&\n(.*)", bot_message, re.DOTALL)
+        #     if match:
+        #         bot_message = match.group(1)
         self.__chat_history_buffer.append({"user": user_message, "ai": bot_message})
-        print("HISTRY: ", self.__chat_history_buffer)
+        #print("HISTRY: ", self.__chat_history_buffer)
     def test_chatbot_with_tools(self):
         while True:
             query = input("user: ")

@@ -24,7 +24,6 @@ class QueryBot(RootBot):
             text = f.read()
         return text
 
-
     async def query(self, question: str, id: int):
         pattern = r"SELECT.*?;"
         # structure_chain = (
@@ -99,11 +98,11 @@ class QueryBot(RootBot):
         chain = (
             PROMPT_SQL_ANSWER
             #| self.model1_5
-            | self.model_openai4
+            #| self.model_openai4
+            | self.model_gemini_1_5
             | StrOutputParser()
         )
         #final_result = chain.invoke({'id': id, "question": question, "result": query_result})
         full_bot_message = []
-
         for chunk in chain.stream({'id': id, "question": question, "result": query_result}):
             yield chunk

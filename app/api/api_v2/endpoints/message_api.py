@@ -32,8 +32,8 @@ async def send_message(
                     user=Depends(auth_wrapper)
                     ):
     print("VIP: ", user)
-    if user != message.chatId:
-        raise HTTPException(status.HTTP_409_CONFLICT)
+    #if user != message.chatId:
+     #   raise HTTPException(status.HTTP_409_CONFLICT)
     response_generator, full_bot_response, message_id = await ChatServiceV2.send_message(message, user)
     async def streaming_response():
         try:
