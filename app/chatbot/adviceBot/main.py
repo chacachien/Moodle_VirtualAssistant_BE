@@ -146,7 +146,6 @@ class AdviceBot(RootBot):
 
         summary = await self.get_combined_results(quiz, assignment)
         print("SUMMARY: ", summary)
-        yield "hahaha"
         chain = self.prompt | self.model_gemini_1_5 | StrOutputParser()
         print("Talk", chain)
         for chunk in chain.stream({"context":summary, "input": message}):
