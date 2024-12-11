@@ -41,9 +41,9 @@ async def get_token(
 
 
     #for test:
-    return {
-        "token": "832be2bcb454b8a051d0ee870ddf1027"
-    }
+    # return {
+    #     "token": "832be2bcb454b8a051d0ee870ddf1027"
+    # }
     # end
     if not auth.credentials: return None
     session = await AuthService.get_session(auth.credentials)
