@@ -23,6 +23,8 @@ PROMPT_CHOOSE_TOOLS_V2 = PromptTemplate.from_template("""
                Tool 1 => Used for retrieving information based on search results or external knowledge.
                Tool 2 =>  Used for querying specific data like course details or user participation.
                Tool 3 =>  Used for casual conversation or general queries.
+               Tool 4 => Used for analysis learning result of user or give the advice for the learning result better.
+                                                      
             ##GOAL: Given the user input, return the name of the tool to use. The input of the tool is {input}.
             ##Instructions:
                 1. Review the user input.
@@ -40,6 +42,7 @@ PROMPT_CHOOSE_TOOLS_V2 = PromptTemplate.from_template("""
                     + "input": "Chào cậu" --> 3
                     + "input": "Giải thích sự tăng trưởng của Việt Nam" --> 1
                     + "input": "tôi đang tham gia những khóa học nào" --> 2
+                    + "input": "phân tích kết quả học tập của tôi"  --> 4
             RESPONSE: 
 """                                                 
 )
