@@ -947,7 +947,7 @@ transformers 4.44.2 State-of-the-art Machine Learning for JAX, PyTorch and Tenso
 │       │   └── colorama * 
 │       └── typing-extensions >=3.7.4.3 
 └── tqdm >=4.27
-    └── colorama * 
+    └── colorama
 uvicorn 0.29.0 The lightning-fast ASGI server.
 ├── click >=7.0
 │   └── colorama * 
