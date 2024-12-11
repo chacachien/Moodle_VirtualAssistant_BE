@@ -23,6 +23,8 @@ PROMPT_CHOOSE_TOOLS_V2 = PromptTemplate.from_template("""
                Tool 1 => Used for retrieving information based on search results or external knowledge.
                Tool 2 =>  Used for querying specific data like course details or user participation.
                Tool 3 =>  Used for casual conversation or general queries.
+               Tool 4 => Used for analysis learning result of user or give the advice for the learning result better.
+                                                      
             ##GOAL: Given the user input, return the name of the tool to use. The input of the tool is {input}.
             ##Instructions:
                 1. Review the user input.
@@ -40,6 +42,7 @@ PROMPT_CHOOSE_TOOLS_V2 = PromptTemplate.from_template("""
                     + "input": "Chào cậu" --> 3
                     + "input": "Giải thích sự tăng trưởng của Việt Nam" --> 1
                     + "input": "tôi đang tham gia những khóa học nào" --> 2
+                    + "input": "phân tích kết quả học tập của tôi"  --> 4
             RESPONSE: 
 """                                                 
 )
@@ -83,8 +86,6 @@ PROMPT_NORMAL_TALK=  PromptTemplate.from_template("""
             ## Constraints:
                 + Respond in a language consistent with that used by the user.
             ## YOU ANSWER: 
-
-
 """)
 
 PROMPT_REMINDER = """You should be a responsible ChatGPT and should not generate harmful or misleading content! 
@@ -112,6 +113,8 @@ PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
                 2. If uncertain, politely inform the user that you don't have the answer.
                 3. When confident, provide concise and insightful assistance, not just itemize.
                 4. Respond to the user in their language, prioritizing Vietnamese whenever possible.
+                5. Use emoji if need to make the message more attractive.
+
             ## Constraints:
                 + Only use the content of Context to answer user.
                 + Ensure responses remain pertinent to the course material.
@@ -136,7 +139,8 @@ PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
                +course_link+"""
             4. Response the link as a markdown button. example:"""
                 +example_markdown+"""
-            5. Respond to the user in their language, prioritizing Vietnamese whenever possible.
+            5. Respond to the user in their language, prioritizing Vietnamese whenever possible. Use emoji if need to make the message more attractive.
+
         ## Constraints:
             + Ensure the reminder is polite and encouraging.
             + Provide a friendly and helpful message to the user.
@@ -683,6 +687,7 @@ NHIỆM VỤ: bạn có thể thực hiện một hoặc nhiều nhiệm vụ sa
 
 
 Hãy sử dụng giọng điệu chuyên nghiệp nhưng thân thiện, tạo động lực cho học viên đồng thời đưa ra những góp ý mang tính xây dựng.
+Sử dụng emoji vào chỗ cần thiết để làm cho tin nhắn thu hút hơn.
 
 Dựa trên dữ liệu trên, hãy phân tích và đưa ra lời khuyên phù hợp cho học viên.
 """)

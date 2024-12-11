@@ -7,7 +7,7 @@ import os
 
 from openai import api_key
 
-
+from langchain_google_genai import GoogleGenerativeAI
 class RootBot:
     def __init__(self):
         load_dotenv(override=True)
@@ -38,21 +38,34 @@ class RootBot:
                     streaming=True
         )
         self.claude3_5 = ChatAnthropic(model='claude-3-5-sonnet-20241022', api_key=os.getenv("CLAUDE_API_KEY"))
-
-
+        
 def main():
     import time
+    from langchain_core.tools import Tool
+    from langchain_google_community import GoogleSearchAPIWrapper
     message = "What are some of the pros and cons of Python as a programming language?"
     bot = RootBot()
+    
+    search = GoogleSearchAPIWrapper()
+
+    def top5_results(query):
+        return search.results(query, 5)
+
+
+    tool = Tool(
+        name="Google Search Snippets",
+        description="Search Google for recent results.",
+        func=top5_results,
+    )
     s = time.time()
     t = 0
     while True:
         message = input("user: ")
         s = time.time()
-        response = bot.groq.invoke(message)
+        response = tool.run(message)
         e = time.time()
         print("TIME: ", e-s)
-        print(response.content)
+        print(response)
 
     # import os
     # import time
@@ -82,7 +95,6 @@ def main():
     #     e = time.time()
     #     print("TIME: ", e-s)
 
-    
     
 if __name__ == "__main__":
     main()
