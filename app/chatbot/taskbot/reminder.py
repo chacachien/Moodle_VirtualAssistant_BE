@@ -33,6 +33,7 @@ class Reminder:
 
         # find the right mod_id
         module = 0
+        type = reminder.name
         if reminder.name == "quiz":
             module = 18
             mod_id = await ReminderServiceV2.get_mod_id(reminder.course_id, module, reminder.mod_id)
@@ -44,11 +45,12 @@ class Reminder:
         else:
             module =14
             mod_id = reminder.course_id
+            type = "chapter"
 
         #end
         reminder_content =f'''
             User: {reminder.user}
-            Type: {reminder.name}
+            Type: {type}
             Title: {reminder.title}
             Action: {reminder.type_action}
             Course: {reminder.course}
