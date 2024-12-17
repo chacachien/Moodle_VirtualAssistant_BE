@@ -44,10 +44,10 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "content": "hi",
+    "content": "bạn có khỏe không",
     "chatId": 3,
-    "role": 0,
-    "courseId": 11
+    "role": 1,
+    "courseId": 3
 }
 ###
 # send message

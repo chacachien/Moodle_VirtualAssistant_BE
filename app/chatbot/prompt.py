@@ -23,6 +23,7 @@ PROMPT_CHOOSE_TOOLS_V2 = PromptTemplate.from_template("""
                Tool 1 => Used for retrieving information based on search results or external knowledge.
                Tool 2 =>  Used for querying specific data like course details or user participation.
                Tool 3 =>  Used for casual conversation or general queries.
+               Tool 4 => Used to analyze the user's learning results and provide recommendations to help them improve their studies.
             ##GOAL: Given the user input, return the name of the tool to use. The input of the tool is {input}.
             ##Instructions:
                 1. Review the user input.
@@ -40,6 +41,7 @@ PROMPT_CHOOSE_TOOLS_V2 = PromptTemplate.from_template("""
                     + "input": "Chào cậu" --> 3
                     + "input": "Giải thích sự tăng trưởng của Việt Nam" --> 1
                     + "input": "tôi đang tham gia những khóa học nào" --> 2
+                    + "input": "phân tích kết quả học tập của tôi" --> 4
             RESPONSE: 
 """                                                 
 )
@@ -108,6 +110,10 @@ PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
             ## Context: {context}
             ## Goal: Offer clear and helpful responses to users' inquiries related to the course content using the same language with user.
             ## Instructions:
+                0. You are only responsible for answering questions related to the lesson content or introducing the course. If the question falls outside of these areas, suggest the user switch to the appropriate function:
+                    - If the user asks about personal information (e.g., course details or user participation), remind them to switch to "Assistant" mode.
+                    - If the user requests learning result analysis or study suggestions, remind them to switch to "Analyzer" mode.
+                    - If the user engages in casual, friendly conversation, remind them to switch to "Friend" mode.
                 1. Use the provided course content to craft accurate responses.
                 2. If uncertain, politely inform the user that you don't have the answer.
                 3. When confident, provide concise and insightful assistance, not just itemize.
@@ -119,7 +125,7 @@ PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
                 + Prompt users to furnish additional context if required.
                 + Maintain professionalism and clarity in all interactions.
                 + Respond in a language consistent with that used by the user.
-            ## YOU ANSWER: 
+            ## YOUR ANSWER: 
     """)
 base_url = os.getenv("BASE_URL")
 course_link = base_url+"/course/view.php?id=[courseid]"
@@ -130,6 +136,10 @@ PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
         ## Course information: {context}
         ## Goal: Offer clear and helpful responses to users' inquiries related to the course content.
         ## Instructions:
+            0. You are only responsible for answering questions related to  introducing the course. If the question falls outside of these areas, suggest the user switch to the appropriate function:
+                - If the user asks about personal information (e.g., course details or user participation), remind them to switch to "Assistant" mode.
+                - If the user requests learning result analysis or study suggestions, remind them to switch to "Analyzer" mode.
+                - If the user engages in casual, friendly conversation, remind them to switch to "Friend" mode.
             1. Use the information of the course in the system to remind the user to go to the course page that is relevant to the user's question.
             2. If the course information is not relevant to the user's question, just say the system does not have any course that is relevant to the user's question and do nothing further. 
             3. Otherwise, if the user message and course information match, remind the user to visit the course page to get more information. Link to course page: """
@@ -144,6 +154,7 @@ PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
             + Just remind in 2-5 sentences.
             + Do not give a reminder if the course information and user's question do not match. Only remind when they match.
             + Do not create responses like this: "Xin chào, bạn có thể tìm hiểu về Machine Learning trong khóa học 'Lịch sử và văn hóa của Việt Phục qua các thời kỳ'. Hãy truy cập trang khóa học để biết thêm thông tin nhé!" because Machine Learning and "Lịch sử và văn hóa của Việt Phục qua các thời kỳ" do not match. In that case, just sorry user about don't have any suitable courses. 
+
         ## YOUR ANSWER:
             // YOUR ANSWER HERE
     """)
@@ -197,15 +208,6 @@ PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
                 // Your data structure (schema) here
 
             """)
-
-
-
-
-
-
-
-
-
 
 # PROMPT_SQL_QUERY = PromptTemplate.from_template(
 #             """You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run.
@@ -286,8 +288,7 @@ user_course = """
                             WHERE u.id = {id}
                             ORDER BY ue.timestart DESC
                             LIMIT 5;"
-                            
-                            
+                             
             ## Here is the relevant table info: {database_structure}
             ## Here are some sql functions. If the requirement can be done with it, just call the function.
                 + Get all courses of a user: select get_course_of_user({id})
@@ -422,6 +423,10 @@ PROMPT_SQL_ANSWER = PromptTemplate.from_template(
             ## SQL Result: {result}
             ## Goal: Provide a friendly and accurate answer to the user's question based on the SQL query result.
             ## Instructions:
+                0. You are only responsible for answering questions related to personal information (e.g., course details or user participation). If the question falls outside of these areas, suggest the user switch to the appropriate function:
+                - If the user asks about content of course (eg. việt phục ra đời khi nào?, nhà lý hình thành từ năm nào), remind them to switch to "Instructor" mode.
+                - If the user requests learning result analysis or study suggestions (eg. phân tích kết quả học tập của tôi, tôi cần làm gì để cải thiện), remind them to switch to "Analyzer" mode.
+                - If the user engages in casual, friendly conversation (eg. chào cậu, kể một câu chuyện vui), remind them to switch to "Friend" mode.
                 1. Retrieve data relevant to the user from the database.
                 2. Use the SQL query result to answer the user's question.
                 3. Maintain a friendly and helpful tone in your response.
@@ -523,7 +528,7 @@ PROMPT_REWRITE_QUESTION = PromptTemplate.from_template(PROMPT_REWRITE_TEMPLATE)
 
 
 label_link = base_url+"/course/view.php?id=[courseid]"
-label_markdown = f"Khóa học lịch sử việt phục!]({base_url}/course/view.php?id=4)"
+label_markdown = f"[Khóa học lịch sử việt phục!]({base_url}/course/view.php?id=4)"
 
 PROMPT_REMINDER = PromptTemplate.from_template("""
         ## Expert persona: Act as a Vietnamese virtual assistant and write a reminder for the user in a friendly language. 
@@ -535,7 +540,7 @@ PROMPT_REMINDER = PromptTemplate.from_template("""
             2. Include a link to the course in Markdown format as follows.
              Remind the user to visit the course page to get more information. Link to course page: """
                +label_link+"""
-            4. Response the link as a markdown button. example:"""
+            4. Response the link as a markdown button with format: [Course name](url). example:"""
                 +label_markdown+"""
         ## Constraints:
             + Use passive voice to convey the reminder (e.g., "Một chương mới vừa được thêm vào").  
@@ -558,7 +563,7 @@ PROMPT_REMINDER_QUIZ = PromptTemplate.from_template("""
             2. Include a link to the quiz.
                 Link to quiz page: """
                +quiz_link+"""
-            3. Response the link as a markdown button. example:"""
+            3. Response the link as a markdown button with format: [Quiz name](url). example:"""
                 +quiz_markdown+"""
         ## Constraints:
             + Use passive voice to convey the reminder (e.g., "Quiz xxx đã được tạo").  
@@ -580,7 +585,7 @@ PROMPT_REMINDER_ASSIGN= PromptTemplate.from_template("""
             2. Include a link to the quiz in Markdown format as follows. 
                 Remind the user to visit the assignment. Link to assignment page: """
                +assign_link+"""
-            3. Response the link as a markdown button. example:"""
+            3. Response the link as a markdown button with format: [Assignment name](url). example:"""
                 +assign_markdown+"""
         ## Constraints:
             + Use passive voice to convey the reminder (e.g., "Assignment xxx đã được tạo").  
@@ -623,17 +628,16 @@ PROMPT_REMINDER_DAILY = PromptTemplate.from_template("""
         ## Example format:
             ```
             Khoá học A:
-            - tiến độ quiz
-            - tiến độ assignment
-            - tiến độ chapter
+            - tiến độ quiz (2/3)
+            - tiến độ assignment (2/3)
+            - tiến độ chapter (2/3)
             Khoá học B:
-            - tiến độ quiz
-            - tiến độ assignment
-            - tiến độ chapter
+            - tiến độ quiz (2/3)
+            - tiến độ assignment (2/3)
+            - tiến độ chapter (2/3)
             ...
             ```
         ## Output:
-
         """)
 
 
@@ -651,8 +655,11 @@ PROMPT_NORMAL_TALK_HISTORY_SYSTEM = """You are my funny virtual assistant."""
 PROMPT_ADVICE = PromptTemplate.from_template("""
     Bạn là một chuyên gia tư vấn học tập với nhiều năm kinh nghiệm trong việc phân tích kết quả học tập và đưa ra lời khuyên phù hợp cho từng học viên. Bạn sẽ phân tích dữ liệu học tập của học viên và đưa ra những gợi ý cụ thể dựa trên yêu cầu của học viên, có tính thực tiễn để cải thiện kết quả học tập.
     Yêu cầu của học viên: {input}
-CONTEXT:
-Bạn được cung cấp dữ liệu về kết quả học tập của một học viên, bao gồm:
+You are only responsible for answering questions related to learning result analysis or study suggestions . If the question falls outside of these areas, suggest the user switch to the appropriate function:
+    - If the user asks about content of course (eg. việt phục ra đời khi nào?, nhà lý hình thành từ năm nào), remind them to switch to "Instructor" mode.
+    - If the user requests personal information (e.g., course details or user participation), remind them to switch to "Assistant" mode.
+    - If the user engages in casual, friendly conversation (eg. chào cậu, kể một câu chuyện vui), remind them to switch to "Friend" mode.
+CONTEXT: Bạn được cung cấp dữ liệu về kết quả học tập của một học viên, bao gồm:
 - Tên khóa học
 - Kết quả các bài quiz:
   + Tên quiz
@@ -670,20 +677,17 @@ NHIỆM VỤ: bạn có thể thực hiện một hoặc nhiều nhiệm vụ sa
    - Đánh giá điểm mạnh dựa trên các assignment có điểm cao
    - Xác định điểm yếu dựa trên các quiz chưa đạt và assignment có điểm thấp
    - Nhận diện các chương học cần được ưu tiên ôn tập
-
 2. Đề xuất kế hoạch học tập cải thiện:
    - Sắp xếp thứ tự ưu tiên cho các chương cần ôn tập
    - Đề xuất phương pháp học tập phù hợp cho từng chương
    - Gợi ý cách tiếp cận các bài quiz và assignment tiếp theo
-
 3. Đưa ra lời khuyên cụ thể:
    - Tập trung vào các chương được đề cập nhiều lần trong phần cần ôn tập
    - Kết hợp nhận xét của giáo viên để đưa ra lời khuyên sát thực
    - Đề xuất thời gian biểu học tập hợp lý
 
-
 Hãy sử dụng giọng điệu chuyên nghiệp nhưng thân thiện, tạo động lực cho học viên đồng thời đưa ra những góp ý mang tính xây dựng.
-
+Sử dụng Emoji nếu cần thiết để làm sinh động hơn cho câu trả lời. 
 Dựa trên dữ liệu trên, hãy phân tích và đưa ra lời khuyên phù hợp cho học viên.
 """)
 #ĐỊNH DẠNG PHẢN HỒI:

@@ -35,12 +35,15 @@ class Reminder:
         module = 0
         if reminder.name == "quiz":
             module = 18
+            mod_id = await ReminderServiceV2.get_mod_id(reminder.course_id, module, reminder.mod_id)
+
         elif reminder.name == "assign":
             module = 1
-        else:
-            module =14          
+            mod_id = await ReminderServiceV2.get_mod_id(reminder.course_id, module, reminder.mod_id)
 
-        mod_id = await ReminderServiceV2.get_mod_id(reminder.course_id, module, reminder.mod_id)
+        else:
+            module =14
+            mod_id = reminder.course_id
 
         #end
         reminder_content =f'''
