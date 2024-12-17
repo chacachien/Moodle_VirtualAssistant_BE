@@ -23,7 +23,8 @@ PROMPT_CHOOSE_TOOLS_V2 = PromptTemplate.from_template("""
                Tool 1 => Used for retrieving information based on search results or external knowledge.
                Tool 2 =>  Used for querying specific data like course details or user participation.
                Tool 3 =>  Used for casual conversation or general queries.
-               Tool 4 => Used to analyze the user's learning results and provide recommendations to help them improve their studies.
+               Tool 4 => Used for analysis learning result of user or give the advice for the learning result better.
+                                                      
             ##GOAL: Given the user input, return the name of the tool to use. The input of the tool is {input}.
             ##Instructions:
                 1. Review the user input.
@@ -41,7 +42,7 @@ PROMPT_CHOOSE_TOOLS_V2 = PromptTemplate.from_template("""
                     + "input": "Chào cậu" --> 3
                     + "input": "Giải thích sự tăng trưởng của Việt Nam" --> 1
                     + "input": "tôi đang tham gia những khóa học nào" --> 2
-                    + "input": "phân tích kết quả học tập của tôi" --> 4
+                    + "input": "phân tích kết quả học tập của tôi"  --> 4
             RESPONSE: 
 """                                                 
 )
@@ -118,6 +119,8 @@ PROMPT_RAG_IMPROVE = PromptTemplate.from_template("""
                 2. If uncertain, politely inform the user that you don't have the answer.
                 3. When confident, provide concise and insightful assistance, not just itemize.
                 4. Respond to the user in their language, prioritizing Vietnamese whenever possible.
+                5. Use emoji if need to make the message more attractive.
+
             ## Constraints:
                 + Only use the content of Context to answer user.
                 + Ensure responses remain pertinent to the course material.
@@ -146,7 +149,8 @@ PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
                +course_link+"""
             4. Response the link as a markdown button. example:"""
                 +example_markdown+"""
-            5. Respond to the user in their language, prioritizing Vietnamese whenever possible.
+            5. Respond to the user in their language, prioritizing Vietnamese whenever possible. Use emoji if need to make the message more attractive.
+
         ## Constraints:
             + Ensure the reminder is polite and encouraging.
             + Provide a friendly and helpful message to the user.
@@ -154,7 +158,6 @@ PROMPT_REMIND_TO_COURSE = PromptTemplate.from_template("""
             + Just remind in 2-5 sentences.
             + Do not give a reminder if the course information and user's question do not match. Only remind when they match.
             + Do not create responses like this: "Xin chào, bạn có thể tìm hiểu về Machine Learning trong khóa học 'Lịch sử và văn hóa của Việt Phục qua các thời kỳ'. Hãy truy cập trang khóa học để biết thêm thông tin nhé!" because Machine Learning and "Lịch sử và văn hóa của Việt Phục qua các thời kỳ" do not match. In that case, just sorry user about don't have any suitable courses. 
-
         ## YOUR ANSWER:
             // YOUR ANSWER HERE
     """)
@@ -208,6 +211,15 @@ PROMPT_STRUCTURE_TABLE = PromptTemplate.from_template(
                 // Your data structure (schema) here
 
             """)
+
+
+
+
+
+
+
+
+
 
 # PROMPT_SQL_QUERY = PromptTemplate.from_template(
 #             """You are a MySQL expert. Given an input question, create a syntactically correct MySQL query to run.
@@ -288,7 +300,8 @@ user_course = """
                             WHERE u.id = {id}
                             ORDER BY ue.timestart DESC
                             LIMIT 5;"
-                             
+                            
+                            
             ## Here is the relevant table info: {database_structure}
             ## Here are some sql functions. If the requirement can be done with it, just call the function.
                 + Get all courses of a user: select get_course_of_user({id})
@@ -638,6 +651,7 @@ PROMPT_REMINDER_DAILY = PromptTemplate.from_template("""
             ...
             ```
         ## Output:
+
         """)
 
 
