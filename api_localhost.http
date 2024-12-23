@@ -44,9 +44,9 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "content": "bạn có khỏe không",
+    "content": "có",
     "chatId": 3,
-    "role": 1,
+    "role": 0,
     "courseId": 3
 }
 ###
