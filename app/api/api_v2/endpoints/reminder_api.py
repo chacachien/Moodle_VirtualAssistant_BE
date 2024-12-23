@@ -10,6 +10,8 @@ from app.services.auth_service import auth_wrapper
 from app.services.chat_service import ChatServiceV2
 from app.services.schedule import ReminderService, ReminderServiceV2
 
+
+
 pusher_client = pusher.Pusher(
     app_id='1879635',
     key='9de03240cc8a5c22c658',
@@ -33,6 +35,9 @@ async def get_reminder(reminder: RemiderContent):
     await ChatServiceV2.insert_message("",message, 4, user_id)
     reminderBot.create_reminder_database(reminder.name, reminder.user_id, reminder.time_reminder, message);
     pusher_client.trigger('moodle-remind', f"{user_id}", {'message': f"{message}"})
+    #send mail
+    email = await ChatServiceV2.send_email(reminder.user_id, message, reminder.name)
+    print("Result mail: ", email)
     print("Message sent:", message)
     return message
 

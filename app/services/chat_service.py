@@ -6,6 +6,10 @@ import asyncpg
 from fastapi import HTTPException
 from starlette import status
 from app.chatbot.model import ChatBot
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
+import markdown
 
 class ChatServiceV2(object):
     chatbot = ChatBot()
@@ -59,7 +63,7 @@ class ChatServiceV2(object):
         finally:
             # Close the database connection
             await ChatServiceV2.close_db_connection(connection)
-            await connection.close()
+
     @staticmethod
     async def update_bot_message(message_id, chat_id: int, new_message: str):
         connection = await ChatServiceV2.get_db_connection()
@@ -176,3 +180,38 @@ class ChatServiceV2(object):
         finally:
             await connection.close()
 
+    @staticmethod
+    async def send_email(user_id, bot_message, subject):
+        connection = await ChatServiceV2.get_db_connection()
+        try:
+            # Execute the SQL query to fetch the chat history
+            query = "SELECT email FROM mdl_user WHERE id = $1"
+            records = await connection.fetch(query, user_id)
+
+            # Convert the fetched records into a list of dictionaries
+            if not records:
+                return "User email does not exist"
+            recipient_email = records[0]
+            print("EMAIL: ", recipient_email)
+            # Close the database connection
+            sender_email = "chacachiene@gmail.com"
+            password = "ivmh xgit bnkm nksf"
+            #password = "unxf lrzw eizs wrcn"
+            #recipient_email = "phat.nguyennpk1311@hcmut.edu.vn"
+            message = MIMEMultipart('alternative')
+            message["From"] = sender_email
+            #message["To"] = recipient_email
+            message["Subject"] = "[Moodle Bot] Daily reminder" if subject =="daily" else "[Moodle Bot] Important event"
+            html_content = markdown.markdown(bot_message)
+            #message.attach(MIMEText(f"Message: {bot_message}", "plain"))
+            message.attach(MIMEText(bot_message, 'plain'))
+            message.attach(MIMEText(html_content, 'html'))
+            with smtplib.SMTP("smtp.gmail.com", 587) as server:
+                server.starttls()
+                server.login(sender_email, password)
+                server.sendmail(sender_email, recipient_email, message.as_string())
+
+            return {"message": "Email sent successfully"}
+        except Exception as e:
+            print(f"Error sending email: {e}")
+            return {"message": "Email sent fail!"}
