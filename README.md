@@ -1,5 +1,11 @@
 # Chatbot Application
 
+This chatbox is integrated into the LMS (Learning Management System) to enhance the user experience. You can view the details through the following:
+
+   - Slide: https://www.canva.com/design/DAGYbpGCAIU/H_L08fPKz_T5N4FrGHU9Sg/edit?utm_content=DAGYbpGCAIU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
+
+   - Video Presentation: https://www.youtube.com/watch?v=ZuaEuZog9UQ&t=1s
+
 ## Modules Overview
 
 ### Active Module
